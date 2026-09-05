@@ -1,0 +1,1866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="refresh" content="0; url=/industry.html">
+<script>window.location.replace('/industry.html');</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Employer &amp; Industry Dashboard — SkillTrack</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<style>
+  .section { display: none; } .section.active { display: block; }
+  .skill-chip-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .candidate-row { border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px; background:#fff; }
+  .candidate-head { display: flex; justify-content: space-between; align-items: center; }
+  .course-card-industry { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="/index.html" class="brand"><span class="brand-mark">ST</span><span class="brand-name">SkillTrack</span></a>
+  <div id="userBadge" class="flex gap-1"></div>
+</nav>
+
+<div class="dash">
+  <aside class="dash-side">
+    <a href="#" data-section="overview" class="active">Dashboard</a>
+    <a href="#" data-section="profile">Company Profile</a>
+    <a href="#" data-section="postjob">Post Job</a>
+    <a href="#" data-section="myjobs">My Jobs</a>
+    <a href="#" data-section="candidates">Candidates</a>
+    <a href="#" data-section="hiring">Hiring</a>
+    <a href="#" data-section="analytics">Analytics</a>
+  </aside>
+
+  <main class="dash-main">
+
+    <!-- 1. DASHBOARD -->
+    <section id="overview" class="section active">
+      <div class="flex-between">
+        <div>
+          <h2>Employer &amp; Industry Dashboard</h2>
+          <p class="mt-0" id="pendingBanner">Overview of open positions, talent applications, and candidate match scores.</p>
+        </div>
+        <div class="flex gap-1">
+          <button class="btn btn-primary btn-sm" onclick="showSection('postjob')">+ Post New Job</button>
+        </div>
+      </div>
+      <div class="grid grid-3 mt-2" id="overviewStats"></div>
+    </section>
+
+    <!-- 2. COMPANY PROFILE -->
+    <section id="profile" class="section">
+      <div class="flex-between">
+        <div>
+          <h2>Company Profile</h2>
+          <p class="mt-0">Showcase your organization, industry sector, and recruiter contact details.</p>
+        </div>
+      </div>
+      <div class="card mt-2">
+        <form id="profileForm">
+          <div class="flex gap-2" style="align-items:flex-start; margin-bottom: 20px;">
+            <img id="logoPreviewImg" class="avatar-preview" src="/uploads/default-company.png" onerror="this.src='https://ui-avatars.com/api/?name=Company&background=16233A&color=E2A33B'" alt="Logo">
+            <div style="flex:1;">
+              <label style="font-weight:600; font-size:0.85rem; color:var(--ink-soft); display:block; margin-bottom:6px;">Company Logo</label>
+              <div class="flex gap-1">
+                <input type="text" id="logo_url" placeholder="Paste logo image URL or upload file" style="flex:1;">
+                <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('logoFileInput').click()">Upload Logo</button>
+                <input type="file" id="logoFileInput" style="display:none;" accept="image/*" onchange="handleLogoUpload(this.files[0])">
+              </div>
+              <div class="field-hint">Recommended: square PNG, WebP or JPG up to 10MB</div>
+            </div>
+          </div>
+
+          <div class="grid grid-2">
+            <div class="field"><label>Company Name <span class="required-star">*</span></label><input id="company_name" required></div>
+            <div class="field"><label>Industry Sector</label><input id="industry_sector" placeholder="e.g. Software &amp; IT Services, Manufacturing"></div>
+            <div class="field"><label>Website URL</label><input id="website" placeholder="https://yourcompany.com"></div>
+            <div class="field"><label>Recruiter / Contact Email</label><input id="contact_email" type="email" placeholder="careers@yourcompany.com"></div>
+            <div class="field"><label>Contact Phone</label><input id="contact_phone" placeholder="+91 9876543210"></div>
+            <div class="field"><label>Company LinkedIn Page</label><input id="linkedin_url" placeholder="https://linkedin.com/company/..."></div>
+            <div class="field"><label>District / City</label><input id="district" placeholder="e.g. Bengaluru"></div>
+            <div class="field"><label>State</label><input id="state" placeholder="e.g. Karnataka"></div>
+          </div>
+          <div class="field"><label>About the Company</label><textarea id="description" placeholder="Describe your company, work culture, and hiring focus..."></textarea></div>
+          <button class="btn btn-primary" type="submit">Save Company Profile</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- 3. POST A JOB -->
+    <section id="postjob" class="section">
+      <h2>Post a Job, Internship, or Training</h2>
+      <p class="mt-0">Define required proficiencies so our AI engine can rank candidates by skill match.</p>
+      <div class="card mt-2">
+        <form id="jobForm">
+          <div class="grid grid-2">
+            <div class="field"><label>Title <span class="required-star">*</span></label><input id="j_title" required placeholder="e.g. Junior Full Stack Developer"></div>
+            <div class="field"><label>Role Type</label>
+              <select id="j_type">
+                <option value="job">Full-time Job</option>
+                <option value="internship">Internship</option>
+                <option value="training">Apprenticeship / Training</option>
+              </select>
+            </div>
+            <div class="field"><label>Location</label><input id="j_location" placeholder="e.g. Hitec City, Hyderabad / Remote"></div>
+            <div class="field"><label>District</label><input id="j_district" placeholder="e.g. Hyderabad"></div>
+          </div>
+          <div class="field"><label>Role Description</label><textarea id="j_desc" placeholder="Job responsibilities, prerequisites, and perks..."></textarea></div>
+          <div class="field">
+            <label>Required Skills &amp; Minimum Proficiency</label>
+            <div class="flex gap-1">
+              <select id="skillSelect" style="flex:1;"></select>
+              <select id="profSelect">
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option>
+                <option value="expert">Expert</option>
+              </select>
+              <button type="button" class="btn btn-ghost btn-sm" onclick="addSkillToJob()">+ Add Skill</button>
+            </div>
+            <div id="jobSkillChips" class="mt-1"></div>
+          </div>
+          <button class="btn btn-primary" type="submit">Post Position</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- 4. MY JOBS (Positions, Assignments, Courses) -->
+    <section id="myjobs" class="section">
+      <div class="flex-between">
+        <div>
+          <h2>My Published Opportunities</h2>
+          <p class="mt-0">Manage job vacancies, technical challenges, and training curricula.</p>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="showSection('postjob')">+ Post Position</button>
+      </div>
+
+      <div class="subtabs mt-2" id="jobsTabs">
+        <button type="button" class="subtab-btn active" data-tab="tab-jobs-posted">Posted Positions</button>
+        <button type="button" class="subtab-btn" data-tab="tab-jobs-assignments">Industry Assignments</button>
+        <button type="button" class="subtab-btn" data-tab="tab-jobs-courses">Teaching &amp; Courses</button>
+      </div>
+
+      <div id="tab-jobs-posted" class="subtab-pane active">
+        <div id="myJobsList" class="mt-2"></div>
+      </div>
+
+      <div id="tab-jobs-assignments" class="subtab-pane">
+        <div class="flex-between mt-2">
+          <h4>Published Assignments</h4>
+          <button class="btn btn-primary btn-sm" onclick="openCreateAssignmentModal()">+ Create Assignment</button>
+        </div>
+        <div id="industryAssignmentsList" class="mt-2"></div>
+      </div>
+
+      <div id="tab-jobs-courses" class="subtab-pane">
+        <div class="flex-between mt-2">
+          <h4>Company Courses &amp; Modules</h4>
+          <button class="btn btn-primary btn-sm" onclick="openCreateCourseModal()">+ Create New Course</button>
+        </div>
+        <div id="industryCoursesList" class="grid grid-2 mt-2"></div>
+      </div>
+    </section>
+
+    <!-- 5. CANDIDATES -->
+    <section id="candidates" class="section">
+      <div class="flex-between">
+        <div>
+          <h2>Applicant Candidates Pipeline</h2>
+          <p class="mt-0">Review candidates ranked by deterministic AI skill-match percentages.</p>
+        </div>
+      </div>
+      <div id="allCandidatesList" class="mt-2">
+        <p class="muted">Loading candidate applicants...</p>
+      </div>
+    </section>
+
+    <!-- 6. HIRING & OUTCOME VERIFICATIONS -->
+    <section id="hiring" class="section">
+      <div class="flex-between">
+        <div>
+          <h2>Hiring, Interviews &amp; Outcomes</h2>
+          <p class="mt-0">Manage scheduled interview rounds, state-recognized Level 3 verifications, and certificates.</p>
+        </div>
+      </div>
+
+      <div class="subtabs mt-2" id="hiringTabs">
+        <button type="button" class="subtab-btn active" data-tab="tab-hiring-verifications">Level 3 Outcome Verifications</button>
+        <button type="button" class="subtab-btn" data-tab="tab-hiring-certify">Issue Certificate</button>
+      </div>
+
+      <div id="tab-hiring-verifications" class="subtab-pane active">
+        <div class="flex-between mt-2">
+          <p class="mt-0">Officially corroborate trainee 30, 90, 180, and 365-day employment reports for state audits.</p>
+          <button class="btn btn-ghost btn-sm" onclick="loadVerifications()">Refresh Submissions</button>
+        </div>
+        <div class="mt-2" id="verificationsList"></div>
+      </div>
+
+      <div id="tab-hiring-certify" class="subtab-pane">
+        <div class="card mt-2">
+          <h3>Issue Verified Certificate</h3>
+          <p class="muted mt-0">Award a verified credential that automatically alerts the student and links to their profile.</p>
+          <form id="certForm" class="mt-2">
+            <div class="grid grid-2">
+              <div class="field"><label>Student ID <span class="required-star">*</span></label><input id="c_student_id" type="number" required placeholder="Found in candidate lists"></div>
+              <div class="field"><label>Issue Date <span class="required-star">*</span></label><input id="c_date" type="date" required></div>
+            </div>
+            <div class="field"><label>Certificate Title <span class="required-star">*</span></label><input id="c_title" required placeholder="e.g. Certificate of Excellence in Full Stack Development"></div>
+            <button class="btn btn-primary" type="submit">Issue Certificate</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. ANALYTICS -->
+    <section id="analytics" class="section">
+      <div class="flex-between">
+        <div>
+          <h2>Hiring &amp; Talent Analytics</h2>
+          <p class="mt-0">Applicant conversion funnel, skill match distributions, and placement metrics.</p>
+        </div>
+      </div>
+      <div class="grid grid-3 mt-2" id="employerAnalyticsCards">
+        <div class="card"><div class="stat-num" id="ea_activeJobs">--</div><div class="muted">Active Positions</div></div>
+        <div class="card"><div class="stat-num" id="ea_totalApplicants">--</div><div class="muted">Total Applicants</div></div>
+        <div class="card"><div class="stat-num" id="ea_avgMatch">--%</div><div class="muted">Average Skill Match</div></div>
+      </div>
+    </section>
+
+
+  </main>
+</div>
+
+<!-- ================= MODALS ================= -->
+
+<!-- ASSIGNMENT CREATE / EDIT MODAL -->
+<div class="modal-backdrop" id="assignmentModal">
+  <div class="modal-box modal-box-lg">
+    <div class="modal-header">
+      <h3 id="am_modalTitle">Create Assignment</h3>
+      <button class="modal-close" onclick="closeModal('assignmentModal')">&times;</button>
+    </div>
+    <form id="assignmentForm">
+      <input type="hidden" id="am_id">
+      <div class="modal-body">
+        <div class="field">
+          <label>Assignment Title <span class="required-star">*</span></label>
+          <input id="am_title_input" required placeholder="e.g. Build an E-commerce Product Filtering API">
+        </div>
+        <div class="grid grid-3">
+          <div class="field">
+            <label>Difficulty Level</label>
+            <select id="am_diff">
+              <option value="beginner">Beginner</option>
+              <option value="intermediate" selected>Intermediate</option>
+              <option value="advanced">Advanced</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Submission Deadline</label>
+            <input id="am_deadline" type="date">
+          </div>
+          <div class="field">
+            <label>Status</label>
+            <select id="am_status">
+              <option value="published">Published</option>
+              <option value="draft">Draft</option>
+              <option value="closed">Closed</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Skills Required / Tags</label>
+          <input id="am_skills" placeholder="e.g. React, Node.js, SQL, REST APIs">
+        </div>
+        <div class="field">
+          <label>Description / Overview</label>
+          <textarea id="am_desc" placeholder="Brief summary of the business scenario or challenge..."></textarea>
+        </div>
+        <div class="field">
+          <label>Detailed Instructions &amp; Acceptance Criteria</label>
+          <textarea id="am_instructions" style="min-height:110px;" placeholder="Provide explicit instructions, schemas, testing guidelines, and submission requirements..."></textarea>
+        </div>
+        <div class="field">
+          <label>Resource / Attachment File (PDF, Docs, Starter Zip)</label>
+          <div class="flex gap-1">
+            <input id="am_attachment" placeholder="Attachment URL or upload file" style="flex:1;">
+            <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('amFileInput').click()">Upload File</button>
+            <input type="file" id="amFileInput" style="display:none;" accept=".pdf,.zip,.doc,.docx,.txt" onchange="handleAssignmentAttachmentUpload(this.files[0])">
+          </div>
+          <div id="amAttachmentPreview" class="field-hint"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('assignmentModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="am_submitBtn">Save Assignment</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- SUBMISSIONS REVIEW MODAL -->
+<div class="modal-backdrop" id="submissionsModal">
+  <div class="modal-box modal-box-lg">
+    <div class="modal-header">
+      <div>
+        <h3 id="sm_title">Student Submissions</h3>
+        <p class="muted mt-0" id="sm_subtitle"></p>
+      </div>
+      <button class="modal-close" onclick="closeModal('submissionsModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div id="sm_submissionsList"></div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-ghost" onclick="closeModal('submissionsModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- COURSE CREATE / EDIT MODAL -->
+<div class="modal-backdrop" id="courseModal">
+  <div class="modal-box modal-box-lg">
+    <div class="modal-header">
+      <h3 id="cm_modalTitle">Create Course</h3>
+      <button class="modal-close" onclick="closeModal('courseModal')">&times;</button>
+    </div>
+    <form id="courseForm">
+      <input type="hidden" id="cm_id">
+      <div class="modal-body">
+        <div class="field">
+          <label>Course Title <span class="required-star">*</span></label>
+          <input id="cm_title" required placeholder="e.g. Production Engineering with Node.js &amp; MySQL">
+        </div>
+        <div class="grid grid-3">
+          <div class="field">
+            <label>Instructor / Lead</label>
+            <input id="cm_instructor" placeholder="e.g. Senior Staff Engineer">
+          </div>
+          <div class="field">
+            <label>Category</label>
+            <input id="cm_category" placeholder="e.g. Web Development, Cloud, Data">
+          </div>
+          <div class="field">
+            <label>Difficulty</label>
+            <select id="cm_difficulty">
+              <option value="beginner">Beginner</option>
+              <option value="intermediate">Intermediate</option>
+              <option value="advanced">Advanced</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid grid-2">
+          <div class="field">
+            <label>Duration (Weeks)</label>
+            <input id="cm_duration" type="number" min="1" max="52" value="4">
+          </div>
+          <div class="field">
+            <label>Publication Status</label>
+            <select id="cm_status">
+              <option value="published">Published</option>
+              <option value="draft">Draft</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Skills Covered</label>
+          <input id="cm_skills" placeholder="e.g. Express, MySQL, REST APIs, Authentication">
+        </div>
+        <div class="field">
+          <label>Course Thumbnail (Image)</label>
+          <div class="flex gap-1">
+            <input id="cm_thumbnail" placeholder="Image URL or upload thumbnail" style="flex:1;">
+            <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('cmFileInput').click()">Upload Image</button>
+            <input type="file" id="cmFileInput" style="display:none;" accept="image/*" onchange="handleCourseThumbnailUpload(this.files[0])">
+          </div>
+          <div id="cmThumbPreview" class="field-hint"></div>
+        </div>
+        <div class="field">
+          <label>Course Overview / Description</label>
+          <textarea id="cm_desc" placeholder="Describe the course curriculum, learning objectives, and prerequisites..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('courseModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="cm_submitBtn">Save Course</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- COURSE LESSONS MANAGER MODAL -->
+<div class="modal-backdrop" id="lessonsModal">
+  <div class="modal-box modal-box-lg">
+    <div class="modal-header">
+      <div>
+        <h3 id="lm_title">Manage Lessons</h3>
+        <p class="muted mt-0" id="lm_subtitle"></p>
+      </div>
+      <button class="modal-close" onclick="closeModal('lessonsModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <!-- Existing Lessons List -->
+      <div id="lm_lessonList" class="mb-2"></div>
+
+      <!-- Add Lesson Form -->
+      <div class="card" style="background:var(--paper);">
+        <h4 style="margin-top:0;" id="lm_formTitle">+ Add New Lesson</h4>
+        <form id="lessonForm">
+          <input type="hidden" id="lf_lessonId">
+          <div class="grid grid-3">
+            <div class="field" style="grid-column: 1 / 3;">
+              <label>Lesson Title <span class="required-star">*</span></label>
+              <input id="lf_title" required placeholder="e.g. Lesson 1: Architecture Deep Dive">
+            </div>
+            <div class="field">
+              <label>Order / Sequence</label>
+              <input id="lf_order" type="number" min="1" value="1">
+            </div>
+          </div>
+          <div class="grid grid-2">
+            <div class="field">
+              <label>Content Type</label>
+              <select id="lf_type">
+                <option value="text">Text Lesson / Notes</option>
+                <option value="video">Video Stream URL</option>
+                <option value="document">PDF / Document Resource</option>
+                <option value="link">External Resource Link</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Resource / Video URL</label>
+              <div class="flex gap-1">
+                <input id="lf_url" placeholder="https://..." style="flex:1;">
+                <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('lfFileInput').click()">Upload File</button>
+                <input type="file" id="lfFileInput" style="display:none;" accept=".pdf,.doc,.docx,.txt" onchange="handleLessonFileUpload(this.files[0])">
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label>Lesson Notes / Text Content</label>
+            <textarea id="lf_text" placeholder="Detailed reading materials, code snippets, or instructions..."></textarea>
+          </div>
+          <div class="flex gap-1">
+            <button type="submit" class="btn btn-primary btn-sm" id="lf_saveBtn">Save Lesson</button>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="resetLessonForm()">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-ghost" onclick="closeModal('lessonsModal')">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- COURSE STUDENTS MODAL -->
+<div class="modal-backdrop" id="studentsModal">
+  <div class="modal-box modal-box-lg">
+    <div class="modal-header">
+      <div>
+        <h3 id="stm_title">Enrolled Students</h3>
+        <p class="muted mt-0" id="stm_subtitle"></p>
+      </div>
+      <button class="modal-close" onclick="closeModal('studentsModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div id="stm_studentList"></div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-ghost" onclick="closeModal('studentsModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- SCHEDULE INTERVIEW MODAL -->
+<div class="modal-backdrop" id="scheduleInterviewModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div>
+        <h3 id="sim_title">Schedule Candidate Interview</h3>
+        <p class="muted mt-0" id="sim_subtitle">Set up online or in-person interview details for this applicant.</p>
+      </div>
+      <button class="modal-close" onclick="closeModal('scheduleInterviewModal')">&times;</button>
+    </div>
+    <form id="scheduleInterviewForm">
+      <input type="hidden" id="sim_appId">
+      <input type="hidden" id="sim_jobId">
+      <div class="modal-body">
+        <div class="field">
+          <label>Interview Date &amp; Time <span class="required-star">*</span></label>
+          <input type="datetime-local" id="sim_date" required>
+        </div>
+        <div class="field">
+          <label>Interview Mode</label>
+          <select id="sim_mode">
+            <option value="online">Online Video Call</option>
+            <option value="in_person">In-Person Office Meeting</option>
+            <option value="phone">Phone Screening</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Meeting Link / Venue Address</label>
+          <input type="text" id="sim_link" placeholder="e.g. https://meet.google.com/abc-defg-hij or Office Room 402">
+        </div>
+        <div class="field">
+          <label>Instructions / Notes for Candidate</label>
+          <textarea id="sim_notes" placeholder="e.g. Technical assessment & architecture discussion. Please have your code portfolio ready."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('scheduleInterviewModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="sim_submitBtn">Confirm &amp; Schedule Interview</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- QUIZZES & MCQS MANAGER MODAL -->
+<div class="modal-backdrop" id="quizzesManagerModal">
+  <div class="modal-box modal-box-lg">
+    <div class="modal-header">
+      <div>
+        <h3 id="qm_title">Quizzes &amp; MCQ Assessments</h3>
+        <p class="muted mt-0" id="qm_subtitle">Create auto-graded quizzes to test knowledge and verify student skills.</p>
+      </div>
+      <button class="modal-close" onclick="closeModal('quizzesManagerModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <!-- Existing quizzes list -->
+      <div id="qm_quizzesList" class="mb-2"></div>
+
+      <!-- Create Quiz Form -->
+      <div class="card" style="background:var(--paper); margin-bottom:16px;">
+        <h4 style="margin-top:0;" id="qm_formTitle">+ Create New Quiz</h4>
+        <form id="createQuizForm">
+          <div class="grid grid-2">
+            <div class="field">
+              <label>Quiz Title <span class="required-star">*</span></label>
+              <input type="text" id="qf_title" required placeholder="e.g. Node.js &amp; SQL Architecture Test">
+            </div>
+            <div class="field">
+              <label>Passing Score (%) <span class="required-star">*</span></label>
+              <input type="number" id="qf_passing" min="1" max="100" value="70" required>
+            </div>
+          </div>
+          <div class="field">
+            <label>Description / Learning Outcomes</label>
+            <input type="text" id="qf_desc" placeholder="Assesses database indexing, query optimization, and REST best practices.">
+          </div>
+          <button type="submit" class="btn btn-primary btn-sm">Create Quiz</button>
+        </form>
+      </div>
+
+      <!-- Questions Manager Pane -->
+      <div id="qm_questionsPane" style="display:none;" class="card">
+        <div class="flex-between">
+          <h4 id="qm_qPaneTitle" style="margin:0;">Manage MCQ Questions</h4>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="closeQuestionsPane()">Close Questions</button>
+        </div>
+        <div id="qm_questionsList" class="mt-2 mb-2"></div>
+        
+        <!-- Add Question Form -->
+        <div class="card" style="background:var(--panel);">
+          <h5 style="margin-top:0;">+ Add MCQ Question</h5>
+          <form id="addQuestionForm">
+            <input type="hidden" id="aqf_quizId">
+            <div class="field">
+              <label>Question Text <span class="required-star">*</span></label>
+              <textarea id="aqf_question" required placeholder="e.g. Which HTTP method is typically idempotent according to REST specifications?"></textarea>
+            </div>
+            <div class="grid grid-2">
+              <div class="field">
+                <label>Option A <span class="required-star">*</span></label>
+                <input type="text" id="aqf_optA" required placeholder="Option A text">
+              </div>
+              <div class="field">
+                <label>Option B <span class="required-star">*</span></label>
+                <input type="text" id="aqf_optB" required placeholder="Option B text">
+              </div>
+              <div class="field">
+                <label>Option C</label>
+                <input type="text" id="aqf_optC" placeholder="Option C text">
+              </div>
+              <div class="field">
+                <label>Option D</label>
+                <input type="text" id="aqf_optD" placeholder="Option D text">
+              </div>
+            </div>
+            <div class="grid grid-2">
+              <div class="field">
+                <label>Correct Answer <span class="required-star">*</span></label>
+                <select id="aqf_correct" required>
+                  <option value="A">Option A</option>
+                  <option value="B">Option B</option>
+                  <option value="C">Option C</option>
+                  <option value="D">Option D</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Points / Weight</label>
+                <input type="number" id="aqf_points" min="1" value="1">
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm">Add Question to Quiz</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Quiz Attempts Pane -->
+      <div id="qm_attemptsPane" style="display:none;" class="card mt-2">
+        <div class="flex-between">
+          <h4 id="qm_attemptsTitle" style="margin:0;">Student Quiz Attempts</h4>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('qm_attemptsPane').style.display='none'">Close Attempts</button>
+        </div>
+        <div id="qm_attemptsList" class="mt-2"></div>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-ghost" onclick="closeModal('quizzesManagerModal')">Done</button>
+    </div>
+  </div>
+</div>
+
+<script src="/js/shared.js"></script>
+<script>
+  const user = requireLogin('industry');
+  renderUserBadge('userBadge');
+
+  // Sidebar navigation
+  function showSection(secId) {
+    document.querySelectorAll('.dash-side a').forEach(l => l.classList.toggle('active', l.dataset.section === secId));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    const target = document.getElementById(secId);
+    if (target) target.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  document.querySelectorAll('.dash-side a').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      showSection(link.dataset.section);
+    });
+  });
+
+  // Jobs Subtabs
+  document.querySelectorAll('#jobsTabs .subtab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#jobsTabs .subtab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('#myjobs .subtab-pane').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // Hiring Subtabs
+  document.querySelectorAll('#hiringTabs .subtab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#hiringTabs .subtab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('#hiring .subtab-pane').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  if (user.status === 'pending') {
+    document.getElementById('pendingBanner').innerHTML = `<span class="pill pill-signal">Pending government approval — you can still set up your profile, assignments, and courses now.</span>`;
+  }
+
+  let jobSkills = [];
+  let currentActiveCourseId = null;
+
+  // 1. OVERVIEW
+  async function loadOverview() {
+    try {
+      const { jobs } = await api('/industry/jobs');
+      const { assignments } = await api('/industry/assignments');
+      const { courses } = await api('/industry/courses');
+
+      const openJobs = jobs.filter(j => j.status === 'open').length;
+      const totalSubmissions = assignments.reduce((acc, a) => acc + (parseInt(a.submission_count) || 0), 0);
+      const totalStudents = courses.reduce((acc, c) => acc + (parseInt(c.enrolled_count) || 0), 0);
+
+      document.getElementById('overviewStats').innerHTML = `
+        <div class="card"><div class="stat-num">${jobs.length}</div><div class="muted">Jobs posted (${openJobs} open)</div></div>
+        <div class="card"><div class="stat-num">${assignments.length}</div><div class="muted">Published assignments</div></div>
+        <div class="card"><div class="stat-num">${totalSubmissions}</div><div class="muted">Student solutions received</div></div>
+        <div class="card"><div class="stat-num">${courses.length}</div><div class="muted">Published courses</div></div>
+        <div class="card"><div class="stat-num">${totalStudents}</div><div class="muted">Students enrolled</div></div>
+        <div class="card"><div class="stat-num">${user.status}</div><div class="muted">Account approval status</div></div>
+      `;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // 2. COMPANY PROFILE
+  async function loadProfile() {
+    try {
+      const { company } = await api('/industry/profile');
+      document.getElementById('company_name').value = company.company_name || user.name || '';
+      document.getElementById('industry_sector').value = company.industry_sector || '';
+      document.getElementById('website').value = company.website || '';
+      document.getElementById('contact_email').value = company.contact_email || '';
+      document.getElementById('contact_phone').value = company.contact_phone || '';
+      document.getElementById('linkedin_url').value = company.linkedin_url || '';
+      document.getElementById('district').value = company.district || '';
+      document.getElementById('state').value = company.state || '';
+      document.getElementById('description').value = company.description || '';
+      document.getElementById('logo_url').value = company.logo_url || '';
+
+      if (company.logo_url) {
+        document.getElementById('logoPreviewImg').src = company.logo_url;
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function handleLogoUpload(file) {
+    if (!file) return;
+    try {
+      toast('Uploading company logo...');
+      const res = await uploadFile(file);
+      document.getElementById('logo_url').value = res.url;
+      document.getElementById('logoPreviewImg').src = res.url;
+      toast('Logo uploaded. Click Save Profile to apply.');
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  document.getElementById('profileForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    try {
+      await api('/industry/profile', {
+        method: 'PUT',
+        body: {
+          company_name: document.getElementById('company_name').value.trim(),
+          industry_sector: document.getElementById('industry_sector').value.trim(),
+          website: document.getElementById('website').value.trim(),
+          contact_email: document.getElementById('contact_email').value.trim(),
+          contact_phone: document.getElementById('contact_phone').value.trim(),
+          linkedin_url: document.getElementById('linkedin_url').value.trim(),
+          district: document.getElementById('district').value.trim(),
+          state: document.getElementById('state').value.trim(),
+          description: document.getElementById('description').value.trim(),
+          logo_url: document.getElementById('logo_url').value.trim()
+        }
+      });
+      toast('Company profile saved successfully.');
+      await loadProfile();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  });
+
+  // 3. JOB POSTING & SKILLS
+  async function loadSkillsForJob() {
+    try {
+      const { skills } = await api('/public/skills-master');
+      document.getElementById('skillSelect').innerHTML = skills.map(s => `<option value="${s.id}" data-name="${s.name}">${s.name}</option>`).join('');
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  function addSkillToJob() {
+    const sel = document.getElementById('skillSelect');
+    const opt = sel.options[sel.selectedIndex];
+    if (!opt) return;
+    const skill_id = Number(opt.value);
+    const required_proficiency = document.getElementById('profSelect').value;
+    if (jobSkills.find(s => s.skill_id === skill_id)) return;
+    jobSkills.push({ skill_id, name: opt.dataset.name, required_proficiency });
+    renderJobSkillChips();
+  }
+
+  function removeJobSkill(id) {
+    jobSkills = jobSkills.filter(s => s.skill_id !== id);
+    renderJobSkillChips();
+  }
+
+  function renderJobSkillChips() {
+    document.getElementById('jobSkillChips').innerHTML = jobSkills.map(s => `
+      <span class="pill pill-signal" style="margin-right:6px;">${s.name} · ${s.required_proficiency}
+        <a href="#" onclick="removeJobSkill(${s.skill_id});return false;" style="color:inherit;margin-left:4px;">✕</a>
+      </span>`).join('');
+  }
+
+  document.getElementById('jobForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    try {
+      await api('/industry/jobs', {
+        method: 'POST',
+        body: {
+          title: document.getElementById('j_title').value.trim(),
+          description: document.getElementById('j_desc').value.trim(),
+          job_type: document.getElementById('j_type').value,
+          location: document.getElementById('j_location').value.trim(),
+          district: document.getElementById('j_district').value.trim(),
+          skills: jobSkills
+        }
+      });
+      toast('Job posted successfully.');
+      e.target.reset();
+      jobSkills = [];
+      renderJobSkillChips();
+      loadOverview();
+      loadMyJobs();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  });
+
+  // 4. MY JOBS & CANDIDATE MATCHING
+  async function loadMyJobs() {
+    const { jobs } = await api('/industry/jobs');
+    const container = document.getElementById('myJobsList');
+    if (!jobs.length) {
+      container.innerHTML = `<div class="card"><p class="empty-state">You haven't posted any jobs yet.</p></div>`;
+      return;
+    }
+    container.innerHTML = jobs.map(j => `
+      <div class="card mt-2">
+        <div class="flex-between">
+          <div>
+            <h3>${j.title}</h3>
+            <p class="muted mt-0">${j.job_type} &middot; ${j.location || ''} &middot; <span class="pill">${j.status}</span></p>
+          </div>
+          <div class="flex gap-1">
+            ${j.status === 'open' ? `<button class="btn btn-ghost btn-sm" onclick="closeJob(${j.id})">Close Role</button>` : ''}
+            <button class="btn btn-primary btn-sm" onclick="loadCandidates(${j.id})">View Candidates</button>
+          </div>
+        </div>
+        <div id="candidates-${j.id}" class="mt-2"></div>
+      </div>
+    `).join('');
+  }
+
+  async function closeJob(id) {
+    try {
+      await api(`/industry/jobs/${id}/close`, { method: 'PUT' });
+      toast('Job closed.');
+      loadMyJobs();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  async function loadCandidates(jobId) {
+    try {
+      const { candidates } = await api(`/industry/jobs/${jobId}/candidates`);
+      const box = document.getElementById(`candidates-${jobId}`);
+      box.innerHTML = candidates.length ? candidates.map(c => `
+        <div class="candidate-row" style="background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:16px; margin-bottom:14px;">
+          <div class="flex-between" style="align-items:flex-start;">
+            <div class="flex gap-1" style="align-items:flex-start;">
+              ${renderAvatar(c.name, c.avatar_url, 48)}
+              <div>
+                <strong style="font-size:1.05rem;">${escapeHtml(c.name)}</strong>
+                <span class="muted" style="font-size:0.85rem;">(ID: ${c.id})</span>
+                <div class="muted" style="font-size:0.85rem; margin-top:2px;">
+                  ${c.college ? `${escapeHtml(c.college)} &middot; ` : ''}
+                  ${c.branch ? `${escapeHtml(c.branch)} &middot; ` : ''}
+                  ${c.district || 'Location unlisted'}
+                </div>
+                <div class="muted" style="font-size:0.82rem; margin-top:2px;">
+                  ✉ ${escapeHtml(c.email || '')} ${c.phone ? `&middot; 📞 ${escapeHtml(c.phone)}` : ''}
+                  ${c.cgpa ? `&middot; CGPA: <strong>${c.cgpa}</strong>` : ''}
+                </div>
+              </div>
+            </div>
+            <div style="text-align:right;">
+              <span class="pill ${scoreColor(c.matchScore)}" style="font-size:0.9rem; font-weight:700;">${c.matchScore}% skill match</span>
+            </div>
+          </div>
+
+          <!-- Verified Badges & Skills -->
+          <div class="flex gap-1 mt-2" style="flex-wrap:wrap;">
+            <button class="btn btn-outline btn-sm" onclick="viewFullStudentProfile(${c.id})" style="padding:2px 8px; font-size:0.8rem; font-weight:600;">👁️ Full Profile &amp; Credentials</button>
+            <span class="pill pill-good" style="font-size:0.8rem;">
+              ✔ ${c.passedQuizzes || 0} Quizzes Passed ${c.avgQuizScore ? `(Avg: ${c.avgQuizScore}%)` : ''}
+            </span>
+            <span class="pill" style="font-size:0.8rem;">
+              📁 ${c.totalProjects || 0} Projects Showcased
+            </span>
+            ${c.resume_url ? `<a href="${c.resume_url}" target="_blank" class="btn btn-ghost btn-sm" style="padding:2px 8px; font-size:0.8rem;">📄 View Resume</a>` : ''}
+            ${c.linkedin_url ? `<a href="${c.linkedin_url}" target="_blank" class="btn btn-ghost btn-sm" style="padding:2px 8px; font-size:0.8rem;">🔗 LinkedIn</a>` : ''}
+            ${c.github_url ? `<a href="${c.github_url}" target="_blank" class="btn btn-ghost btn-sm" style="padding:2px 8px; font-size:0.8rem;">🐙 GitHub</a>` : ''}
+          </div>
+
+          ${c.preferred_jobs ? `<p class="muted mt-1" style="font-size:0.85rem; margin-bottom:2px;"><strong>Preferred Roles:</strong> ${escapeHtml(c.preferred_jobs)}</p>` : ''}
+          ${c.experience ? `<p class="muted mt-0" style="font-size:0.85rem; margin-bottom:4px;"><strong>Experience:</strong> ${escapeHtml(c.experience)}</p>` : ''}
+          ${c.missingSkills.length ? `<p class="muted mt-0" style="font-size:0.82rem; color:#D9534F;">Missing required: ${c.missingSkills.join(', ')}</p>` : ''}
+
+          <!-- Interview Details (if scheduled) -->
+          ${c.interview_date ? `
+            <div class="mt-2" style="background:#EEF6FF; border:1px solid #B8D6F7; border-radius:var(--radius); padding:10px 14px;">
+              <div class="flex-between">
+                <div>
+                  <strong style="color:#1E429F;">📅 Interview Scheduled:</strong> 
+                  ${new Date(c.interview_date).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
+                  <span class="pill" style="text-transform:capitalize; margin-left:6px;">${c.interview_mode || 'Online'}</span>
+                </div>
+                <button class="btn btn-ghost btn-sm" onclick="openScheduleInterviewModal(${c.applicationId}, '${escapeHtml(c.name)}', ${JSON.stringify(c).replace(/"/g, '&quot;')}, ${jobId})">
+                  Update Schedule
+                </button>
+              </div>
+              ${c.interview_link ? `<div class="mt-1" style="font-size:0.85rem;"><strong>Link / Venue:</strong> <a href="${c.interview_link}" target="_blank">${c.interview_link}</a></div>` : ''}
+              ${c.interview_notes ? `<div class="muted mt-1" style="font-size:0.82rem;"><strong>Notes:</strong> ${escapeHtml(c.interview_notes)}</div>` : ''}
+            </div>
+          ` : ''}
+
+          <!-- Pipeline & Action Controls -->
+          <div class="flex-between mt-2 pt-1" style="border-top:1px solid var(--line); align-items:center;">
+            <div class="flex gap-1" style="align-items:center;">
+              <label class="muted" style="font-size:0.85rem; font-weight:600;">Hiring Stage:</label>
+              <select onchange="updateAppStatus(${c.applicationId}, this.value, ${jobId})" style="max-width:160px; font-weight:600;">
+                <option value="applied" ${c.status==='applied'?'selected':''}>Applied</option>
+                <option value="shortlisted" ${c.status==='shortlisted'?'selected':''}>Shortlisted</option>
+                <option value="interview" ${c.status==='interview'?'selected':''}>Interview</option>
+                <option value="offered" ${c.status==='offered'?'selected':''}>Offered</option>
+                <option value="hired" ${c.status==='hired'?'selected':''}>Hired</option>
+                <option value="rejected" ${c.status==='rejected'?'selected':''}>Rejected</option>
+              </select>
+            </div>
+            <div>
+              <button class="btn btn-accent btn-sm" onclick="openScheduleInterviewModal(${c.applicationId}, '${escapeHtml(c.name)}', ${c.interview_date ? JSON.stringify(c).replace(/"/g, '&quot;') : 'null'}, ${jobId})">
+                ${c.interview_date ? 'Reschedule Interview' : '📅 Schedule Interview'}
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('') : `<p class="empty-state">No candidates have applied for this position yet.</p>`;
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  async function updateAppStatus(applicationId, status, jobId) {
+    try {
+      await api(`/industry/applications/${applicationId}/status`, { method: 'PUT', body: { status } });
+      toast('Candidate status updated.');
+      loadCandidates(jobId);
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  function openScheduleInterviewModal(appId, studentName, existingCandidate, jobId) {
+    document.getElementById('sim_appId').value = appId;
+    document.getElementById('sim_jobId').value = jobId;
+    document.getElementById('sim_title').textContent = `Schedule Interview: ${studentName}`;
+    
+    if (existingCandidate && existingCandidate.interview_date) {
+      const d = new Date(existingCandidate.interview_date);
+      const isoLocal = new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+      document.getElementById('sim_date').value = isoLocal;
+      document.getElementById('sim_mode').value = existingCandidate.interview_mode || 'online';
+      document.getElementById('sim_link').value = existingCandidate.interview_link || '';
+      document.getElementById('sim_notes').value = existingCandidate.interview_notes || '';
+      document.getElementById('sim_submitBtn').textContent = 'Update Interview Schedule';
+    } else {
+      document.getElementById('scheduleInterviewForm').reset();
+      document.getElementById('sim_appId').value = appId;
+      document.getElementById('sim_jobId').value = jobId;
+      document.getElementById('sim_mode').value = 'online';
+      document.getElementById('sim_submitBtn').textContent = 'Confirm & Schedule Interview';
+    }
+    openModal('scheduleInterviewModal');
+  }
+
+  document.getElementById('scheduleInterviewForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const appId = document.getElementById('sim_appId').value;
+    const jobId = document.getElementById('sim_jobId').value;
+    const interview_date = document.getElementById('sim_date').value;
+    const interview_mode = document.getElementById('sim_mode').value;
+    const interview_link = document.getElementById('sim_link').value.trim();
+    const interview_notes = document.getElementById('sim_notes').value.trim();
+
+    try {
+      await api(`/industry/applications/${appId}/interview`, {
+        method: 'PUT',
+        body: { interview_date, interview_mode, interview_link, interview_notes }
+      });
+      toast('Interview scheduled successfully! Student dashboard updated.');
+      closeModal('scheduleInterviewModal');
+      if (jobId) loadCandidates(jobId);
+    } catch (err) {
+      toast(err.message, true);
+    }
+  });
+
+  // 5. INDUSTRY ASSIGNMENTS
+  async function loadIndustryAssignments() {
+    try {
+      const { assignments } = await api('/industry/assignments');
+      const box = document.getElementById('industryAssignmentsList');
+      if (!assignments || !assignments.length) {
+        box.innerHTML = `<div class="card"><p class="empty-state">No assignments published yet. Click "+ Create Assignment" to challenge students with real problem sets.</p></div>`;
+        return;
+      }
+
+      box.innerHTML = assignments.map(a => `
+        <div class="card mt-2">
+          <div class="flex-between">
+            <div>
+              <div class="flex gap-1">
+                <h3 style="margin:0;">${a.title}</h3>
+                <span class="pill diff-pill diff-${a.difficulty}">${a.difficulty}</span>
+                <span class="pill pill-${a.status}">${a.status}</span>
+              </div>
+              <p class="muted mt-0">Deadline: ${fmtDate(a.deadline)} &middot; ${a.submission_count} submission${a.submission_count == 1 ? '' : 's'}</p>
+            </div>
+            <div class="flex gap-1">
+              <button class="btn btn-primary btn-sm" onclick="openSubmissionsModal(${a.id}, '${escapeHtml(a.title)}')">
+                View Submissions (${a.submission_count})
+              </button>
+              <button class="btn btn-ghost btn-sm" onclick="editAssignment(${JSON.stringify(a).replace(/"/g, '&quot;')})">Edit</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteAssignment(${a.id})">Delete</button>
+            </div>
+          </div>
+          <p class="mt-1">${a.description || ''}</p>
+          ${a.skills_required ? `<p class="muted"><strong>Skills:</strong> ${a.skills_required}</p>` : ''}
+        </div>
+      `).join('');
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  function openCreateAssignmentModal() {
+    document.getElementById('assignmentForm').reset();
+    document.getElementById('am_id').value = '';
+    document.getElementById('am_modalTitle').textContent = 'Create New Assignment';
+    document.getElementById('am_submitBtn').textContent = 'Create & Publish';
+    document.getElementById('amAttachmentPreview').textContent = '';
+    openModal('assignmentModal');
+  }
+
+  function editAssignment(a) {
+    document.getElementById('am_id').value = a.id;
+    document.getElementById('am_title_input').value = a.title || '';
+    document.getElementById('am_diff').value = a.difficulty || 'intermediate';
+    document.getElementById('am_deadline').value = a.deadline ? a.deadline.split('T')[0] : '';
+    document.getElementById('am_status').value = a.status || 'published';
+    document.getElementById('am_skills').value = a.skills_required || '';
+    document.getElementById('am_desc').value = a.description || '';
+    document.getElementById('am_instructions').value = a.instructions || '';
+    document.getElementById('am_attachment').value = a.attachment_url || '';
+    document.getElementById('am_modalTitle').textContent = 'Edit Assignment';
+    document.getElementById('am_submitBtn').textContent = 'Update Assignment';
+    openModal('assignmentModal');
+  }
+
+  async function handleAssignmentAttachmentUpload(file) {
+    if (!file) return;
+    try {
+      toast('Uploading resource file...');
+      const res = await uploadFile(file);
+      document.getElementById('am_attachment').value = res.url;
+      document.getElementById('amAttachmentPreview').textContent = `Uploaded: ${res.fileName}`;
+      toast('Resource file attached.');
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  document.getElementById('assignmentForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('am_id').value;
+    const payload = {
+      title: document.getElementById('am_title_input').value.trim(),
+      difficulty: document.getElementById('am_diff').value,
+      deadline: document.getElementById('am_deadline').value || null,
+      status: document.getElementById('am_status').value,
+      skills_required: document.getElementById('am_skills').value.trim(),
+      description: document.getElementById('am_desc').value.trim(),
+      instructions: document.getElementById('am_instructions').value.trim(),
+      attachment_url: document.getElementById('am_attachment').value.trim()
+    };
+
+    try {
+      if (id) {
+        await api(`/industry/assignments/${id}`, { method: 'PUT', body: payload });
+        toast('Assignment updated.');
+      } else {
+        await api('/industry/assignments', { method: 'POST', body: payload });
+        toast('Assignment created.');
+      }
+      closeModal('assignmentModal');
+      await loadIndustryAssignments();
+      await loadOverview();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  });
+
+  async function deleteAssignment(id) {
+    if (!confirm('Are you sure you want to delete this assignment and its submissions?')) return;
+    try {
+      await api(`/industry/assignments/${id}`, { method: 'DELETE' });
+      toast('Assignment deleted.');
+      await loadIndustryAssignments();
+      await loadOverview();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  async function openSubmissionsModal(assignmentId, title) {
+    try {
+      const { assignment, submissions } = await api(`/industry/assignments/${assignmentId}/submissions`);
+      document.getElementById('sm_title').textContent = `Submissions for: ${assignment.title}`;
+      document.getElementById('sm_subtitle').textContent = `Total submissions received: ${submissions.length}`;
+
+      const list = document.getElementById('sm_submissionsList');
+      if (!submissions.length) {
+        list.innerHTML = `<p class="empty-state">No students have submitted solutions for this assignment yet.</p>`;
+      } else {
+        list.innerHTML = submissions.map(s => `
+          <div class="candidate-row">
+            <div class="flex-between">
+              <div>
+                <strong>${s.student_name}</strong> <span class="muted">(ID: ${s.student_id}) &middot; ${s.student_email}</span>
+                <p class="muted mt-0">${s.college || ''} ${s.branch ? `&middot; ${s.branch}` : ''} ${s.cgpa ? `&middot; CGPA: ${s.cgpa}` : ''} &middot; Submitted ${fmtDate(s.submitted_at)}</p>
+              </div>
+              <div class="flex gap-1" style="align-items:center;">
+                <button class="btn btn-outline btn-sm" onclick="viewFullStudentProfile(${s.student_id})" style="padding:2px 8px; font-size:0.8rem;">👁️ Full Profile</button>
+                <span class="pill pill-${s.status}">${s.status}</span>
+              </div>
+            </div>
+            ${s.submission_text ? `<p style="white-space:pre-wrap; background:var(--paper); padding:10px; border-radius:var(--radius); margin:8px 0;">${s.submission_text}</p>` : ''}
+            <div class="flex gap-1 mt-1">
+              ${s.repo_url ? `<a href="${s.repo_url}" target="_blank" class="btn btn-ghost btn-sm">GitHub / Repo</a>` : ''}
+              ${s.file_url ? `<a href="${s.file_url}" target="_blank" class="btn btn-ghost btn-sm">📄 Solution File</a>` : ''}
+            </div>
+            <div class="divider" style="margin:12px 0;"></div>
+            <div class="grid grid-2" style="align-items:flex-end;">
+              <div class="field" style="margin:0;">
+                <label>Mentor Feedback / Review Notes</label>
+                <input id="feedback_${s.id}" value="${escapeHtml(s.feedback || '')}" placeholder="Write feedback for the student...">
+              </div>
+              <div class="flex gap-1">
+                <select id="status_${s.id}" style="max-width:140px;">
+                  <option value="submitted" ${s.status==='submitted'?'selected':''}>Submitted</option>
+                  <option value="reviewed" ${s.status==='reviewed'?'selected':''}>Reviewed</option>
+                  <option value="accepted" ${s.status==='accepted'?'selected':''}>Accepted</option>
+                  <option value="rejected" ${s.status==='rejected'?'selected':''}>Rejected</option>
+                </select>
+                <button class="btn btn-primary btn-sm" onclick="saveSubmissionFeedback(${s.id}, ${assignmentId})">Save Review</button>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      openModal('submissionsModal');
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  async function saveSubmissionFeedback(submissionId, assignmentId) {
+    const feedback = document.getElementById(`feedback_${submissionId}`).value;
+    const status = document.getElementById(`status_${submissionId}`).value;
+    try {
+      await api(`/industry/submissions/${submissionId}/feedback`, {
+        method: 'PUT',
+        body: { status, feedback }
+      });
+      toast('Feedback saved successfully.');
+      openSubmissionsModal(assignmentId, '');
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  // 6. TEACHING & COURSES
+  async function loadIndustryCourses() {
+    try {
+      const { courses } = await api('/industry/courses');
+      const box = document.getElementById('industryCoursesList');
+      if (!courses || !courses.length) {
+        box.innerHTML = `<div class="card" style="grid-column: 1 / -1;"><p class="empty-state">No courses created yet. Click "+ Create New Course" to share your company's domain expertise.</p></div>`;
+        return;
+      }
+
+      box.innerHTML = courses.map(c => `
+        <div class="course-card-industry">
+          ${c.thumbnail_url ? `<img src="${c.thumbnail_url}" style="width:100%; height:140px; object-fit:cover; border-bottom:1px solid var(--line);" onerror="this.style.display='none'">` : ''}
+          <div style="padding:18px; display:flex; flex-direction:column; flex:1;">
+            <div class="flex-between">
+              <h3>${c.title}</h3>
+              <span class="pill pill-${c.status}">${c.status}</span>
+            </div>
+            <p class="muted mt-0">${c.category || 'Technical'} &middot; ${c.duration_weeks || 4} weeks &middot; ${c.difficulty || 'beginner'}</p>
+            <p style="flex:1;">${c.description || ''}</p>
+            <div class="flex gap-1 mt-1" style="font-size:0.85rem; color:var(--ink-soft);">
+              <span><strong>${c.lesson_count || 0}</strong> Lessons</span> &middot;
+              <span><strong>${c.enrolled_count || 0}</strong> Students enrolled</span>
+            </div>
+            <div class="divider" style="margin:12px 0;"></div>
+            <div class="flex-between">
+              <div class="flex gap-1" style="flex-wrap:wrap;">
+                <button class="btn btn-primary btn-sm" onclick="openLessonsManager(${c.id}, '${escapeHtml(c.title)}')">Lessons (${c.lesson_count || 0})</button>
+                <button class="btn btn-accent btn-sm" onclick="openQuizzesManager(${c.id}, '${escapeHtml(c.title)}')">Quizzes &amp; MCQs</button>
+                <button class="btn btn-ghost btn-sm" onclick="openStudentsManager(${c.id}, '${escapeHtml(c.title)}')">Students (${c.enrolled_count || 0})</button>
+              </div>
+              <div class="flex gap-1">
+                <button class="btn btn-ghost btn-sm" onclick="editCourse(${JSON.stringify(c).replace(/"/g, '&quot;')})">Edit</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteCourse(${c.id})">Delete</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  function openCreateCourseModal() {
+    document.getElementById('courseForm').reset();
+    document.getElementById('cm_id').value = '';
+    document.getElementById('cm_modalTitle').textContent = 'Create New Course';
+    document.getElementById('cm_submitBtn').textContent = 'Create Course';
+    document.getElementById('cmThumbPreview').textContent = '';
+    openModal('courseModal');
+  }
+
+  function editCourse(c) {
+    document.getElementById('cm_id').value = c.id;
+    document.getElementById('cm_title').value = c.title || '';
+    document.getElementById('cm_instructor').value = c.instructor || '';
+    document.getElementById('cm_category').value = c.category || '';
+    document.getElementById('cm_difficulty').value = c.difficulty || 'beginner';
+    document.getElementById('cm_duration').value = c.duration_weeks || 4;
+    document.getElementById('cm_status').value = c.status || 'published';
+    document.getElementById('cm_skills').value = c.skills_covered || '';
+    document.getElementById('cm_thumbnail').value = c.thumbnail_url || '';
+    document.getElementById('cm_desc').value = c.description || '';
+    document.getElementById('cm_modalTitle').textContent = 'Edit Course';
+    document.getElementById('cm_submitBtn').textContent = 'Update Course';
+    openModal('courseModal');
+  }
+
+  async function handleCourseThumbnailUpload(file) {
+    if (!file) return;
+    try {
+      toast('Uploading course thumbnail...');
+      const res = await uploadFile(file);
+      document.getElementById('cm_thumbnail').value = res.url;
+      document.getElementById('cmThumbPreview').textContent = `Uploaded: ${res.fileName}`;
+      toast('Thumbnail uploaded.');
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  document.getElementById('courseForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('cm_id').value;
+    const payload = {
+      title: document.getElementById('cm_title').value.trim(),
+      instructor: document.getElementById('cm_instructor').value.trim(),
+      category: document.getElementById('cm_category').value.trim(),
+      difficulty: document.getElementById('cm_difficulty').value,
+      duration_weeks: document.getElementById('cm_duration').value,
+      status: document.getElementById('cm_status').value,
+      skills_covered: document.getElementById('cm_skills').value.trim(),
+      thumbnail_url: document.getElementById('cm_thumbnail').value.trim(),
+      description: document.getElementById('cm_desc').value.trim()
+    };
+
+    try {
+      if (id) {
+        await api(`/industry/courses/${id}`, { method: 'PUT', body: payload });
+        toast('Course updated.');
+      } else {
+        await api('/industry/courses', { method: 'POST', body: payload });
+        toast('Course created.');
+      }
+      closeModal('courseModal');
+      await loadIndustryCourses();
+      await loadOverview();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  });
+
+  async function deleteCourse(id) {
+    if (!confirm('Are you sure you want to delete this course and all its lessons?')) return;
+    try {
+      await api(`/industry/courses/${id}`, { method: 'DELETE' });
+      toast('Course deleted.');
+      await loadIndustryCourses();
+      await loadOverview();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  // LESSONS MANAGER
+  async function openLessonsManager(courseId, courseTitle) {
+    currentActiveCourseId = courseId;
+    document.getElementById('lm_title').textContent = `Lessons: ${courseTitle}`;
+    resetLessonForm();
+    await refreshLessonList();
+    openModal('lessonsModal');
+  }
+
+  async function refreshLessonList() {
+    try {
+      const { course, lessons } = await api(`/industry/courses/${currentActiveCourseId}/lessons`);
+      const list = document.getElementById('lm_lessonList');
+      if (!lessons.length) {
+        list.innerHTML = `<p class="empty-state">No lessons added yet. Use the form below to add your first lesson.</p>`;
+        return;
+      }
+      list.innerHTML = lessons.map(l => `
+        <div class="lesson-row">
+          <div class="flex gap-1">
+            <span class="lesson-badge">${l.lesson_order}</span>
+            <div>
+              <strong>${l.title}</strong>
+              <div class="muted" style="font-size:0.8rem; text-transform:uppercase;">${l.content_type} ${l.content_url ? `&middot; <a href="${l.content_url}" target="_blank">View Resource</a>` : ''}</div>
+            </div>
+          </div>
+          <div class="flex gap-1">
+            <button class="btn btn-ghost btn-sm" onclick="editLesson(${JSON.stringify(l).replace(/"/g, '&quot;')})">Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteLesson(${l.id})">Delete</button>
+          </div>
+        </div>
+      `).join('');
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  function resetLessonForm() {
+    document.getElementById('lessonForm').reset();
+    document.getElementById('lf_lessonId').value = '';
+    document.getElementById('lm_formTitle').textContent = '+ Add New Lesson';
+    document.getElementById('lf_saveBtn').textContent = 'Save Lesson';
+  }
+
+  function editLesson(l) {
+    document.getElementById('lf_lessonId').value = l.id;
+    document.getElementById('lf_title').value = l.title || '';
+    document.getElementById('lf_order').value = l.lesson_order || 1;
+    document.getElementById('lf_type').value = l.content_type || 'text';
+    document.getElementById('lf_url').value = l.content_url || '';
+    document.getElementById('lf_text').value = l.content_text || '';
+    document.getElementById('lm_formTitle').textContent = 'Edit Lesson';
+    document.getElementById('lf_saveBtn').textContent = 'Update Lesson';
+  }
+
+  async function handleLessonFileUpload(file) {
+    if (!file) return;
+    try {
+      toast('Uploading lesson document...');
+      const res = await uploadFile(file);
+      document.getElementById('lf_url').value = res.url;
+      toast('File uploaded & attached.');
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  document.getElementById('lessonForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!currentActiveCourseId) return;
+
+    const lessonId = document.getElementById('lf_lessonId').value;
+    const payload = {
+      title: document.getElementById('lf_title').value.trim(),
+      lesson_order: document.getElementById('lf_order').value,
+      content_type: document.getElementById('lf_type').value,
+      content_url: document.getElementById('lf_url').value.trim(),
+      content_text: document.getElementById('lf_text').value.trim()
+    };
+
+    try {
+      if (lessonId) {
+        await api(`/industry/lessons/${lessonId}`, { method: 'PUT', body: payload });
+        toast('Lesson updated.');
+      } else {
+        await api(`/industry/courses/${currentActiveCourseId}/lessons`, { method: 'POST', body: payload });
+        toast('Lesson added.');
+      }
+      resetLessonForm();
+      await refreshLessonList();
+      await loadIndustryCourses();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  });
+
+  async function deleteLesson(lessonId) {
+    if (!confirm('Are you sure you want to delete this lesson?')) return;
+    try {
+      await api(`/industry/lessons/${lessonId}`, { method: 'DELETE' });
+      toast('Lesson deleted.');
+      await refreshLessonList();
+      await loadIndustryCourses();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  // STUDENTS ENROLLED MANAGER
+  async function openStudentsManager(courseId, courseTitle) {
+    try {
+      const { course, students } = await api(`/industry/courses/${courseId}/students`);
+      document.getElementById('stm_title').textContent = `Enrolled Students: ${course.title}`;
+      document.getElementById('stm_subtitle').textContent = `Total enrolled: ${students.length}`;
+
+      const list = document.getElementById('stm_studentList');
+      if (!students.length) {
+        list.innerHTML = `<p class="empty-state">No students have enrolled in this course yet.</p>`;
+      } else {
+        list.innerHTML = `
+          <table>
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>District / College</th>
+                <th>Progress</th>
+                <th>Status</th>
+                <th>Enrolled Date</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${students.map(s => `
+                <tr>
+                  <td><strong>${s.name}</strong><br><span class="muted">${s.email} (ID: ${s.student_id})</span></td>
+                  <td>${s.district || ''} ${s.college ? `<br><span class="muted">${s.college}</span>` : ''}</td>
+                  <td style="min-width:140px;">
+                    <div class="score-track"><div class="score-fill" style="width:${s.progress_percent}%"></div></div>
+                    <span class="muted" style="font-size:0.8rem;">${s.progress_percent}% completed</span>
+                  </td>
+                  <td><span class="pill pill-${s.status === 'completed' ? 'good' : 'signal'}">${s.status}</span></td>
+                  <td>${fmtDate(s.enrolled_at)}</td>
+                  <td>
+                    <button class="btn btn-outline btn-sm" onclick="viewFullStudentProfile(${s.student_id})" style="padding:2px 8px; font-size:0.78rem;">👁️ Profile</button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+      }
+
+      openModal('studentsModal');
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  // 7. ISSUE CERTIFICATE
+  document.getElementById('certForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    try {
+      await api('/industry/certificates', {
+        method: 'POST',
+        body: {
+          student_id: Number(c_student_id.value),
+          title: c_title.value.trim(),
+          issue_date: c_date.value
+        }
+      });
+      toast('Certificate issued successfully.');
+      e.target.reset();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  });
+
+  // QUIZZES & MCQS MANAGEMENT
+  let activeQuizCourseId = null;
+  let activeQuizId = null;
+
+  async function openQuizzesManager(courseId, courseTitle) {
+    activeQuizCourseId = courseId;
+    document.getElementById('qm_title').textContent = `Quizzes: ${courseTitle}`;
+    document.getElementById('createQuizForm').reset();
+    document.getElementById('qm_questionsPane').style.display = 'none';
+    document.getElementById('qm_attemptsPane').style.display = 'none';
+    await refreshQuizList();
+    openModal('quizzesManagerModal');
+  }
+
+  async function refreshQuizList() {
+    try {
+      const { quizzes } = await api(`/industry/courses/${activeQuizCourseId}/quizzes`);
+      const container = document.getElementById('qm_quizzesList');
+      if (!quizzes || !quizzes.length) {
+        container.innerHTML = `<p class="empty-state">No quizzes created for this course yet. Use the form below to create your first MCQ quiz.</p>`;
+        return;
+      }
+      container.innerHTML = `
+        <h4>Published Course Quizzes</h4>
+        <div class="grid grid-2 mt-1">
+          ${quizzes.map(q => `
+            <div class="card" style="background:#fff; border:1px solid var(--line); display:flex; flex-direction:column;">
+              <div class="flex-between">
+                <strong>${escapeHtml(q.title)}</strong>
+                <span class="pill pill-good">Pass: ${q.passing_score}%</span>
+              </div>
+              <p class="muted mt-1" style="font-size:0.85rem; flex:1;">${escapeHtml(q.description || 'Auto-graded assessment')}</p>
+              <div class="flex gap-1 mt-2">
+                <button class="btn btn-primary btn-sm" onclick="openQuizQuestions(${q.id}, '${escapeHtml(q.title)}')">Questions (${q.question_count || 0})</button>
+                <button class="btn btn-ghost btn-sm" onclick="viewQuizAttempts(${q.id}, '${escapeHtml(q.title)}')">Attempts (${q.attempt_count || 0})</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteQuiz(${q.id})">Delete</button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  document.getElementById('createQuizForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!activeQuizCourseId) return;
+
+    try {
+      await api(`/industry/courses/${activeQuizCourseId}/quizzes`, {
+        method: 'POST',
+        body: {
+          title: document.getElementById('qf_title').value.trim(),
+          passing_score: parseInt(document.getElementById('qf_passing').value),
+          description: document.getElementById('qf_desc').value.trim()
+        }
+      });
+      toast('Quiz created successfully.');
+      document.getElementById('createQuizForm').reset();
+      await refreshQuizList();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  });
+
+  async function deleteQuiz(quizId) {
+    if (!confirm('Are you sure you want to delete this quiz and all its questions?')) return;
+    try {
+      await api(`/industry/quizzes/${quizId}`, { method: 'DELETE' });
+      toast('Quiz deleted.');
+      await refreshQuizList();
+      closeQuestionsPane();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  async function openQuizQuestions(quizId, quizTitle) {
+    activeQuizId = quizId;
+    document.getElementById('qm_qPaneTitle').textContent = `Questions for: ${quizTitle}`;
+    document.getElementById('aqf_quizId').value = quizId;
+    document.getElementById('addQuestionForm').reset();
+    document.getElementById('qm_questionsPane').style.display = 'block';
+    document.getElementById('qm_attemptsPane').style.display = 'none';
+    await refreshQuestionsList();
+  }
+
+  function closeQuestionsPane() {
+    document.getElementById('qm_questionsPane').style.display = 'none';
+  }
+
+  async function refreshQuestionsList() {
+    try {
+      const { questions } = await api(`/industry/quizzes/${activeQuizId}`);
+      const list = document.getElementById('qm_questionsList');
+      if (!questions || !questions.length) {
+        list.innerHTML = `<p class="empty-state">No questions added yet. Use the form below to add your first MCQ question.</p>`;
+        return;
+      }
+      list.innerHTML = questions.map((q, idx) => `
+        <div class="card mb-2" style="background:#fff; border:1px solid var(--line); padding:12px 16px;">
+          <div class="flex-between">
+            <strong>Q${idx + 1}. ${escapeHtml(q.question_text)}</strong>
+            <button class="btn btn-danger btn-sm" onclick="deleteQuestion(${q.id})">Delete</button>
+          </div>
+          <div class="grid grid-2 mt-1" style="font-size:0.85rem;">
+            <div style="${q.correct_option === 'A' ? 'font-weight:700; color:#2D8A4E;' : ''}">A) ${escapeHtml(q.option_a)} ${q.correct_option === 'A' ? '✔ (Correct)' : ''}</div>
+            <div style="${q.correct_option === 'B' ? 'font-weight:700; color:#2D8A4E;' : ''}">B) ${escapeHtml(q.option_b)} ${q.correct_option === 'B' ? '✔ (Correct)' : ''}</div>
+            ${q.option_c ? `<div style="${q.correct_option === 'C' ? 'font-weight:700; color:#2D8A4E;' : ''}">C) ${escapeHtml(q.option_c)} ${q.correct_option === 'C' ? '✔ (Correct)' : ''}</div>` : ''}
+            ${q.option_d ? `<div style="${q.correct_option === 'D' ? 'font-weight:700; color:#2D8A4E;' : ''}">D) ${escapeHtml(q.option_d)} ${q.correct_option === 'D' ? '✔ (Correct)' : ''}</div>` : ''}
+          </div>
+          <div class="muted mt-1" style="font-size:0.8rem;">Points: ${q.points || 1}</div>
+        </div>
+      `).join('');
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  document.getElementById('addQuestionForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!activeQuizId) return;
+
+    try {
+      await api(`/industry/quizzes/${activeQuizId}/questions`, {
+        method: 'POST',
+        body: {
+          question_text: document.getElementById('aqf_question').value.trim(),
+          option_a: document.getElementById('aqf_optA').value.trim(),
+          option_b: document.getElementById('aqf_optB').value.trim(),
+          option_c: document.getElementById('aqf_optC').value.trim() || null,
+          option_d: document.getElementById('aqf_optD').value.trim() || null,
+          correct_option: document.getElementById('aqf_correct').value,
+          points: parseInt(document.getElementById('aqf_points').value) || 1
+        }
+      });
+      toast('MCQ question added.');
+      document.getElementById('addQuestionForm').reset();
+      document.getElementById('aqf_correct').value = 'A';
+      document.getElementById('aqf_points').value = '1';
+      await refreshQuestionsList();
+      await refreshQuizList();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  });
+
+  async function deleteQuestion(questionId) {
+    if (!confirm('Are you sure you want to delete this question?')) return;
+    try {
+      await api(`/industry/quizzes/${activeQuizId}/questions/${questionId}`, { method: 'DELETE' });
+      toast('Question deleted.');
+      await refreshQuestionsList();
+      await refreshQuizList();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  async function viewQuizAttempts(quizId, quizTitle) {
+    try {
+      const { attempts } = await api(`/industry/quizzes/${quizId}/attempts`);
+      const pane = document.getElementById('qm_attemptsPane');
+      const list = document.getElementById('qm_attemptsList');
+      document.getElementById('qm_attemptsTitle').textContent = `Student Attempts: ${quizTitle} (${attempts.length})`;
+      pane.style.display = 'block';
+      document.getElementById('qm_questionsPane').style.display = 'none';
+
+      if (!attempts || !attempts.length) {
+        list.innerHTML = `<p class="empty-state">No students have attempted this quiz yet.</p>`;
+        return;
+      }
+      list.innerHTML = `
+        <table>
+          <thead><tr><th>Student</th><th>Email &amp; College</th><th>Score</th><th>Result</th><th>Date</th></tr></thead>
+          <tbody>
+            ${attempts.map(a => `
+              <tr>
+                <td><strong>${escapeHtml(a.student_name)}</strong></td>
+                <td>${escapeHtml(a.student_email)} ${a.college ? `<br><span class="muted">${escapeHtml(a.college)}</span>` : ''}</td>
+                <td><strong>${a.score_percent}%</strong></td>
+                <td><span class="pill ${a.passed ? 'pill-good' : 'pill-bad'}">${a.passed ? 'Passed' : 'Failed'}</span></td>
+                <td>${fmtDate(a.attempted_at)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  // 8. OUTCOME VERIFICATIONS (SIH26135)
+  async function loadVerifications() {
+    try {
+      const res = await api('/industry/pending-verifications');
+      const container = document.getElementById('verificationsList');
+      const records = res.records || [];
+
+      if (!records.length) {
+        container.innerHTML = `<p class="empty-state">No pending trainee outcome records to verify.</p>`;
+        return;
+      }
+
+      const levelBadges = {
+        'self_reported': '<span class="pill pill-level1">Level 1: Self-Reported</span>',
+        'institute_verified': '<span class="pill pill-level2">Level 2: Institute Verified</span>',
+        'employer_verified': '<span class="pill pill-level3">Level 3: Employer Verified</span>'
+      };
+
+      container.innerHTML = `
+        <div style="display:flex; flex-direction:column; gap:14px;">
+          ${records.map(r => `
+            <div class="card" style="border:1px solid var(--line); border-left:4px solid ${r.verification_level === 'employer_verified' ? '#059669' : '#D97706'};">
+              <div class="flex-between">
+                <div>
+                  <h3 style="margin:0 0 4px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                    ${escapeHtml(r.student_name)}
+                    <span class="pill" style="font-family:monospace; font-size:0.75rem; background:#F1F5F9; color:#0F172A; font-weight:700;">ID: ${escapeHtml(r.trainee_id || 'ST-2026-TR-' + String(r.student_id).padStart(4, '0'))}</span>
+                    <button class="btn btn-outline btn-sm" onclick="viewFullStudentProfile(${r.student_id})" style="padding:2px 8px; font-size:0.78rem;">👁️ Full Profile</button>
+                  </h3>
+                  <div class="muted" style="font-size:0.85rem;">
+                    ${escapeHtml(r.student_email)} ${r.student_phone ? `&middot; ${escapeHtml(r.student_phone)}` : ''} &middot; 
+                    <strong>College:</strong> ${escapeHtml(r.college || '—')} &middot; District: <strong>${escapeHtml(r.student_district || r.location_district || '—')}</strong>
+                  </div>
+                </div>
+                <div>
+                  ${levelBadges[r.verification_level] || levelBadges.self_reported}
+                  <span class="pill" style="margin-left:6px;">${r.milestone_days} Days Milestone</span>
+                </div>
+              </div>
+
+              <div class="grid grid-3 mt-2" style="background:var(--paper); padding:10px 14px; border-radius:6px; font-size:0.88rem;">
+                <div><strong>Role / Title:</strong> ${escapeHtml(r.job_title || '—')}</div>
+                <div><strong>Reported Employer:</strong> ${escapeHtml(r.employer_name || '—')}</div>
+                <div><strong>Reported Salary:</strong> ${r.monthly_salary ? `₹${Number(r.monthly_salary).toLocaleString('en-IN')}/mo` : 'Not stated'}</div>
+              </div>
+
+              ${r.outcome_type === 'seeking' && r.unemployment_reason ? `
+                <div style="background:#FFFBEB; border:1px solid #FDE68A; border-radius:4px; padding:8px 12px; margin-top:8px; font-size:0.85rem; color:#92400E;">
+                  <strong>Candidate Barrier:</strong> ${escapeHtml(r.unemployment_reason.replace(/_/g, ' '))}
+                  ${r.unemployment_notes ? `— <em>"${escapeHtml(r.unemployment_notes)}"</em>` : ''}
+                </div>
+              ` : ''}
+
+              ${r.follow_up_notes ? `
+                <div class="muted mt-1" style="font-size:0.83rem;">
+                  <strong>Notes:</strong> ${escapeHtml(r.follow_up_notes)}
+                </div>
+              ` : ''}
+
+              <div class="flex gap-2 mt-2" style="align-items:center; justify-content:flex-end; flex-wrap:wrap;">
+                <input type="number" id="verify_salary_${r.id}" placeholder="Confirm Monthly Salary (₹)" value="${r.monthly_salary || ''}" style="width:200px; padding:6px 10px; font-size:0.85rem;">
+                <input type="text" id="verify_notes_${r.id}" placeholder="Verification Audit Notes" value="${r.follow_up_notes || ''}" style="width:260px; padding:6px 10px; font-size:0.85rem;">
+                <button class="btn btn-primary btn-sm" onclick="verifyRecord(${r.id})">
+                  ${r.verification_level === 'employer_verified' ? '✓ Update Level 3 Verification' : '✓ Verify as Employer (Level 3)'}
+                </button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    } catch (err) {
+      console.error('Error loading verifications:', err);
+    }
+  }
+
+  async function verifyRecord(recordId) {
+    const salary = document.getElementById(`verify_salary_${recordId}`).value;
+    const notes = document.getElementById(`verify_notes_${recordId}`).value;
+
+    try {
+      const res = await api(`/industry/verifications/${recordId}`, {
+        method: 'PUT',
+        body: { monthly_salary: salary ? parseInt(salary) : null, notes }
+      });
+      toast(res.message || 'Milestone verified!');
+      await loadVerifications();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  // Candidates Pipeline Loader
+  async function loadAllCandidates() {
+    const container = document.getElementById('allCandidatesList');
+    try {
+      const { jobs } = await api('/industry/jobs');
+      let allApps = [];
+      for (const j of (jobs || [])) {
+        try {
+          const res = await api(`/industry/jobs/${j.id}/applications`);
+          if (res.applications && res.applications.length) {
+            allApps = allApps.concat(res.applications.map(a => ({ ...a, jobTitle: j.title })));
+          }
+        } catch (_) {}
+      }
+
+      const activeJobsCount = (jobs || []).filter(j => j.status === 'open').length;
+      if (document.getElementById('ea_activeJobs')) document.getElementById('ea_activeJobs').textContent = activeJobsCount;
+      if (document.getElementById('ea_totalApplicants')) document.getElementById('ea_totalApplicants').textContent = allApps.length;
+      const avgMatch = allApps.length ? Math.round(allApps.reduce((acc, a) => acc + (a.matchScore || 0), 0) / allApps.length) : 0;
+      if (document.getElementById('ea_avgMatch')) document.getElementById('ea_avgMatch').textContent = `${avgMatch}%`;
+
+      if (!allApps.length) {
+        container.innerHTML = '<div class="card"><p class="empty-state">No candidates have applied to your active positions yet.</p></div>';
+        return;
+      }
+
+      container.innerHTML = allApps.map(a => `
+        <div class="candidate-row">
+          <div class="candidate-head">
+            <div class="flex gap-1" style="align-items:center;">
+              ${renderAvatar(a.name, a.avatar_url, 'avatar-initials-md')}
+              <div>
+                <strong style="font-size:1rem;">${escapeHtml(a.name)}</strong>
+                <div class="muted" style="font-size:0.8rem;">${escapeHtml(a.email)} &middot; Applied for: <strong>${escapeHtml(a.jobTitle)}</strong></div>
+              </div>
+            </div>
+            <span class="pill ${scoreColor(a.matchScore)}">${a.matchScore}% Match</span>
+          </div>
+          <div class="flex-between mt-2" style="font-size:0.85rem; border-top:1px solid var(--line); padding-top:8px;">
+            <div>
+              ${a.resume_url ? `<a href="${a.resume_url}" target="_blank" class="btn btn-ghost btn-sm">📄 View Resume</a>` : '<span class="muted">No resume uploaded</span>'}
+              <span class="pill pill-${a.status}" style="margin-left:6px;">${a.status}</span>
+            </div>
+            <div class="flex gap-1">
+              <button class="btn btn-primary btn-sm" onclick="openScheduleModal(${a.id}, '${escapeHtml(a.name)}')">Schedule Interview</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    } catch (err) {
+      container.innerHTML = `<p class="empty-state">${escapeHtml(err.message)}</p>`;
+    }
+  }
+
+  // Certificate Issuance Form
+  document.getElementById('certForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const student_id = document.getElementById('c_student_id').value.trim();
+    const issue_date = document.getElementById('c_date').value;
+    const title = document.getElementById('c_title').value.trim();
+    if (!student_id || !title) return toast('Please provide student ID and title', true);
+
+    try {
+      const res = await api('/industry/certificates', {
+        method: 'POST',
+        body: { student_id, title, issue_date }
+      });
+      toast(res.message || 'Certificate issued and student notified!');
+      document.getElementById('certForm').reset();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  });
+
+  // INITIALIZE
+  (async function init() {
+    await loadOverview();
+    await loadProfile();
+    await loadSkillsForJob();
+    await loadMyJobs();
+    await loadAllCandidates();
+    await loadIndustryAssignments();
+    await loadIndustryCourses();
+    await loadVerifications();
+  })();
+</script>
+</body>
+</html>

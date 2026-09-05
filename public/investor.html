@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Investor Dashboard — SkillBridge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="/index.html" class="brand"><span class="brand-mark">SB</span><span class="brand-name">SkillBridge</span></a>
+  <div id="userBadge" class="flex gap-1"></div>
+</nav>
+
+<main class="container" style="padding: 40px 24px;">
+  <h2>Impact overview</h2>
+  <p class="mt-0">Aggregate, anonymized outcomes across the platform. No personal student or company data is shown here.</p>
+
+  <div class="grid grid-4 mt-2" id="stats"></div>
+
+  <h2 class="mt-3">Outcomes by district</h2>
+  <div id="districtTable" class="mt-2"></div>
+</main>
+
+<script src="/js/shared.js"></script>
+<script>
+  const user = requireLogin();
+  renderUserBadge('userBadge');
+
+  (async function init() {
+    try {
+      const d = await api('/public/investor/impact');
+      document.getElementById('stats').innerHTML = `
+        <div class="card"><div class="stat-num">${d.totalStudents}</div><div class="muted">Students on platform</div></div>
+        <div class="card"><div class="stat-num">${d.totalEmployed}</div><div class="muted">Students employed</div></div>
+        <div class="card"><div class="stat-num">${d.employmentRate}%</div><div class="muted">Overall employment rate</div></div>
+        <div class="card"><div class="stat-num">${d.totalCompanies}</div><div class="muted">Partner companies</div></div>
+      `;
+      document.getElementById('districtTable').innerHTML = d.districtRows.length ? `
+        <table><thead><tr><th>District</th><th>Students</th><th>Employed</th></tr></thead>
+        <tbody>${d.districtRows.map(r => `<tr><td>${r.district}</td><td>${r.students}</td><td>${r.employed}</td></tr>`).join('')}</tbody></table>
+      ` : `<p class="empty-state">No district data yet.</p>`;
+    } catch (err) { toast(err.message, true); }
+  })();
+</script>
+</body>
+</html>

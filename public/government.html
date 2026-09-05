@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Government Administration — SkillTrack</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<style>
+  .section { display: none; } .section.active { display: block; }
+  .report-box { background: var(--slate-deep); color: #fff; padding: 22px; border-radius: var(--radius); }
+  .report-box strong { color: var(--signal); }
+  .ai-disclaimer-box {
+    background: #FEF3C7;
+    border: 1px solid #F59E0B;
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    font-size: 0.88rem;
+    color: #92400E;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .ai-insight-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .ai-insight-card.severity-critical { border-left: 4px solid #DC2626; }
+  .ai-insight-card.severity-warning { border-left: 4px solid #D97706; }
+  .ai-insight-card.severity-positive { border-left: 4px solid #059669; }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="/index.html" class="brand"><span class="brand-mark">ST</span><span class="brand-name">SkillTrack</span></a>
+  <div id="userBadge" class="flex gap-1"></div>
+</nav>
+
+<div class="dash">
+  <aside class="dash-side">
+    <a href="#" data-section="overview" class="active">Dashboard</a>
+    <a href="#" data-section="trainees">Trainees</a>
+    <a href="#" data-section="programmes">Training Programmes</a>
+    <a href="#" data-section="employment">Employment Outcomes</a>
+    <a href="#" data-section="district-analytics">District Analytics</a>
+    <a href="#" data-section="institutes">Institute Analytics</a>
+    <a href="#" data-section="skill-gap">Skill Gap</a>
+    <a href="#" data-section="industry-demand">Industry Demand</a>
+    <a href="#" data-section="ai-insights">AI Insights</a>
+    <a href="#" data-section="reports">Reports</a>
+  </aside>
+
+  <main class="dash-main">
+
+    <!-- 1. DASHBOARD OVERVIEW -->
+    <section id="overview" class="section active">
+      <div class="flex-between">
+        <div>
+          <h2>National Overview &amp; State Command Center</h2>
+          <p class="mt-0">Real-time macro telemetry on student enrollments, accredited companies, and verified employment.</p>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="loadOverview()">Refresh Overview</button>
+      </div>
+      <div class="grid grid-4 mt-2" id="overviewStats"></div>
+      
+      <div class="card mt-2" style="background:#F8FAFC; border:1px solid var(--line);">
+        <div class="flex-between">
+          <h3 style="margin:0;">Statewide System Readiness &amp; Integrity</h3>
+          <span class="telemetry-tag-pill" style="background:#D1FAE5; color:#065F46;">Real-Time Monitored</span>
+        </div>
+        <p class="muted mt-1" style="font-size:0.88rem;">
+          SkillTrack integrates automated AI skill gap analytics, multi-tier outcome verification (Student &rarr; Institute &rarr; Employer), and longitudinal milestone tracking across 30, 90, 180, and 365 days.
+        </p>
+      </div>
+    </section>
+
+    <!-- 2. TRAINEES -->
+    <section id="trainees" class="section">
+      <div class="flex-between">
+        <div>
+          <h2>Trainee Directory &amp; Longitudinal Audit</h2>
+          <p class="mt-0">Audit candidate registrations, review identity credentials, and manage moderation flags.</p>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="loadStudents()">Refresh Trainees</button>
+      </div>
+
+      <div id="studentTable" class="mt-2"></div>
+
+      <!-- TRAINEE SPOTLIGHT -->
+      <div class="flex-between mt-3">
+        <div>
+          <h3>Longitudinal Trainee Journey Spotlight: Rahul Sharma</h3>
+          <p class="muted mt-0" style="font-size:0.85rem;">Continuous 365-day audited career trajectory demonstrating multi-tier verified retention.</p>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="loadSpotlight()">Reload Case Study</button>
+      </div>
+
+      <div id="spotlightProfileCard" class="card mt-1" style="background:#F0F7FF; border:1px solid #BAE0FD;"></div>
+      <div id="spotlightTimeline" class="mt-2"></div>
+    </section>
+
+    <!-- 3. TRAINING PROGRAMMES -->
+    <section id="programmes" class="section">
+      <div class="flex-between">
+        <div>
+          <h2>Training Programmes &amp; Scheme Performance</h2>
+          <p class="mt-0">Monitor enrollment throughput, course completion velocities, and vocational scheme metrics.</p>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="loadTraining(); loadProgramRoi();">Refresh Programmes</button>
+      </div>
+
+      <h3 class="mt-2">Active Vocational Courses</h3>
+      <div id="trainingTable" class="mt-1"></div>
+
+      <h3 class="mt-3">Program Comparative ROI &amp; 365-Day Retention</h3>
+      <p class="muted mt-0" style="font-size:0.85rem;">Evaluating long-term economic returns and sustained employment rates across schemes.</p>
+      <div id="programRoiTable" class="mt-1"></div>
+    </section>
+
+    <!-- 4. EMPLOYMENT OUTCOMES -->
+    <section id="employment" class="section">
+      <div class="flex-between">
+        <div>
+          <h2>Verified Employment Outcomes &amp; Longitudinal Retention</h2>
+          <p class="mt-0">Multi-tier verified hiring data, assessment pass rates, and survival curves at 30, 90, 180, and 365 days.</p>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="loadOutcomes(); loadRetention(); loadUnemploymentReasons();">Refresh Outcomes</button>
+      </div>
+
+      <div class="grid grid-4 mt-2" id="outcomeStats"></div>
+
+      <h3 class="mt-3">Longitudinal Retention Rates (30 &rarr; 90 &rarr; 180 &rarr; 365 Days)</h3>
+      <div class="grid grid-4 mt-1" id="retentionKpiCards"></div>
+
+      <div class="card mt-2" style="background:#F8FAFC; border:1px solid var(--line);">
+        <div class="flex-between">
+          <h4 style="margin:0;">3-Tier Multi-Source Verification Distribution</h4>
+          <span class="telemetry-tag-pill">State Anti-Fraud Ledger</span>
+        </div>
+        <p class="muted mt-1" style="font-size:0.85rem;">
+          Ensures integrity of employment data by elevating self-reported outcomes via college leads and corporate HR audits.
+        </p>
+        <div class="grid grid-3 mt-2" id="verificationDistributionCards"></div>
+      </div>
+
+      <h3 class="mt-3">Milestone Outcome Curve Table</h3>
+      <div id="retentionMilestonesTable" class="mt-1"></div>
+
+      <h3 class="mt-3">Longitudinal Wage Growth &amp; Salary Progression</h3>
+      <div id="wageProgressionCard" class="card mt-1" style="background:var(--paper);"></div>
+
+      <h3 class="mt-3">Recent Verified Hires &amp; Placements</h3>
+      <div id="verifiedHiresTable" class="mt-1"></div>
+
+      <h3 class="mt-3">Course Completions</h3>
+      <div id="trainingCompletionsTable" class="mt-1"></div>
+
+      <h3 class="mt-3">Recent Skill Assessment Attempts</h3>
+      <div id="quizAttemptsTable" class="mt-1"></div>
+
+      <!-- Unemployment Diagnostics -->
+      <h3 class="mt-3">Granular Unemployment Root-Cause Diagnostics</h3>
+      <p class="muted mt-0" style="font-size:0.85rem;">Firsthand milestone feedback diagnosing why trainees remain seeking work.</p>
+      <div class="grid grid-2 mt-2">
+        <div class="card">
+          <h4 style="margin-top:0;">Primary Employment Barriers (% Breakdown)</h4>
+          <div id="unemploymentReasonsList" class="mt-1"></div>
+        </div>
+        <div class="card">
+          <h4 style="margin-top:0;">Recent Trainee Qualitative Feedback</h4>
+          <p class="muted mt-0" style="font-size:0.85rem;">Candidate diagnostic logs submitted during milestone check-ins.</p>
+          <div id="unemploymentNotesList" class="mt-1"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. DISTRICT ANALYTICS -->
+    <section id="district-analytics" class="section">
+      <div class="flex-between">
+        <div>
+          <h2>District Analytics &amp; Geographic Distribution</h2>
+          <p class="mt-0">Breakdown of trainee cohorts, active employment, and regional participation across districts.</p>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="loadDistricts()">Refresh Districts</button>
+      </div>
+
+      <div id="districtTable" class="mt-2"></div>
+    </section>
+
+    <!-- 6. INSTITUTE ANALYTICS -->
+    <section id="institutes" class="section">
+      <div class="flex-between">
+        <div>
+          <h2>Accredited Institutes &amp; College Performance Rankings</h2>
+          <p class="mt-0">Benchmarking polytechnics, ITIs, and higher education institutes on long-term verified employment outcomes.</p>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="loadInstitutes()">Refresh Rankings</button>
+      </div>
+
+      <div id="institutesTable" class="mt-2"></div>
+    </section>
+
+    <!-- 7. SKILL GAP -->
+    <section id="skill-gap" class="section">
+      <div class="flex-between">
+        <div>
+          <h2>Regional Skill Gap Intelligence &amp; AI Policy Engine</h2>
+          <p class="mt-0">Real-time matching of corporate hiring demand against student skill supply to guide curriculum intervention.</p>
+        </div>
+        <div class="flex gap-1" style="align-items:center;">
+          <label style="font-size:0.85rem; font-weight:600;">District:</label>
+          <select id="gapDistrictFilter" onchange="loadSkillGaps(this.value)" style="width:160px; padding:6px 10px;">
+            <option value="">All Districts</option>
+            <option value="Pune">Pune</option>
+            <option value="Hyderabad">Hyderabad</option>
+            <option value="Nagpur">Nagpur</option>
+            <option value="Nashik">Nashik</option>
+            <option value="Thane">Thane</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="criticalShortageContainer" class="mt-2"></div>
+
+      <h3 class="mt-2">Skill Supply vs. Market Demand Index</h3>
+      <div id="skillGapsTable" class="mt-1"></div>
+
+      <h3 class="mt-3">Automated Government Policy Directives</h3>
+      <p class="muted mt-0">Deterministic curriculum interventions generated from market deficits to adapt vocational schemes.</p>
+      <div id="policyRecommendationsList" class="mt-1"></div>
+    </section>
+
+    <!-- 8. INDUSTRY DEMAND -->
+    <section id="industry-demand" class="section">
+      <div class="flex-between">
+        <div>
+          <h2>Industry Demand &amp; Employer Ecosystem</h2>
+          <p class="mt-0">Monitor corporate hiring activity, vacancies, and regulate accredited industry partners.</p>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="loadIndustries(); loadCompanies();">Refresh Demand</button>
+      </div>
+
+      <h3 class="mt-2">Corporate Hiring &amp; Job Posting Performance</h3>
+      <div id="industryTable" class="mt-1"></div>
+
+      <h3 class="mt-3">Registered Employers &amp; Accreditation Status</h3>
+      <div id="companyTable" class="mt-1"></div>
+    </section>
+
+    <!-- 9. AI INSIGHTS (9-AXIS DECISION SUPPORT) -->
+    <section id="ai-insights" class="section">
+      <div class="flex-between">
+        <div>
+          <h2>AI Skill Intelligence — Government Decision-Support</h2>
+          <p class="mt-0">Multi-axis policy intelligence synthesized from statewide training, placement, and skill-demand streams.</p>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="loadAiDecisionSupport()">Re-Evaluate Policy Engine</button>
+      </div>
+
+      <div class="ai-disclaimer-box mt-2">
+        <span style="font-size:1.3rem;">ℹ️</span>
+        <div>
+          <strong>Official System Role: Decision-Support Advisory Engine (Non-Autonomous)</strong><br>
+          <span id="aiDisclaimerText">AI outputs act as a decision-support system to guide human administrators, not make autonomous government policy decisions.</span>
+        </div>
+      </div>
+
+      <div class="mt-2 flex-between">
+        <div class="muted" style="font-size:0.85rem;" id="aiGeneratedMeta">Evaluating live state telemetry...</div>
+      </div>
+
+      <div class="grid grid-2 mt-2" id="aiInsightsContainer"></div>
+    </section>
+
+    <!-- 10. REPORTS -->
+    <section id="reports" class="section">
+      <div class="flex-between">
+        <div>
+          <h2>Reports &amp; Data Export</h2>
+          <p class="mt-0">Generate instant executive outcome summaries or export full audited placement CSV datasets.</p>
+        </div>
+        <div class="flex gap-1">
+          <button class="btn btn-ghost btn-sm" onclick="exportAuditCsv()">📥 Export CSV Audit</button>
+          <button class="btn btn-accent btn-sm" onclick="genReport()">Generate AI Instant Report</button>
+        </div>
+      </div>
+
+      <div class="card mt-2">
+        <h3>State Longitudinal Outcome Export</h3>
+        <p class="muted mt-0" style="font-size:0.88rem;">
+          Download complete multi-tier verified employment records, student profiles, and salary progression logs in standard CSV format for inter-departmental auditing and legislative review.
+        </p>
+        <button class="btn btn-primary" onclick="exportAuditCsv()">Export Full System Analytics (CSV)</button>
+      </div>
+
+      <h3 class="mt-3">AI-Generated Executive Summary</h3>
+      <div id="reportOutput" class="mt-1">
+        <p class="muted">Click "Generate AI Instant Report" to create a fresh natural-language briefing from current database telemetry.</p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script src="/js/shared.js"></script>
+<script>
+  const user = requireLogin();
+  renderUserBadge('userBadge');
+
+  // Exact 10-link navigation
+  document.querySelectorAll('.dash-side a').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      document.querySelectorAll('.dash-side a').forEach(l => l.classList.remove('active'));
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      link.classList.add('active');
+      const targetSec = document.getElementById(link.dataset.section);
+      if (targetSec) targetSec.classList.add('active');
+    });
+  });
+
+  // 1. Overview
+  async function loadOverview() {
+    try {
+      const s = await api('/government/stats/overview');
+      document.getElementById('overviewStats').innerHTML = `
+        <div class="card"><div class="stat-num">${s.totalStudents || 0}</div><div class="muted">Total students</div></div>
+        <div class="card"><div class="stat-num">${s.totalCompanies || 0}</div><div class="muted">Active companies</div></div>
+        <div class="card"><div class="stat-num">${s.totalTrainings || 0}</div><div class="muted">Total enrollments</div></div>
+        <div class="card"><div class="stat-num">${s.totalEmployed || 0}</div><div class="muted">Employed (all-time)</div></div>
+      `;
+      if (s.pendingApprovals > 0) {
+        document.getElementById('overviewStats').innerHTML += `
+        <div class="card" style="grid-column: span 4;">
+          <span class="pill pill-signal">${s.pendingApprovals} account(s) awaiting approval</span> — review them under Trainees &amp; Industry Demand.
+        </div>`;
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // 2. Trainees
+  async function loadStudents() {
+    try {
+      const isGovAdmin = user && (user.role === 'government' || user.role === 'admin');
+      const { students } = await api('/government/students');
+      document.getElementById('studentTable').innerHTML = students && students.length ? `
+        <table><thead><tr><th>Name</th><th>Email</th><th>District</th><th>Status</th><th>Employment</th><th>Actions</th></tr></thead>
+        <tbody>${students.map(s => `
+          <tr>
+            <td>
+              <div style="display:flex; align-items:center; gap:10px;">
+                ${renderAvatar(s.name, s.avatar_url, 32)}
+                <strong>${escapeHtml(s.name)}</strong>
+              </div>
+            </td>
+            <td>${escapeHtml(s.email)}</td><td>${escapeHtml(s.district || '—')}</td>
+            <td><span class="pill ${s.status==='banned'||s.status==='rejected' ? 'pill-bad' : 'pill-good'}">${escapeHtml(s.status)}</span></td>
+            <td>${escapeHtml(s.employment_status || '—')}</td>
+            <td class="flex gap-1" style="align-items:center;">
+              <button class="btn btn-outline btn-sm" onclick="viewFullStudentProfile(${s.id})" style="padding:2px 8px; font-size:0.8rem;">👁️ Full Profile</button>
+              ${isGovAdmin ? (s.status !== 'banned' ? `<button class="btn btn-danger btn-sm" onclick="moderate('student', ${s.id}, 'ban')">Ban</button>` : `<button class="btn btn-ghost btn-sm" onclick="moderate('student', ${s.id}, 'unban')">Unban</button>`) : ''}
+              ${isGovAdmin && s.status === 'pending' ? `<button class="btn btn-ghost btn-sm" onclick="moderate('student', ${s.id}, 'reject')">Reject</button>` : ''}
+            </td>
+          </tr>`).join('')}</tbody></table>
+      ` : `<p class="empty-state">No students found.</p>`;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // Trainee Spotlight: Rahul Sharma
+  async function loadSpotlight() {
+    try {
+      const res = await api('/government/stats/trainee-journey');
+      const s = res.student || {};
+      const journey = res.journey || [];
+      const wage = res.wageProgression || {};
+
+      document.getElementById('spotlightProfileCard').innerHTML = `
+        <div class="flex-between">
+          <div class="flex gap-2" style="align-items:center;">
+            ${renderAvatar(s.name || 'Rahul Sharma', s.avatar_url, 56)}
+            <div>
+              <h3 style="margin:0;">${escapeHtml(s.name || 'Rahul Sharma')}</h3>
+              <div class="muted mt-0" style="font-size:0.88rem;">
+                ${escapeHtml(s.email || 'rahul.sharma@example.com')} &middot; <strong>Institute:</strong> ${escapeHtml(s.college || 'GPP Pune')} &middot; District: <strong>${escapeHtml(s.district || 'Pune')}</strong>
+              </div>
+            </div>
+          </div>
+          <div style="text-align:right;">
+            <span class="pill pill-good" style="font-size:0.9rem; padding:6px 12px;">Current Status: Employed</span>
+            ${wage.growthPercent ? `<div style="font-size:0.85rem; color:#059669; font-weight:bold; margin-top:4px;">+${wage.growthPercent}% 1-Year Wage Growth</div>` : ''}
+            <div style="margin-top:6px;">
+              <button class="btn btn-outline btn-sm" onclick="viewFullStudentProfile(${s.id || 1})" style="padding:2px 8px; font-size:0.8rem;">👁️ View Full Profile &amp; Audit</button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      const levelBadges = {
+        'self_reported': '<span class="pill pill-level1">Level 1: Self-Reported</span>',
+        'institute_verified': '<span class="pill pill-level2">Level 2: Institute Verified</span>',
+        'employer_verified': '<span class="pill pill-level3">Level 3: Employer Verified</span>'
+      };
+
+      document.getElementById('spotlightTimeline').innerHTML = `
+        <div class="career-timeline">
+          ${journey.map(node => `
+            <div class="journey-node">
+              <div class="milestone-badge">${node.milestone_days} Days Post-Training</div>
+              <div class="flex-between" style="align-items:flex-start;">
+                <div>
+                  <h4 style="margin:0 0 4px; font-size:1.05rem;">
+                    ${escapeHtml(node.job_title || (node.outcome_type === 'seeking' ? 'Seeking Employment' : 'Employed'))}
+                  </h4>
+                  <div class="muted" style="font-size:0.85rem;">
+                    ${node.employer_name || node.company_name ? `<strong>Employer:</strong> ${escapeHtml(node.employer_name || node.company_name)} &middot; ` : ''}
+                    ${node.location_district ? `<span>District: ${escapeHtml(node.location_district)}</span> &middot; ` : ''}
+                    ${node.monthly_salary ? `<strong style="color:#059669;">₹${Number(node.monthly_salary).toLocaleString('en-IN')}/month</strong> &middot; ` : ''}
+                    <span>Status: <strong>${escapeHtml((node.outcome_type || '').replace(/_/g, ' '))}</strong></span>
+                  </div>
+                </div>
+                <div>
+                  ${levelBadges[node.verification_level] || levelBadges.self_reported}
+                </div>
+              </div>
+
+              ${node.outcome_type === 'seeking' && node.unemployment_reason ? `
+                <div style="background:#FFFBEB; border:1px solid #FDE68A; border-radius:6px; padding:10px 12px; margin-top:10px; font-size:0.85rem; color:#92400E;">
+                  <strong>30-Day Friction Identified:</strong> ${escapeHtml(node.unemployment_reason.replace(/_/g, ' '))}
+                  ${node.unemployment_notes ? `<div style="margin-top:4px; color:#78350F;"><em>"${escapeHtml(node.unemployment_notes)}"</em></div>` : ''}
+                </div>
+              ` : ''}
+
+              ${node.follow_up_notes ? `
+                <div class="muted" style="font-size:0.85rem; margin-top:8px;">
+                  <strong>Audit Record Notes:</strong> ${escapeHtml(node.follow_up_notes)}
+                </div>
+              ` : ''}
+
+              ${node.verified_by_name ? `
+                <div style="font-size:0.8rem; color:#2563EB; margin-top:8px;">
+                  ✓ Verified by: <strong>${escapeHtml(node.verified_by_name)}</strong> on ${fmtDate(node.verified_at)}
+                </div>
+              ` : ''}
+            </div>
+          `).join('')}
+        </div>
+      `;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // 3. Programmes
+  async function loadTraining() {
+    try {
+      const { programs } = await api('/government/stats/training-performance');
+      document.getElementById('trainingTable').innerHTML = programs && programs.length ? `
+        <table><thead><tr><th>Program</th><th>Enrolled</th><th>Completed</th><th>Avg. Progress</th></tr></thead>
+        <tbody>${programs.map(p => `<tr><td><strong>${escapeHtml(p.title)}</strong></td><td>${p.enrolled}</td><td>${p.completed}</td><td>${p.avg_progress || 0}%</td></tr>`).join('')}</tbody></table>
+      ` : `<p class="empty-state">No training data yet.</p>`;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function loadProgramRoi() {
+    try {
+      const { programs } = await api('/government/stats/program-evaluation');
+      document.getElementById('programRoiTable').innerHTML = programs && programs.length ? `
+        <table>
+          <thead>
+            <tr>
+              <th>Vocational Scheme / Course</th>
+              <th>Sector</th>
+              <th>Total Intake</th>
+              <th>Completion Rate</th>
+              <th>Placement Rate</th>
+              <th>365-Day Retention</th>
+              <th>Avg Salary</th>
+              <th>ROI Evaluation</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${programs.map(p => `
+              <tr>
+                <td><strong>${escapeHtml(p.title)}</strong></td>
+                <td><span class="pill">${escapeHtml(p.category || 'Tech')}</span></td>
+                <td>${p.enrolled_count} trainees</td>
+                <td><span class="pill pill-good">${p.completion_rate}%</span></td>
+                <td><span class="pill ${p.placement_rate >= 70 ? 'pill-good' : 'pill-signal'}">${p.placement_rate}%</span></td>
+                <td><strong style="color:${p.sustained_retention_365_rate >= 60 ? '#059669' : '#D97706'};">${p.sustained_retention_365_rate}%</strong></td>
+                <td><strong>${p.avg_salary ? `₹${Number(p.avg_salary).toLocaleString('en-IN')}` : '—'}</strong></td>
+                <td>
+                  <span class="pill ${p.sustained_retention_365_rate >= 65 ? 'pill-good' : (p.sustained_retention_365_rate >= 40 ? 'pill-signal' : 'pill-bad')}">
+                    ${p.sustained_retention_365_rate >= 65 ? '★ High State ROI' : (p.sustained_retention_365_rate >= 40 ? 'Moderate ROI' : 'Needs Curriculum Audit')}
+                  </span>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      ` : `<p class="empty-state">No program evaluation records yet.</p>`;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // 4. Employment Outcomes
+  async function loadOutcomes() {
+    try {
+      const { hires, completions, quizStats, metrics } = await api('/government/stats/outcomes');
+      
+      document.getElementById('outcomeStats').innerHTML = `
+        <div class="card"><div class="stat-num">${metrics?.totalHired || 0}</div><div class="muted">Verified Hires</div></div>
+        <div class="card"><div class="stat-num">${metrics?.totalTrainingCompleted || 0}</div><div class="muted">Course Completions</div></div>
+        <div class="card"><div class="stat-num">${metrics?.totalQuizzesPassed || 0}</div><div class="muted">Quizzes Passed</div></div>
+        <div class="card"><div class="stat-num">${metrics?.totalInterviewsScheduled || 0}</div><div class="muted">Scheduled Interviews</div></div>
+      `;
+
+      document.getElementById('verifiedHiresTable').innerHTML = hires && hires.length ? `
+        <table>
+          <thead><tr><th>Student</th><th>District &amp; College</th><th>Position</th><th>Company</th><th>Hired Date</th><th>Action</th></tr></thead>
+          <tbody>
+            ${hires.map(h => `
+              <tr>
+                <td><strong>${escapeHtml(h.student_name)}</strong><br><span class="muted">${escapeHtml(h.student_email)} ${h.student_phone ? `&middot; ${escapeHtml(h.student_phone)}` : ''}</span></td>
+                <td>${escapeHtml(h.student_district || '—')} ${h.college ? `<br><span class="muted">${escapeHtml(h.college)}</span>` : ''}</td>
+                <td><strong>${escapeHtml(h.job_title)}</strong> <span class="pill">${escapeHtml(h.job_type || '')}</span></td>
+                <td><strong>${escapeHtml(h.company_name)}</strong></td>
+                <td>${fmtDate(h.applied_at)}</td>
+                <td><button class="btn btn-outline btn-sm" onclick="viewFullStudentProfile(${h.student_id})" style="padding:2px 8px; font-size:0.78rem;">👁️ Profile</button></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      ` : `<p class="empty-state">No verified hires recorded yet.</p>`;
+
+      document.getElementById('trainingCompletionsTable').innerHTML = completions && completions.length ? `
+        <table>
+          <thead><tr><th>Student</th><th>Course</th><th>Provider</th><th>Progress</th><th>Enrolled</th><th>Action</th></tr></thead>
+          <tbody>
+            ${completions.map(c => `
+              <tr>
+                <td><strong>${escapeHtml(c.student_name)}</strong><br><span class="muted">${escapeHtml(c.student_email)}</span></td>
+                <td><strong>${escapeHtml(c.course_title)}</strong> <span class="pill">${escapeHtml(c.category || '')}</span></td>
+                <td>${escapeHtml(c.company_name || 'SkillTrack Academy')}</td>
+                <td><span class="pill pill-good">${c.progress_percent}% Complete</span></td>
+                <td>${fmtDate(c.enrolled_at)}</td>
+                <td><button class="btn btn-outline btn-sm" onclick="viewFullStudentProfile(${c.student_id})" style="padding:2px 8px; font-size:0.78rem;">👁️ Profile</button></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      ` : `<p class="empty-state">No training completions recorded yet.</p>`;
+
+      document.getElementById('quizAttemptsTable').innerHTML = quizStats && quizStats.length ? `
+        <table>
+          <thead><tr><th>Student</th><th>Course &amp; Quiz</th><th>Score</th><th>Result</th><th>Attempted Date</th></tr></thead>
+          <tbody>
+            ${quizStats.map(q => `
+              <tr>
+                <td><strong>${escapeHtml(q.student_name)}</strong></td>
+                <td>${escapeHtml(q.course_title)} &middot; <strong>${escapeHtml(q.quiz_title)}</strong></td>
+                <td><strong>${q.score_percent}%</strong> (Pass: ${q.passing_score}%)</td>
+                <td><span class="pill ${q.passed ? 'pill-good' : 'pill-bad'}">${q.passed ? 'Passed & Verified' : 'Failed'}</span></td>
+                <td>${fmtDate(q.attempted_at)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      ` : `<p class="empty-state">No assessment attempts recorded yet.</p>`;
+
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // Longitudinal Retention
+  async function loadRetention() {
+    try {
+      const res = await api('/government/stats/retention');
+      const milestones = res.milestones || [];
+      const v = res.verification_breakdown || {};
+      const m30 = milestones.find(m => m.milestone === 30) || {};
+      const m90 = milestones.find(m => m.milestone === 90) || {};
+      const m180 = milestones.find(m => m.milestone === 180) || {};
+      const m365 = milestones.find(m => m.milestone === 365) || {};
+
+      document.getElementById('retentionKpiCards').innerHTML = `
+        <div class="card"><div class="stat-num">${m30.employment_rate || 0}%</div><div class="muted">30-Day Employment</div></div>
+        <div class="card"><div class="stat-num">${m90.employment_rate || 0}%</div><div class="muted">90-Day Placement</div></div>
+        <div class="card"><div class="stat-num">${m180.employment_rate || 0}%</div><div class="muted">180-Day Retention</div></div>
+        <div class="card"><div class="stat-num" style="color:var(--signal);">${m365.employment_rate || 0}%</div><div class="muted">365-Day Sustained Retention</div></div>
+      `;
+
+      document.getElementById('verificationDistributionCards').innerHTML = `
+        <div class="card" style="background:#fff; border-top:3px solid #94A3B8;">
+          <div class="flex-between">
+            <span class="pill pill-level1">Level 1</span>
+            <strong style="font-size:1.4rem;">${v.self_reported || 0}</strong>
+          </div>
+          <div class="muted mt-1" style="font-size:0.85rem;"><strong>Self-Reported</strong><br>Direct trainee milestone check-ins awaiting institutional corroboration.</div>
+        </div>
+        <div class="card" style="background:#fff; border-top:3px solid #2563EB;">
+          <div class="flex-between">
+            <span class="pill pill-level2">Level 2</span>
+            <strong style="font-size:1.4rem; color:#2563EB;">${v.institute_verified || 0}</strong>
+          </div>
+          <div class="muted mt-1" style="font-size:0.85rem;"><strong>Institute Verified</strong><br>Attested by college placement leads &amp; polytechnic department heads.</div>
+        </div>
+        <div class="card" style="background:#fff; border-top:3px solid #059669;">
+          <div class="flex-between">
+            <span class="pill pill-level3">Level 3</span>
+            <strong style="font-size:1.4rem; color:#059669;">${v.employer_verified || 0}</strong>
+          </div>
+          <div class="muted mt-1" style="font-size:0.85rem;"><strong>Employer / State Verified</strong><br>Officially validated by hiring corporations or government payroll audits.</div>
+        </div>
+      `;
+
+      document.getElementById('retentionMilestonesTable').innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Milestone Horizon</th>
+              <th>Tracked Cohort</th>
+              <th>Employed / Productive</th>
+              <th>Seeking / Friction</th>
+              <th>Survival Rate</th>
+              <th>Avg Salary</th>
+              <th>Retention Curve</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${milestones.map(m => `
+              <tr>
+                <td><strong>${m.milestone} Days</strong> (${m.milestone === 30 ? '1 Month' : (m.milestone === 90 ? '3 Months' : (m.milestone === 180 ? '6 Months' : '1 Year'))})</td>
+                <td>${m.total} trainees</td>
+                <td><strong style="color:#059669;">${m.employed}</strong> (${Number(m.employed_count || 0)} salaried + ${Number(m.self_employed_count || 0)} self/trade)</td>
+                <td><span style="color:#D97706;">${m.seeking} seeking</span></td>
+                <td><span class="pill ${m.employment_rate >= 70 ? 'pill-good' : (m.employment_rate >= 50 ? '' : 'pill-bad')}">${m.employment_rate}%</span></td>
+                <td><strong>${m.avg_salary ? `₹${Number(m.avg_salary).toLocaleString('en-IN')}` : '—'}</strong></td>
+                <td style="width:160px;">
+                  <div style="background:#E2E8F0; height:10px; border-radius:5px; overflow:hidden;">
+                    <div style="background:#059669; height:100%; width:${m.employment_rate}%; border-radius:5px;"></div>
+                  </div>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+
+      const m90Sal = m90.avg_salary ? Number(m90.avg_salary) : null;
+      const m365Sal = m365.avg_salary ? Number(m365.avg_salary) : null;
+      let salaryDeltaText = 'Milestone salary progression tracking in progress.';
+      if (m90Sal && m365Sal) {
+        const growth = Math.round(((m365Sal - m90Sal) / m90Sal) * 100);
+        salaryDeltaText = `Average graduate starting salary at 90 days is <strong>₹${m90Sal.toLocaleString('en-IN')}/mo</strong>, growing to <strong>₹${m365Sal.toLocaleString('en-IN')}/mo</strong> at 365 days sustained employment — reflecting an audited <strong>+${growth}% wage progression</strong>.`;
+      }
+
+      document.getElementById('wageProgressionCard').innerHTML = `
+        <div class="flex-between">
+          <div>
+            <h4 style="margin:0 0 6px;">Longitudinal Wage Survival &amp; Increment Curve</h4>
+            <p class="muted mt-0" style="font-size:0.9rem;">${salaryDeltaText}</p>
+          </div>
+          <div class="telemetry-tag-pill" style="background:#D1FAE5; color:#065F46;">Real Payroll Audited</div>
+        </div>
+      `;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // Unemployment reasons
+  async function loadUnemploymentReasons() {
+    try {
+      const res = await api('/government/stats/unemployment-reasons');
+      const reasons = res.reasons || [];
+      const notes = res.sampleNotes || [];
+
+      document.getElementById('unemploymentReasonsList').innerHTML = reasons.length ? `
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          ${reasons.map(r => `
+            <div>
+              <div class="flex-between" style="font-size:0.88rem; margin-bottom:4px;">
+                <strong>${escapeHtml(r.label)}</strong>
+                <span><strong>${r.count}</strong> reports (${r.percentage}%)</span>
+              </div>
+              <div style="background:#E2E8F0; height:8px; border-radius:4px; overflow:hidden;">
+                <div style="background:#D97706; height:100%; width:${r.percentage}%; border-radius:4px;"></div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      ` : `<p class="empty-state">No barrier reports recorded.</p>`;
+
+      document.getElementById('unemploymentNotesList').innerHTML = notes.length ? `
+        <div style="display:flex; flex-direction:column; gap:10px; max-height:300px; overflow-y:auto;">
+          ${notes.map(n => `
+            <div style="background:var(--paper); border:1px solid var(--line); border-radius:6px; padding:10px 12px; font-size:0.85rem;">
+              <div class="flex-between muted" style="margin-bottom:4px;">
+                <span class="pill" style="font-size:0.75rem;">${escapeHtml(n.reason.replace(/_/g, ' '))}</span>
+                <span>${fmtDate(n.recorded_at)} &middot; ${escapeHtml(n.district || 'District')}</span>
+              </div>
+              <div style="color:#334155; font-style:italic;">"${escapeHtml(n.notes)}"</div>
+            </div>
+          `).join('')}
+        </div>
+      ` : `<p class="empty-state">No verbatim feedback recorded yet.</p>`;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // 5. District Analytics
+  async function loadDistricts() {
+    try {
+      const { districts } = await api('/government/stats/district-wise');
+      document.getElementById('districtTable').innerHTML = districts && districts.length ? `
+        <table><thead><tr><th>District</th><th>Total Students</th><th>Employed</th><th>In Training</th><th>Unemployed</th></tr></thead>
+        <tbody>${districts.map(d => `<tr><td><strong>${escapeHtml(d.district)}</strong></td><td>${d.total_students}</td><td><strong style="color:#059669;">${d.employed}</strong></td><td>${d.in_training}</td><td>${d.unemployed}</td></tr>`).join('')}</tbody></table>
+      ` : `<p class="empty-state">No district data yet.</p>`;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // 6. Institute Analytics
+  async function loadInstitutes() {
+    try {
+      const { institutes } = await api('/government/stats/institutes');
+      document.getElementById('institutesTable').innerHTML = institutes && institutes.length ? `
+        <table>
+          <thead>
+            <tr>
+              <th>Institute Name</th>
+              <th>Code</th>
+              <th>District &amp; State</th>
+              <th>Accreditation Status</th>
+              <th>Trainees Monitored</th>
+              <th>Employed / Placed</th>
+              <th>Placement Rate</th>
+              <th>Avg Salary</th>
+              <th>Verified Milestones</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${institutes.map(inst => `
+              <tr>
+                <td><strong>${escapeHtml(inst.name)}</strong></td>
+                <td><span class="pill">${escapeHtml(inst.code)}</span></td>
+                <td>${escapeHtml(inst.district)}, ${escapeHtml(inst.state || 'MH')}</td>
+                <td><span class="pill pill-good">${escapeHtml(inst.accreditation || 'State Accredited')}</span></td>
+                <td>${inst.total_students}</td>
+                <td><strong style="color:#059669;">${inst.employed_students}</strong></td>
+                <td><span class="pill ${inst.placement_rate >= 75 ? 'pill-good' : (inst.placement_rate >= 50 ? '' : 'pill-bad')}">${inst.placement_rate}%</span></td>
+                <td><strong>${inst.avg_salary ? `₹${Number(inst.avg_salary).toLocaleString('en-IN')}` : '—'}</strong></td>
+                <td><span class="pill pill-level2">${inst.verified_records} verified</span></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      ` : `<p class="empty-state">No institute records registered.</p>`;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // 7. Skill Gap
+  async function loadSkillGaps(district = '') {
+    try {
+      const url = '/government/stats/skill-gaps' + (district ? `?district=${encodeURIComponent(district)}` : '');
+      const res = await api(url);
+      const shortages = res.criticalShortages || [];
+      const skills = res.skillAnalysis || [];
+      const policies = res.policyRecommendations || [];
+
+      // Critical Shortages Alert
+      const shortageBox = document.getElementById('criticalShortageContainer');
+      if (shortages.length) {
+        shortageBox.innerHTML = `
+          <div class="card" style="background:#FEF2F2; border:1px solid #FCA5A5;">
+            <div class="flex-between">
+              <h3 style="margin:0; color:#991B1B; display:flex; align-items:center; gap:8px;">
+                <span>⚠️</span> Critical Skill Deficits Detected in ${escapeHtml(res.district || 'Region')}
+              </h3>
+              <span class="pill pill-bad">${shortages.length} Priority Bottlenecks</span>
+            </div>
+            <p class="muted mt-1" style="font-size:0.85rem; color:#7F1D1D;">
+              Local industry recruitment is severely bottlenecked by deficits in the following competencies:
+            </p>
+            <div class="flex gap-2 mt-2" style="flex-wrap:wrap;">
+              ${shortages.map(s => `
+                <div style="background:#fff; border:1px solid #FECACA; border-radius:6px; padding:8px 14px;">
+                  <strong style="color:#991B1B;">${escapeHtml(s.skill)}</strong>: ${s.demandPercent}% Demand vs. ${s.supplyPercent}% Supply
+                  <span class="pill pill-bad" style="font-size:0.75rem; margin-left:6px;">Gap: +${s.gapIndex} pts</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      } else {
+        shortageBox.innerHTML = '';
+      }
+
+      // Skill Gaps Table
+      document.getElementById('skillGapsTable').innerHTML = skills.length ? `
+        <table>
+          <thead>
+            <tr>
+              <th>Skill Competency</th>
+              <th>Corporate Demand (% of Jobs)</th>
+              <th>Student Supply (% of Candidates)</th>
+              <th>Deficit / Gap Ratio</th>
+              <th>Regional Deficit Status</th>
+              <th>Demand vs Supply Comparison</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${skills.map(s => `
+              <tr>
+                <td><strong>${escapeHtml(s.skill)}</strong></td>
+                <td><strong style="color:#DC2626;">${s.demandPercent}%</strong> (${s.demandCount} vacancies)</td>
+                <td><strong style="color:#059669;">${s.supplyPercent}%</strong> (${s.supplyCount} candidates)</td>
+                <td><strong>${s.gapIndex > 0 ? `+${s.gapIndex}% deficit` : `${s.gapIndex}% surplus`}</strong></td>
+                <td>
+                  <span class="pill ${s.status === 'Critical Shortage' ? 'pill-bad' : (s.status === 'Moderate Deficit' ? 'pill-signal' : 'pill-good')}">
+                    ${escapeHtml(s.status)}
+                  </span>
+                </td>
+                <td style="width:200px;">
+                  <div class="gap-bar-wrap" style="height:14px; margin-bottom:3px;" title="Demand: ${s.demandPercent}%">
+                    <div class="gap-bar-demand" style="width:${Math.min(100, s.demandPercent)}%;"></div>
+                  </div>
+                  <div class="gap-bar-wrap" style="height:14px;" title="Supply: ${s.supplyPercent}%">
+                    <div class="gap-bar-supply" style="width:${Math.min(100, s.supplyPercent)}%;"></div>
+                  </div>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      ` : `<p class="empty-state">No skill data available for this selection.</p>`;
+
+      // Policy Recommendations
+      document.getElementById('policyRecommendationsList').innerHTML = policies.length ? `
+        <div class="grid grid-2">
+          ${policies.map(p => `
+            <div class="policy-card ${p.priority === 'Critical' ? 'critical' : (p.priority === 'High' ? 'modernize' : '')}">
+              <div class="flex-between">
+                <span class="pill ${p.priority === 'Critical' ? 'pill-bad' : (p.priority === 'High' ? 'pill-signal' : 'pill-good')}" style="font-size:0.75rem;">
+                  ${p.priority} Priority &middot; ${escapeHtml(p.category)}
+                </span>
+                <span style="font-size:0.8rem; color:#64748B;">AI Decision Engine</span>
+              </div>
+              <h4 style="margin:10px 0 6px; font-size:1rem; color:#1E293B;">${escapeHtml(p.title || p.category)}</h4>
+              <p style="margin:0; font-size:0.88rem; color:#334155; line-height:1.5;">${escapeHtml(p.recommendation)}</p>
+              ${p.actionableStep ? `
+                <div style="background:#fff; border:1px solid #E2E8F0; border-radius:4px; padding:8px 10px; margin-top:8px; font-size:0.82rem; color:#0F172A;">
+                  <strong>Actionable Directive:</strong> ${escapeHtml(p.actionableStep)}
+                </div>
+              ` : ''}
+            </div>
+          `).join('')}
+        </div>
+      ` : `<p class="empty-state">Curriculum supply is currently aligned with market demand.</p>`;
+
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // 8. Industry Demand
+  async function loadIndustries() {
+    try {
+      const { industries } = await api('/government/stats/industry-performance');
+      document.getElementById('industryTable').innerHTML = industries && industries.length ? `
+        <table><thead><tr><th>Company</th><th>Jobs Posted</th><th>Applications</th><th>Hires</th></tr></thead>
+        <tbody>${industries.map(i => `<tr><td><strong>${escapeHtml(i.company_name || '—')}</strong></td><td>${i.jobs_posted}</td><td>${i.applications_received}</td><td><strong style="color:#059669;">${i.hires}</strong></td></tr>`).join('')}</tbody></table>
+      ` : `<p class="empty-state">No industry data yet.</p>`;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function loadCompanies() {
+    try {
+      const isGovAdmin = user && (user.role === 'government' || user.role === 'admin');
+      const { companies } = await api('/government/companies');
+      document.getElementById('companyTable').innerHTML = companies && companies.length ? `
+        <table><thead><tr><th>Company</th><th>Contact</th><th>Sector</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody>${companies.map(c => `
+          <tr>
+            <td><strong>${escapeHtml(c.company_name || c.name)}</strong></td><td>${escapeHtml(c.email)}</td><td>${escapeHtml(c.industry_sector || '—')}</td>
+            <td><span class="pill ${c.status==='banned'||c.status==='rejected' ? 'pill-bad' : 'pill-good'}">${escapeHtml(c.status)}</span></td>
+            <td class="flex gap-1">
+              ${isGovAdmin && c.status === 'pending' ? `<button class="btn btn-primary btn-sm" onclick="moderate('company', ${c.id}, 'approve')">Approve</button><button class="btn btn-ghost btn-sm" onclick="moderate('company', ${c.id}, 'reject')">Reject</button>` : ''}
+              ${isGovAdmin ? (c.status !== 'banned' ? `<button class="btn btn-danger btn-sm" onclick="moderate('company', ${c.id}, 'ban')">Ban</button>` : `<button class="btn btn-ghost btn-sm" onclick="moderate('company', ${c.id}, 'unban')">Unban</button>`) : '<span class="muted" style="font-size:0.8rem;">Oversight View</span>'}
+            </td>
+          </tr>`).join('')}</tbody></table>
+      ` : `<p class="empty-state">No companies yet.</p>`;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function moderate(type, id, action) {
+    if (!user || (user.role !== 'government' && user.role !== 'admin')) {
+      toast('Administrative moderation is restricted to Government Officials & Regulators.', true);
+      return;
+    }
+    if (!confirm(`Confirm: ${action} this ${type}?`)) return;
+    try {
+      await api('/government/moderate', { method: 'POST', body: { target_type: type, target_id: id, action } });
+      toast('Action applied successfully.');
+      type === 'student' ? loadStudents() : loadCompanies();
+      loadOverview();
+    } catch (err) { toast(err.message, true); }
+  }
+
+  // 9. AI Insights (9-Axis Decision Support Engine)
+  async function loadAiDecisionSupport() {
+    try {
+      const cont = document.getElementById('aiInsightsContainer');
+      cont.innerHTML = `<div class="card" style="grid-column: span 2;"><p class="muted">Synthesizing state-level telemetry across 9 decision axes...</p></div>`;
+      
+      const res = await api('/government/ai/insights');
+      if (res.disclaimer) {
+        document.getElementById('aiDisclaimerText').textContent = res.disclaimer;
+      }
+      if (res.generatedAt) {
+        document.getElementById('aiGeneratedMeta').innerHTML = `Telemetry Analyzed: <strong>${new Date(res.generatedAt).toLocaleString()}</strong> &middot; Engine: <strong>${escapeHtml(res.systemRole || 'Advisory Engine')}</strong>`;
+      }
+
+      const insights = res.insights || [];
+      if (!insights.length) {
+        cont.innerHTML = `<div class="card" style="grid-column: span 2;"><p class="empty-state">No policy insights generated.</p></div>`;
+        return;
+      }
+
+      cont.innerHTML = insights.map((ins, idx) => {
+        const sevClass = ins.severity === 'critical' ? 'severity-critical' : (ins.severity === 'warning' ? 'severity-warning' : 'severity-positive');
+        const pillClass = ins.severity === 'critical' ? 'pill-bad' : (ins.severity === 'warning' ? 'pill-signal' : 'pill-good');
+        return `
+          <div class="ai-insight-card ${sevClass}">
+            <div class="flex-between">
+              <span class="pill ${pillClass}">Axis ${idx + 1}: ${escapeHtml(ins.dimension || ins.category)}</span>
+              <strong style="font-size:0.8rem; color:#64748B;">${escapeHtml(ins.category)}</strong>
+            </div>
+            <div style="font-size:0.95rem; font-weight:600; color:#1E293B;">
+              ${escapeHtml(ins.finding)}
+            </div>
+            <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:6px; padding:10px 12px; font-size:0.88rem; color:#334155;">
+              <strong style="color:#0F172A;">Strategic Policy Directive:</strong><br>
+              ${escapeHtml(ins.recommendation)}
+            </div>
+          </div>
+        `;
+      }).join('');
+    } catch (err) {
+      console.error(err);
+      toast('Failed to load AI decision support insights.', true);
+    }
+  }
+
+  // 10. Reports & CSV Export
+  async function genReport() {
+    try {
+      const { report, generatedAt } = await api('/government/reports/instant');
+      document.getElementById('reportOutput').innerHTML = `
+        <div class="report-box">
+          <strong>SkillTrack AI Executive Briefing</strong>
+          <p style="color:#fff; line-height:1.6; margin-top:10px;">${escapeHtml(report)}</p>
+          <p class="muted" style="color:#B8C2D4; font-size:0.8rem; margin-top:12px;">Generated ${new Date(generatedAt).toLocaleString()} from live verified system records.</p>
+        </div>`;
+    } catch (err) { toast(err.message, true); }
+  }
+
+  function exportAuditCsv() {
+    window.location.href = '/api/government/reports/export';
+    toast('Audit CSV export initiated.');
+  }
+
+  // Initialize all sections
+  (async function init() {
+    await loadOverview();
+    await loadStudents();
+    await loadSpotlight();
+    await loadTraining();
+    await loadProgramRoi();
+    await loadOutcomes();
+    await loadRetention();
+    await loadUnemploymentReasons();
+    await loadDistricts();
+    await loadInstitutes();
+    await loadSkillGaps();
+    await loadIndustries();
+    await loadCompanies();
+    await loadAiDecisionSupport();
+  })();
+</script>
+</body>
+</html>

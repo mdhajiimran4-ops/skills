@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Log in — SkillTrack</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<style>
+  .auth-wrap { max-width: 480px; margin: 48px auto; padding: 0 20px; }
+  .role-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 20px; }
+  .role-tabs button {
+    padding: 8px 4px; font-size: 0.8rem; font-weight: 600; border-radius: var(--radius);
+    border: 1px solid var(--line); background: #fff; color: var(--ink-soft); cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .role-tabs button:hover { border-color: var(--slate-deep); }
+  .role-tabs button.active { background: var(--slate-deep); color: #fff; border-color: var(--slate-deep); }
+  .divider-or { display: flex; align-items: center; gap: 12px; color: var(--ink-soft); font-size: 0.8rem; margin: 18px 0; }
+  .divider-or::before, .divider-or::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+  .demo-box { background: #FBEDD3; border: 1px solid #EFCF8F; border-radius: var(--radius); padding: 14px 16px; font-size: 0.82rem; color: var(--slate-deep); margin-top: 24px; }
+  .demo-btn-group { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .demo-chip {
+    background: #fff; border: 1px solid #D19A36; border-radius: 20px;
+    padding: 4px 10px; font-size: 0.78rem; font-weight: 600; cursor: pointer;
+    color: var(--slate-deep); transition: all 0.15s;
+  }
+  .demo-chip:hover { background: var(--slate-deep); color: #fff; border-color: var(--slate-deep); }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="/index.html" class="brand"><span class="brand-mark">ST</span><span class="brand-name">SkillTrack</span></a>
+  <div class="nav-links"><a href="/register.html">New here? Create an account</a></div>
+</nav>
+
+<div class="auth-wrap">
+  <h2>Log in to SkillTrack</h2>
+  <p class="mt-0">Select your account role, then sign in with your credentials.</p>
+
+  <div class="role-tabs" id="roleTabs">
+    <button type="button" data-role="student" class="active">Student</button>
+    <button type="button" data-role="institute">Institute</button>
+    <button type="button" data-role="industry">Employer</button>
+    <button type="button" data-role="government">Government</button>
+    <button type="button" data-role="employee">Mentor</button>
+    <button type="button" data-role="investor">Investor</button>
+  </div>
+
+  <a href="#" id="googleBtn" class="btn-google">
+    <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.9v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.66 9c0-.59.1-1.17.29-1.7V4.97H.9A9 9 0 0 0 0 9c0 1.45.35 2.83.9 4.03l3.05-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .9 4.97l3.05 2.33C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
+    Continue with Google
+  </a>
+
+  <div class="divider-or">or sign in with email/phone</div>
+
+  <form id="loginForm">
+    <div class="field">
+      <label>Email or Phone Number</label>
+      <input type="text" id="identifier" placeholder="e.g. student@demo.com or +91 9876543210" required autocomplete="username">
+    </div>
+    <div class="field">
+      <div class="flex-between">
+        <label>Password</label>
+        <a href="javascript:void(0)" onclick="openForgotModal()" style="font-size:0.8rem; color:var(--signal-deep); font-weight:600; text-decoration:none;">Forgot Password?</a>
+      </div>
+      <input type="password" id="password" required autocomplete="current-password" placeholder="Enter your password">
+    </div>
+    <button type="submit" class="btn btn-primary btn-block" id="loginSubmitBtn">Log in</button>
+  </form>
+
+  <div class="demo-box">
+    <strong>Demo Quick Fill (Password: <code>Password123!</code>)</strong>
+    <p style="margin:4px 0 0; font-size:0.78rem;">Click below to auto-fill verified test accounts:</p>
+    <div class="demo-btn-group">
+      <button type="button" class="demo-chip" onclick="fillDemo('student@demo.com','student')">Student</button>
+      <button type="button" class="demo-chip" onclick="fillDemo('institute@demo.com','institute')">Institute</button>
+      <button type="button" class="demo-chip" onclick="fillDemo('industry@demo.com','industry')">Employer</button>
+      <button type="button" class="demo-chip" onclick="fillDemo('gov@demo.com','government')">Government</button>
+      <button type="button" class="demo-chip" onclick="fillDemo('employee@demo.com','employee')">Mentor</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= FORGOT PASSWORD MODAL ================= -->
+<div class="modal-backdrop" id="forgotModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 id="forgotModalTitle">Reset Account Password</h3>
+      <button type="button" class="modal-close" onclick="closeModal('forgotModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <!-- STEP 1: Request Reset -->
+      <div id="forgotStep1">
+        <p style="font-size:0.9rem;">Enter the email or phone linked to your SkillTrack account to receive a secure password reset code.</p>
+        <div class="field">
+          <label>Email or Phone</label>
+          <input type="text" id="resetIdentifier" placeholder="e.g. student@demo.com">
+        </div>
+        <button type="button" class="btn btn-primary btn-block" id="sendResetBtn" onclick="requestPasswordReset()">Send Reset Code</button>
+      </div>
+
+      <!-- STEP 2: Submit Reset -->
+      <div id="forgotStep2" style="display:none;">
+        <div class="pill pill-good" style="margin-bottom:12px;" id="resetAlertBanner">Reset code sent!</div>
+        <p style="font-size:0.85rem;" id="codeNotice">Enter the 6-digit reset code and your new password below.</p>
+        <div class="field">
+          <label>Reset Code</label>
+          <input type="text" id="resetCode" placeholder="6-digit reset code">
+        </div>
+        <div class="field">
+          <label>New Password</label>
+          <input type="password" id="newPassword" minlength="6" placeholder="At least 6 characters">
+        </div>
+        <div class="field">
+          <label>Confirm New Password</label>
+          <input type="password" id="confirmPassword" minlength="6" placeholder="Confirm new password">
+        </div>
+        <button type="button" class="btn btn-primary btn-block" id="confirmResetBtn" onclick="submitPasswordReset()">Update Password &amp; Log In</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-ghost" onclick="closeModal('forgotModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script src="/js/shared.js"></script>
+<script>
+  let selectedRole = 'student';
+
+  function setRoleTab(role) {
+    selectedRole = role;
+    document.querySelectorAll('#roleTabs button').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.role === role);
+    });
+    document.getElementById('googleBtn').href = `/api/auth/google?state=${selectedRole}`;
+  }
+
+  document.querySelectorAll('#roleTabs button').forEach(btn => {
+    btn.addEventListener('click', () => setRoleTab(btn.dataset.role));
+  });
+  setRoleTab('student');
+
+  function fillDemo(email, role) {
+    document.getElementById('identifier').value = email;
+    document.getElementById('password').value = 'Password123!';
+    setRoleTab(role);
+    toast(`Filled ${role} demo credentials`);
+  }
+
+  // Handle Google OAuth redirects
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('error') === 'google_not_configured') {
+    toast('Google sign-in is not set up yet on this server. Please use email/password.', true);
+  } else if (params.get('error') === 'google_failed') {
+    toast('Google sign-in failed. Please try again.', true);
+  }
+
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const submitBtn = document.getElementById('loginSubmitBtn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Logging in...';
+
+    try {
+      const identifier = document.getElementById('identifier').value.trim();
+      const password = document.getElementById('password').value;
+      const data = await api('/auth/login', {
+        method: 'POST',
+        body: { identifier, password }
+      });
+      setSession(data.token, data.user);
+      toast('Welcome back, ' + (data.user.name || 'User') + '!');
+      
+      const role = data.user.role;
+      let target = `/${role}.html`;
+      if (role === 'employer' || role === 'industry' || role === 'employee') target = '/industry.html';
+      if (role === 'institute') target = '/institute.html';
+      setTimeout(() => { window.location.href = target; }, 400);
+    } catch (err) {
+      toast(err.message, true);
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Log in';
+    }
+  });
+
+  // Forgot password modal flows
+  function openForgotModal() {
+    document.getElementById('forgotStep1').style.display = 'block';
+    document.getElementById('forgotStep2').style.display = 'none';
+    const curVal = document.getElementById('identifier').value.trim();
+    if (curVal) document.getElementById('resetIdentifier').value = curVal;
+    openModal('forgotModal');
+  }
+
+  async function requestPasswordReset() {
+    const identifier = document.getElementById('resetIdentifier').value.trim();
+    if (!identifier) {
+      toast('Please enter your email or phone number', true);
+      return;
+    }
+    const btn = document.getElementById('sendResetBtn');
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+
+    try {
+      const res = await api('/auth/forgot-password', {
+        method: 'POST',
+        body: { identifier }
+      });
+      toast(res.message || 'Reset code generated');
+      document.getElementById('forgotStep1').style.display = 'none';
+      document.getElementById('forgotStep2').style.display = 'block';
+      if (res.resetCode) {
+        document.getElementById('resetCode').value = res.resetCode;
+        document.getElementById('codeNotice').innerHTML = `Your reset code is <strong>${res.resetCode}</strong> (auto-filled for testing). Enter your new password below.`;
+      }
+    } catch (err) {
+      toast(err.message, true);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Send Reset Code';
+    }
+  }
+
+  async function submitPasswordReset() {
+    const identifier = document.getElementById('resetIdentifier').value.trim();
+    const resetCode = document.getElementById('resetCode').value.trim();
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+
+    if (!resetCode) return toast('Please enter the reset code', true);
+    if (!newPassword || newPassword.length < 6) return toast('New password must be at least 6 characters', true);
+    if (newPassword !== confirmPassword) return toast('Passwords do not match', true);
+
+    const btn = document.getElementById('confirmResetBtn');
+    btn.disabled = true;
+    btn.textContent = 'Updating Password...';
+
+    try {
+      const res = await api('/auth/reset-password', {
+        method: 'POST',
+        body: { identifier, resetCode, newPassword }
+      });
+      toast(res.message || 'Password reset successfully!');
+      closeModal('forgotModal');
+      document.getElementById('identifier').value = identifier;
+      document.getElementById('password').value = newPassword;
+      document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+    } catch (err) {
+      toast(err.message, true);
+      btn.disabled = false;
+      btn.textContent = 'Update Password & Log In';
+    }
+  }
+</script>
+
+</body>
+</html>
+

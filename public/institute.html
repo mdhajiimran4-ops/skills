@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Institute Dashboard — SkillTrack</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<style>
+  .section { display: none; } .section.active { display: block; }
+  .table-responsive { overflow-x: auto; }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="/index.html" class="brand"><span class="brand-mark">ST</span><span class="brand-name">SkillTrack</span></a>
+  <div id="userBadge" class="flex gap-1"></div>
+</nav>
+
+<div class="dash">
+  <aside class="dash-side">
+    <a href="#" data-section="overview" class="active">Dashboard</a>
+    <a href="#" data-section="students">Students</a>
+    <a href="#" data-section="training">Training</a>
+    <a href="#" data-section="assignments">Assignments &amp; Labs</a>
+    <a href="#" data-section="attendance">Attendance</a>
+    <a href="#" data-section="assessments">Assessments</a>
+    <a href="#" data-section="certificates">Certificates</a>
+    <a href="#" data-section="placements">Placements</a>
+    <a href="#" data-section="analytics">Analytics</a>
+  </aside>
+
+  <main class="dash-main">
+
+    <!-- 1. DASHBOARD -->
+    <section id="overview" class="section active">
+      <div class="flex-between">
+        <div>
+          <h2>Training Institute Portal</h2>
+          <p class="mt-0">Polytechnic &amp; Vocational Training Hub &middot; <span id="instDistrictLabel">Regional Directorate</span></p>
+        </div>
+        <div class="flex gap-1">
+          <button class="btn btn-accent btn-sm" onclick="showSection('attendance')">Take Attendance</button>
+          <button class="btn btn-primary btn-sm" onclick="openCreateCourseModal()">+ Add Training Program</button>
+        </div>
+      </div>
+
+      <div class="grid grid-4 mt-2" id="overviewStats">
+        <div class="card"><div class="stat-num">--</div><div class="muted">Enrolled Trainees</div></div>
+        <div class="card"><div class="stat-num">--</div><div class="muted">Active Courses</div></div>
+        <div class="card"><div class="stat-num">--</div><div class="muted">Verified Placements</div></div>
+        <div class="card"><div class="stat-num">--</div><div class="muted">Certificates Issued</div></div>
+      </div>
+
+      <div class="grid grid-2 mt-3">
+        <div class="card">
+          <div class="flex-between">
+            <h3 style="margin:0;">Recent Trainee Enrollments</h3>
+            <button class="btn btn-ghost btn-sm" onclick="showSection('students')">View All</button>
+          </div>
+          <div id="recentStudentsBox" class="mt-2">Loading students...</div>
+        </div>
+
+        <div class="card">
+          <div class="flex-between">
+            <h3 style="margin:0;">Active Training Programs</h3>
+            <button class="btn btn-ghost btn-sm" onclick="showSection('training')">View All</button>
+          </div>
+          <div id="activeTrainingBox" class="mt-2">Loading courses...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. STUDENTS -->
+    <section id="students" class="section">
+      <div class="flex-between">
+        <div>
+          <h2>Enrolled Students &amp; Trainees</h2>
+          <p class="mt-0">Monitor academic progress, semester standings, and technical competencies.</p>
+        </div>
+        <input type="text" id="studentSearchInput" placeholder="Filter by name, branch, or year..." style="max-width:280px;" oninput="filterStudents(this.value)">
+      </div>
+
+      <div class="card mt-2 table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Student Name</th>
+              <th>College / Polytechnic</th>
+              <th>Branch / Trade</th>
+              <th>Year / Sem</th>
+              <th>CGPA</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="studentsTableBody">
+            <tr><td colspan="7" class="muted">Loading student directory...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 3. TRAINING -->
+    <section id="training" class="section">
+      <div class="flex-between">
+        <div>
+          <h2>Vocational &amp; Technical Courses</h2>
+          <p class="mt-0">Accredited curriculum aligned with MSBTE, AICTE, and National Skill Standards.</p>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="openCreateCourseModal()">+ Add New Program</button>
+      </div>
+
+      <div id="trainingProgramsGrid" class="grid grid-2 mt-2">
+        <div class="card"><p class="muted">Loading training courses...</p></div>
+      </div>
+    </section>
+
+    <!-- 3b. ASSIGNMENTS & PRACTICAL LABS -->
+    <section id="assignments" class="section">
+      <div class="flex-between">
+        <div>
+          <h2>Practical Assignments &amp; Hands-on Workshops</h2>
+          <p class="mt-0">Publish engineering lab problem sets, industrial challenges, and review candidate submissions.</p>
+        </div>
+        <div class="flex gap-1">
+          <button class="btn btn-primary btn-sm" onclick="openInstituteAssignmentModal()">+ Create Practical Assignment</button>
+        </div>
+      </div>
+
+      <div class="subtabs mt-2" id="instAssignmentsTabs">
+        <button type="button" class="subtab-btn active" data-tab="tab-inst-assignments">Practical Assignments</button>
+        <button type="button" class="subtab-btn" data-tab="tab-inst-workshops">Industrial Workshops</button>
+      </div>
+
+      <div id="tab-inst-assignments" class="subtab-pane active">
+        <div id="instituteAssignmentsList" class="mt-2">Loading assignments...</div>
+      </div>
+
+      <div id="tab-inst-workshops" class="subtab-pane">
+        <div id="instituteWorkshopsList" class="grid grid-2 mt-2">Loading workshops...</div>
+      </div>
+    </section>
+
+    <!-- 4. ATTENDANCE -->
+    <section id="attendance" class="section">
+      <div class="flex-between">
+        <div>
+          <h2>Daily Session Attendance Registry</h2>
+          <p class="mt-0">Record and verify classroom &amp; lab attendance for state training stipend compliance.</p>
+        </div>
+        <div class="flex gap-1" style="align-items:center;">
+          <label style="font-size:0.85rem; font-weight:600;">Date:</label>
+          <input type="date" id="attendanceDateInput" onchange="loadAttendanceForDate(this.value)">
+        </div>
+      </div>
+
+      <div class="card mt-2">
+        <form id="attendanceBatchForm">
+          <div class="flex-between" style="padding-bottom:12px; border-bottom:1px solid var(--line);">
+            <div>
+              <strong id="attDateHeader">Session Date: Today</strong>
+              <div class="muted" style="font-size:0.82rem;">Mark status for enrolled candidates below</div>
+            </div>
+            <div class="flex gap-1">
+              <button type="button" class="btn btn-ghost btn-sm" onclick="markAllAttendance('present')">Mark All Present</button>
+              <button type="submit" class="btn btn-primary btn-sm">Save Registry</button>
+            </div>
+          </div>
+
+          <div class="table-responsive mt-2">
+            <table>
+              <thead>
+                <tr>
+                  <th>Trainee Name</th>
+                  <th>Branch / Program</th>
+                  <th>Attendance Status</th>
+                  <th>Session Notes</th>
+                </tr>
+              </thead>
+              <tbody id="attendanceTbody">
+                <tr><td colspan="4" class="muted">Loading trainees for selected session date...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- 5. ASSESSMENTS -->
+    <section id="assessments" class="section">
+      <div class="flex-between">
+        <div>
+          <h2>Practical &amp; Theoretical Assessments</h2>
+          <p class="mt-0">Trainee test submissions, question performance, and skill verification rubrics.</p>
+        </div>
+      </div>
+
+      <div class="card mt-2 table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Student Name</th>
+              <th>Assessment / Quiz</th>
+              <th>Score %</th>
+              <th>Result</th>
+              <th>Attempted On</th>
+            </tr>
+          </thead>
+          <tbody id="assessmentsTableBody">
+            <tr><td colspan="5" class="muted">Loading assessment results...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 6. CERTIFICATES -->
+    <section id="certificates" class="section">
+      <div class="flex-between">
+        <div>
+          <h2>Issue Institute Certificates</h2>
+          <p class="mt-0">Issue accredited completion certificates that automatically notify students and link to profiles.</p>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="openIssueCertModal()">+ Issue Certificate</button>
+      </div>
+
+      <div class="card mt-2 table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Recipient Student</th>
+              <th>Certificate Title</th>
+              <th>Issue Date</th>
+              <th>Verification Link</th>
+            </tr>
+          </thead>
+          <tbody id="certificatesTableBody">
+            <tr><td colspan="4" class="muted">Loading issued certificates...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 7. PLACEMENTS & LEVEL 2 VERIFICATION -->
+    <section id="placements" class="section">
+      <div class="flex-between">
+        <div>
+          <h2>Employment Placements &amp; Outcome Verification</h2>
+          <p class="mt-0">State-recognized Level 2 institutional verification of alumni jobs, apprenticeships, and salaries.</p>
+        </div>
+      </div>
+
+      <div class="card mt-2 table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Student Name</th>
+              <th>Milestone Interval</th>
+              <th>Reported Outcome</th>
+              <th>Company / Location</th>
+              <th>Monthly Package</th>
+              <th>Verification Tier</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="placementsTableBody">
+            <tr><td colspan="7" class="muted">Loading placement follow-ups...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 8. ANALYTICS -->
+    <section id="analytics" class="section">
+      <div class="flex-between">
+        <div>
+          <h2>Institutional Skilling Analytics</h2>
+          <p class="mt-0">Completion rates, district placement efficiency, and attendance compliance metrics.</p>
+        </div>
+      </div>
+
+      <div class="grid grid-3 mt-2" id="analyticsCards">
+        <div class="card">
+          <div class="stat-num" id="an_totalTrainees">--</div>
+          <div class="muted">Registered Trainees</div>
+        </div>
+        <div class="card">
+          <div class="stat-num" id="an_passRate" style="color:var(--good);">--%</div>
+          <div class="muted">Assessment Pass Rate</div>
+        </div>
+        <div class="card">
+          <div class="stat-num" id="an_placementRate" style="color:var(--slate-deep);">--%</div>
+          <div class="muted">Verified Placement Rate</div>
+        </div>
+      </div>
+
+      <div class="card mt-3">
+        <h3>Institutional Compliance Summary</h3>
+        <p style="font-size:0.9rem;" class="muted">
+          Your institution's verified employment outcomes are synchronized with the <strong>State Skill Development Directorate</strong>. Maintaining high attendance compliance and timely Level 2 verification elevates your polytechnic's accreditation ranking.
+        </p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ================= MODALS ================= -->
+
+<!-- 1. CREATE COURSE MODAL -->
+<div class="modal-backdrop" id="courseModal">
+  <div class="modal-box modal-box-lg">
+    <div class="modal-header">
+      <h3>Create Training Program</h3>
+      <button class="modal-close" onclick="closeModal('courseModal')">&times;</button>
+    </div>
+    <form id="courseForm">
+      <div class="modal-body">
+        <div class="field">
+          <label>Program Title <span class="required-star">*</span></label>
+          <input type="text" id="cm_title" required placeholder="e.g. Advanced CNC Machining &amp; Industrial Automation">
+        </div>
+        <div class="grid grid-2">
+          <div class="field">
+            <label>Trade / Specialization</label>
+            <input type="text" id="cm_category" placeholder="e.g. Mechanical / IT / Mechatronics">
+          </div>
+          <div class="field">
+            <label>Duration</label>
+            <input type="text" id="cm_duration" placeholder="e.g. 12 Weeks (360 Hours)">
+          </div>
+        </div>
+        <div class="field">
+          <label>Cover / Thumbnail URL</label>
+          <input type="url" id="cm_thumb" placeholder="https://images.unsplash.com/...">
+        </div>
+        <div class="field">
+          <label>Curriculum Overview &amp; Learning Outcomes</label>
+          <textarea id="cm_desc" placeholder="Detail hands-on lab modules, industrial safety guidelines, and certification requirements..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('courseModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="cm_btn">Publish Program</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- 2. ISSUE CERTIFICATE MODAL -->
+<div class="modal-backdrop" id="issueCertModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>Issue Trainee Certificate</h3>
+      <button class="modal-close" onclick="closeModal('issueCertModal')">&times;</button>
+    </div>
+    <form id="issueCertForm">
+      <div class="modal-body">
+        <div class="field">
+          <label>Select Student <span class="required-star">*</span></label>
+          <select id="ic_studentId" required></select>
+        </div>
+        <div class="field">
+          <label>Certificate Title <span class="required-star">*</span></label>
+          <input type="text" id="ic_title" required placeholder="e.g. Certificate of Proficiency in Embedded Systems">
+        </div>
+        <div class="grid grid-2">
+          <div class="field">
+            <label>Issue Date <span class="required-star">*</span></label>
+            <input type="date" id="ic_date" required>
+          </div>
+          <div class="field">
+            <label>Verification Link</label>
+            <input type="url" id="ic_url" placeholder="https://verify.skilltrack.gov/...">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('issueCertModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="ic_btn">Issue &amp; Alert Student</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- 3. MANAGE LECTURES MODAL -->
+<div class="modal-backdrop" id="instituteLecturesModal">
+  <div class="modal-box modal-box-lg" style="max-width:860px; width:94vw;">
+    <div class="modal-header">
+      <div>
+        <h3 id="ilm_title" style="margin:0;">Manage Course Lectures</h3>
+        <p class="muted mt-0" style="font-size:0.82rem;" id="ilm_subtitle">Publish video lectures, practical manuals, and lecture notes for enrolled trainees</p>
+      </div>
+      <button class="modal-close" onclick="closeModal('instituteLecturesModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div id="ilm_lessonsList" class="mb-2"></div>
+
+      <div class="card" style="background:var(--paper); border:1px solid var(--line); margin-top:16px;">
+        <h4 style="margin-top:0;" id="ilm_formTitle">+ Publish New Lecture / Lesson</h4>
+        <form id="instituteLessonForm">
+          <input type="hidden" id="ilf_courseId">
+          <input type="hidden" id="ilf_lessonId">
+          <div class="grid grid-2">
+            <div class="field">
+              <label>Lecture Title <span class="required-star">*</span></label>
+              <input type="text" id="ilf_title" required placeholder="e.g. Session 01: Semiconductor Diodes &amp; Industrial Circuits">
+            </div>
+            <div class="field">
+              <label>Lecture Order / Sequence</label>
+              <input type="number" id="ilf_order" min="1" placeholder="e.g. 1">
+            </div>
+          </div>
+          <div class="grid grid-2">
+            <div class="field">
+              <label>Content Type</label>
+              <select id="ilf_type">
+                <option value="video">Video Lecture (YouTube, Vimeo, MP4)</option>
+                <option value="document">Document / PDF Slide Deck</option>
+                <option value="text">Notes / Reading Text</option>
+                <option value="link">Interactive Resource / External Lab</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Resource / Video URL</label>
+              <div class="flex gap-1">
+                <input type="text" id="ilf_url" placeholder="https://youtube.com/... or upload" style="flex:1;">
+                <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('ilf_fileInput').click()">Upload File</button>
+                <input type="file" id="ilf_fileInput" style="display:none;" onchange="handleInstituteLessonUpload(this.files[0])">
+              </div>
+              <div id="ilf_fileStatus" class="muted" style="font-size:0.75rem; margin-top:2px;"></div>
+            </div>
+          </div>
+          <div class="field">
+            <label>Lecture Notes / Practical Syllabus Breakdown</label>
+            <textarea id="ilf_text" placeholder="Detail classroom explanation, theory derivation, or laboratory safety protocols..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-sm" id="ilf_submitBtn">Publish Lecture</button>
+        </form>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-ghost" onclick="closeModal('instituteLecturesModal')">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- 4. CREATE / EDIT PRACTICAL ASSIGNMENT MODAL -->
+<div class="modal-backdrop" id="instituteAssignmentModal">
+  <div class="modal-box modal-box-lg" style="max-width:800px; width:92vw;">
+    <div class="modal-header">
+      <div>
+        <h3 id="iam_title" style="margin:0;">Create Practical Assignment</h3>
+        <p class="muted mt-0" style="font-size:0.82rem;">Assign lab exercises, theoretical challenges, and industrial problem statements</p>
+      </div>
+      <button class="modal-close" onclick="closeModal('instituteAssignmentModal')">&times;</button>
+    </div>
+    <form id="instituteAssignmentForm">
+      <div class="modal-body">
+        <div class="field">
+          <label>Assignment Title <span class="required-star">*</span></label>
+          <input type="text" id="iaf_title" required placeholder="e.g. PLC Ladder Logic Simulation: Dual Conveyor Automation">
+        </div>
+        <div class="grid grid-3">
+          <div class="field">
+            <label>Difficulty Level</label>
+            <select id="iaf_difficulty">
+              <option value="beginner">Beginner</option>
+              <option value="intermediate" selected>Intermediate</option>
+              <option value="advanced">Advanced</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Submission Deadline</label>
+            <input type="date" id="iaf_deadline">
+          </div>
+          <div class="field">
+            <label>Status</label>
+            <select id="iaf_status">
+              <option value="published">Published (Open)</option>
+              <option value="draft">Draft</option>
+              <option value="closed">Closed</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Skills Tested / Required</label>
+          <input type="text" id="iaf_skills" placeholder="e.g. PLC, SCADA, Ladder Logic, Industrial Automation">
+        </div>
+        <div class="field">
+          <label>Overview &amp; Problem Statement</label>
+          <textarea id="iaf_desc" placeholder="Explain the real-world engineering challenge or practical task..."></textarea>
+        </div>
+        <div class="field">
+          <label>Detailed Lab Instructions / Deliverables</label>
+          <textarea id="iaf_instructions" placeholder="Step 1: Wire sensor inputs. Step 2: Write ladder diagram. Step 3: Upload simulator file and test report..."></textarea>
+        </div>
+        <div class="field">
+          <label>Resource / Worksheet Attachment</label>
+          <div class="flex gap-1">
+            <input type="text" id="iaf_attachment" placeholder="Resource link or upload worksheet" style="flex:1;">
+            <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('iaf_fileInput').click()">Upload File</button>
+            <input type="file" id="iaf_fileInput" style="display:none;" onchange="handleInstituteAssignmentUpload(this.files[0])">
+          </div>
+          <div id="iaf_fileStatus" class="muted" style="font-size:0.75rem; margin-top:2px;"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('instituteAssignmentModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="iaf_btn">Create &amp; Publish Assignment</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- 5. VIEW ASSIGNMENT SUBMISSIONS MODAL -->
+<div class="modal-backdrop" id="instituteSubmissionsModal">
+  <div class="modal-box modal-box-lg" style="max-width:880px; width:94vw;">
+    <div class="modal-header">
+      <div>
+        <h3 id="ism_title" style="margin:0;">Student Submissions</h3>
+        <p class="muted mt-0" style="font-size:0.82rem;" id="ism_subtitle">Review candidate solutions, examine repository links, and record faculty evaluations</p>
+      </div>
+      <button class="modal-close" onclick="closeModal('instituteSubmissionsModal')">&times;</button>
+    </div>
+    <div class="modal-body" id="ism_list">
+      <p class="muted">Loading submissions...</p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-ghost" onclick="closeModal('instituteSubmissionsModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<script src="/js/shared.js"></script>
+<script>
+  const user = requireLogin('institute');
+  renderUserBadge('userBadge');
+
+  function showSection(secId) {
+    document.querySelectorAll('.dash-side a').forEach(l => l.classList.toggle('active', l.dataset.section === secId));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    const target = document.getElementById(secId);
+    if (target) target.classList.add('active');
+    if (secId === 'assignments') loadInstituteAssignments();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  document.querySelectorAll('.dash-side a').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      showSection(link.dataset.section);
+    });
+  });
+
+  // Assignments subtabs
+  document.querySelectorAll('#instAssignmentsTabs .subtab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#instAssignmentsTabs .subtab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('#assignments .subtab-pane').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      const targetPane = document.getElementById(btn.dataset.tab);
+      if (targetPane) targetPane.classList.add('active');
+    });
+  });
+
+  let cachedStudents = [];
+  let currentActiveCourseId = null;
+
+  // 1. OVERVIEW
+  async function loadOverview() {
+    try {
+      const res = await api('/institute/overview');
+      const s = res.stats || {};
+      document.getElementById('overviewStats').innerHTML = `
+        <div class="card"><div class="stat-num">${s.totalStudents || 0}</div><div class="muted">Enrolled Trainees</div></div>
+        <div class="card"><div class="stat-num">${s.totalCourses || 0}</div><div class="muted">Active Courses</div></div>
+        <div class="card"><div class="stat-num">${s.verifiedPlacements || 0}</div><div class="muted">Verified Placements</div></div>
+        <div class="card"><div class="stat-num">${s.certificatesIssued || 0}</div><div class="muted">Certificates Issued</div></div>
+      `;
+
+      if (res.recentStudents && res.recentStudents.length) {
+        document.getElementById('recentStudentsBox').innerHTML = res.recentStudents.slice(0, 5).map(st => `
+          <div class="flex-between" style="padding:8px 0; border-bottom:1px solid var(--line);">
+            <div>
+              <strong>${escapeHtml(st.name)}</strong>
+              <div class="muted" style="font-size:0.8rem;">${escapeHtml(st.branch || 'Vocational')} &middot; ${escapeHtml(st.college || 'Enrolled')}</div>
+            </div>
+            <div class="flex gap-1" style="align-items:center;">
+              <span class="pill pill-good">${st.cgpa ? `CGPA ${st.cgpa}` : 'Active'}</span>
+              <button class="btn btn-ghost btn-sm" style="padding:2px 8px; font-size:0.78rem;" onclick="viewFullStudentProfile(${st.id})">👁️ Profile</button>
+            </div>
+          </div>
+        `).join('');
+      } else {
+        document.getElementById('recentStudentsBox').innerHTML = '<p class="empty-state">No recent enrollments logged.</p>';
+      }
+
+      if (res.recentCourses && res.recentCourses.length) {
+        document.getElementById('activeTrainingBox').innerHTML = res.recentCourses.slice(0, 4).map(c => `
+          <div class="flex-between" style="padding:8px 0; border-bottom:1px solid var(--line);">
+            <div>
+              <strong>${escapeHtml(c.title)}</strong>
+              <div class="muted" style="font-size:0.8rem;">${escapeHtml(c.duration || 'Flexible')} &middot; ${escapeHtml(c.category || 'General')}</div>
+            </div>
+            <span class="pill">${c.enrolled_count || 0} enrolled</span>
+          </div>
+        `).join('');
+      } else {
+        document.getElementById('activeTrainingBox').innerHTML = '<p class="empty-state">No active courses published yet.</p>';
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // 2. STUDENTS
+  async function loadStudents() {
+    try {
+      const res = await api('/institute/students');
+      cachedStudents = res.students || [];
+      renderStudentsTable(cachedStudents);
+      populateStudentSelects(cachedStudents);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  function renderStudentsTable(list) {
+    const tbody = document.getElementById('studentsTableBody');
+    if (!list.length) {
+      tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No trainees registered under this institution.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = list.map(s => `
+      <tr>
+        <td>
+          <div class="flex gap-1" style="align-items:center;">
+            ${renderAvatar(s.name, s.avatar_url, 36)}
+            <div>
+              <strong>${escapeHtml(s.name)}</strong>
+              <div class="muted" style="font-size:0.78rem;">${escapeHtml(s.email)}</div>
+            </div>
+          </div>
+        </td>
+        <td>${escapeHtml(s.college || 'Polytechnic')}</td>
+        <td>${escapeHtml(s.branch || 'General')}</td>
+        <td>${escapeHtml(s.current_year || '')} &middot; ${escapeHtml(s.semester || '')}</td>
+        <td>${s.cgpa ? `<strong>${s.cgpa}</strong>` : '--'}</td>
+        <td><span class="pill pill-good">${escapeHtml(s.employment_status || 'Enrolled')}</span></td>
+        <td>
+          <button class="btn btn-outline btn-sm" onclick="viewFullStudentProfile(${s.student_id || s.id})" style="padding:3px 8px; font-size:0.82rem;">👁️ Full Profile</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  function filterStudents(query) {
+    const q = query.toLowerCase().trim();
+    if (!q) return renderStudentsTable(cachedStudents);
+    const filtered = cachedStudents.filter(s => 
+      (s.name && s.name.toLowerCase().includes(q)) ||
+      (s.branch && s.branch.toLowerCase().includes(q)) ||
+      (s.college && s.college.toLowerCase().includes(q))
+    );
+    renderStudentsTable(filtered);
+  }
+
+  function populateStudentSelects(students) {
+    const sel = document.getElementById('ic_studentId');
+    if (sel) {
+      sel.innerHTML = '<option value="">-- Choose Trainee --</option>' + 
+        students.map(s => `<option value="${s.id}">${escapeHtml(s.name)} (${s.email})</option>`).join('');
+    }
+  }
+
+  // 3. TRAINING COURSES
+  async function loadTraining() {
+    try {
+      const res = await api('/institute/training');
+      const box = document.getElementById('trainingProgramsGrid');
+      const courses = res.courses || [];
+      if (!courses.length) {
+        box.innerHTML = '<div class="card" style="grid-column:1/-1;"><p class="empty-state">No training programs published yet. Click "+ Add New Program" to register courses.</p></div>';
+        return;
+      }
+      box.innerHTML = courses.map(c => `
+        <div class="card" style="display:flex; flex-direction:column;">
+          <div class="flex-between">
+            <h3 style="margin:0;">${escapeHtml(c.title)}</h3>
+            <span class="pill pill-signal">${escapeHtml(c.category || 'Skill Program')}</span>
+          </div>
+          <p class="muted mt-1" style="font-size:0.88rem; flex:1;">${escapeHtml(c.description || 'Comprehensive curriculum.')}</p>
+          <div class="flex-between mt-2" style="font-size:0.82rem; border-top:1px solid var(--line); padding-top:10px;">
+            <span><strong>Duration:</strong> ${escapeHtml(c.duration || 'N/A')}</span>
+            <span><strong>Enrolled:</strong> ${c.enrolled_count || 0} candidates</span>
+          </div>
+          <div class="flex gap-1 mt-2" style="border-top:1px solid var(--line); padding-top:10px; flex-wrap:wrap;">
+            <button class="btn btn-primary btn-sm" onclick="openInstituteLecturesModal(${c.id}, '${escapeHtml(c.title).replace(/'/g, "\\'")}')">🎥 Manage Lectures (${c.lesson_count || 0})</button>
+            <button class="btn btn-outline btn-sm" onclick="openInstituteAssignmentModal(${c.id}, '${escapeHtml(c.title).replace(/'/g, "\\'")}')">📝 Add Assignment</button>
+          </div>
+        </div>
+      `).join('');
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // ---------- LECTURE / LESSON MANAGEMENT ----------
+  async function openInstituteLecturesModal(courseId, courseTitle) {
+    currentActiveCourseId = courseId;
+    document.getElementById('ilm_title').textContent = `Lectures: ${courseTitle}`;
+    document.getElementById('ilf_courseId').value = courseId;
+    resetInstituteLessonForm();
+    await refreshInstituteLessonsList();
+    openModal('instituteLecturesModal');
+  }
+
+  async function refreshInstituteLessonsList() {
+    try {
+      const res = await api(`/institute/courses/${currentActiveCourseId}/lessons`);
+      const lessons = res.lessons || [];
+      const box = document.getElementById('ilm_lessonsList');
+      if (!lessons.length) {
+        box.innerHTML = '<p class="empty-state" style="padding:16px 0;">No lectures published for this curriculum yet. Use the form below to publish your first lecture.</p>';
+        return;
+      }
+      box.innerHTML = `
+        <h4 style="margin:0 0 10px;">Curriculum Lectures (${lessons.length})</h4>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          ${lessons.map(l => `
+            <div style="background:#fff; border:1px solid var(--line); border-radius:6px; padding:10px 14px; display:flex; justify-content:space-between; align-items:center;">
+              <div class="flex gap-1" style="align-items:center;">
+                <span class="pill" style="font-weight:700; background:var(--slate-deep); color:#fff;">#${l.lesson_order}</span>
+                <div>
+                  <strong>${escapeHtml(l.title)}</strong>
+                  <div class="muted" style="font-size:0.78rem; text-transform:uppercase;">
+                    ${escapeHtml(l.content_type || 'video')} ${l.content_url ? `&middot; <a href="${escapeHtml(l.content_url)}" target="_blank" style="color:var(--slate-deep); text-decoration:underline;">Open Resource</a>` : ''}
+                  </div>
+                </div>
+              </div>
+              <div class="flex gap-1">
+                <button type="button" class="btn btn-ghost btn-sm" onclick="editInstituteLesson(${JSON.stringify(l).replace(/"/g, '&quot;')})">Edit</button>
+                <button type="button" class="btn btn-danger btn-sm" onclick="deleteInstituteLesson(${l.id})">Delete</button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  function resetInstituteLessonForm() {
+    document.getElementById('instituteLessonForm').reset();
+    document.getElementById('ilf_courseId').value = currentActiveCourseId;
+    document.getElementById('ilf_lessonId').value = '';
+    document.getElementById('ilm_formTitle').textContent = '+ Publish New Lecture / Lesson';
+    document.getElementById('ilf_submitBtn').textContent = 'Publish Lecture';
+    document.getElementById('ilf_fileStatus').textContent = '';
+  }
+
+  function editInstituteLesson(l) {
+    document.getElementById('ilf_lessonId').value = l.id;
+    document.getElementById('ilf_title').value = l.title || '';
+    document.getElementById('ilf_order').value = l.lesson_order || 1;
+    document.getElementById('ilf_type').value = l.content_type || 'video';
+    document.getElementById('ilf_url').value = l.content_url || '';
+    document.getElementById('ilf_text').value = l.content_text || '';
+    document.getElementById('ilm_formTitle').textContent = 'Edit Lecture';
+    document.getElementById('ilf_submitBtn').textContent = 'Update Lecture';
+  }
+
+  async function handleInstituteLessonUpload(file) {
+    if (!file) return;
+    try {
+      toast('Uploading lesson file...');
+      const res = await uploadFile(file);
+      document.getElementById('ilf_url').value = res.url;
+      document.getElementById('ilf_fileStatus').textContent = `Uploaded: ${res.fileName}`;
+      toast('Lesson file uploaded successfully.');
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  async function deleteInstituteLesson(lessonId) {
+    if (!confirm('Are you sure you want to delete this lecture?')) return;
+    try {
+      await api(`/institute/lessons/${lessonId}`, { method: 'DELETE' });
+      toast('Lecture deleted.');
+      await refreshInstituteLessonsList();
+      await loadTraining();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  document.getElementById('instituteLessonForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const courseId = document.getElementById('ilf_courseId').value;
+    const lessonId = document.getElementById('ilf_lessonId').value;
+    const payload = {
+      title: document.getElementById('ilf_title').value.trim(),
+      lesson_order: document.getElementById('ilf_order').value || null,
+      content_type: document.getElementById('ilf_type').value,
+      content_url: document.getElementById('ilf_url').value.trim() || null,
+      content_text: document.getElementById('ilf_text').value.trim() || null
+    };
+
+    try {
+      if (lessonId) {
+        await api(`/institute/lessons/${lessonId}`, { method: 'PUT', body: payload });
+        toast('Lecture updated successfully.');
+      } else {
+        await api(`/institute/courses/${courseId}/lessons`, { method: 'POST', body: payload });
+        toast('Lecture published successfully.');
+      }
+      resetInstituteLessonForm();
+      await refreshInstituteLessonsList();
+      await loadTraining();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  });
+
+  // ---------- ASSIGNMENT MANAGEMENT ----------
+  async function loadInstituteAssignments() {
+    try {
+      const res = await api('/institute/assignments');
+      const assignments = res.assignments || [];
+      const box = document.getElementById('instituteAssignmentsList');
+
+      if (!assignments.length) {
+        box.innerHTML = `<div class="card"><p class="empty-state">No assignments published yet. Click "+ Create Practical Assignment" to assign real problem sets.</p></div>`;
+      } else {
+        box.innerHTML = assignments.map(a => `
+          <div class="card mt-2">
+            <div class="flex-between">
+              <div>
+                <div class="flex gap-1" style="align-items:center;">
+                  <h3 style="margin:0;">${escapeHtml(a.title)}</h3>
+                  <span class="pill diff-pill diff-${a.difficulty || 'intermediate'}">${escapeHtml(a.difficulty || 'intermediate')}</span>
+                  <span class="pill pill-${a.status}">${escapeHtml(a.status || 'published')}</span>
+                </div>
+                <p class="muted mt-0">Deadline: ${fmtDate(a.deadline)} &middot; ${a.submission_count || 0} student submission${a.submission_count == 1 ? '' : 's'}</p>
+              </div>
+              <div class="flex gap-1">
+                <button class="btn btn-primary btn-sm" onclick="openInstituteSubmissionsModal(${a.id}, '${escapeHtml(a.title).replace(/'/g, "\\'")}')">
+                  View Submissions (${a.submission_count || 0})
+                </button>
+              </div>
+            </div>
+            <p class="mt-1" style="font-size:0.9rem;">${escapeHtml(a.description || '')}</p>
+            ${a.skills_required ? `<p class="muted" style="font-size:0.83rem;"><strong>Skills Tested:</strong> ${escapeHtml(a.skills_required)}</p>` : ''}
+            ${a.instructions ? `<div style="background:var(--paper); padding:8px 12px; border-radius:4px; font-size:0.82rem; margin-top:8px;"><strong>Instructions:</strong> ${escapeHtml(a.instructions)}</div>` : ''}
+          </div>
+        `).join('');
+      }
+
+      // Preload workshops list
+      const wBox = document.getElementById('instituteWorkshopsList');
+      wBox.innerHTML = `
+        <div class="card">
+          <div class="flex-between">
+            <h3 style="margin:0;">Industrial Robotics &amp; ABB Robot Programming</h3>
+            <span class="pill pill-good">Active Workshop</span>
+          </div>
+          <p class="muted mt-1" style="font-size:0.88rem;">Hands-on workshop on ABB IRB 1200 6-axis robotic arm articulation, safety interlocking, and teach pendant trajectory configuration.</p>
+          <div class="muted mt-2" style="font-size:0.82rem;"><strong>Equipment:</strong> ABB IRC5 Controller &middot; Duration: <strong>3 Days (24 Hours)</strong></div>
+        </div>
+        <div class="card">
+          <div class="flex-between">
+            <h3 style="margin:0;">AI &amp; Big Data Engineering Industrial Bootcamp</h3>
+            <span class="pill pill-good">Active Workshop</span>
+          </div>
+          <p class="muted mt-1" style="font-size:0.88rem;">Deploying Apache Kafka streaming pipelines, PySpark transformation clusters, and automated model inference workflows.</p>
+          <div class="muted mt-2" style="font-size:0.82rem;"><strong>Equipment:</strong> High Performance GPU Lab &middot; Duration: <strong>5 Days (40 Hours)</strong></div>
+        </div>
+        <div class="card">
+          <div class="flex-between">
+            <h3 style="margin:0;">EV Powertrain &amp; Battery Management Systems (BMS)</h3>
+            <span class="pill pill-good">Active Workshop</span>
+          </div>
+          <p class="muted mt-1" style="font-size:0.88rem;">Cell balancing hardware simulation, CAN bus diagnostics, thermal dissipation modelling, and motor drive inverters.</p>
+          <div class="muted mt-2" style="font-size:0.82rem;"><strong>Equipment:</strong> High-Voltage Safe Workbench &middot; Duration: <strong>4 Days (32 Hours)</strong></div>
+        </div>
+        <div class="card">
+          <div class="flex-between">
+            <h3 style="margin:0;">Semiconductor VLSI Design &amp; ASIC Synthesis</h3>
+            <span class="pill pill-good">Active Workshop</span>
+          </div>
+          <p class="muted mt-1" style="font-size:0.88rem;">RTL design using Verilog, static timing analysis (STA), FPGA prototyping, and layout verification on Cadence/Xilinx.</p>
+          <div class="muted mt-2" style="font-size:0.82rem;"><strong>Equipment:</strong> Xilinx Vivado Pro EDA &middot; Duration: <strong>4 Days (32 Hours)</strong></div>
+        </div>
+      `;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  function openInstituteAssignmentModal(courseId, courseTitle) {
+    document.getElementById('instituteAssignmentForm').reset();
+    document.getElementById('iaf_fileStatus').textContent = '';
+    if (courseTitle) {
+      document.getElementById('iaf_desc').value = `Practical assessment curriculum for course: ${courseTitle}.`;
+    }
+    openModal('instituteAssignmentModal');
+  }
+
+  async function handleInstituteAssignmentUpload(file) {
+    if (!file) return;
+    try {
+      toast('Uploading assignment resource...');
+      const res = await uploadFile(file);
+      document.getElementById('iaf_attachment').value = res.url;
+      document.getElementById('iaf_fileStatus').textContent = `Attached: ${res.fileName}`;
+      toast('Worksheet file attached.');
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  document.getElementById('instituteAssignmentForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('iaf_btn');
+    btn.disabled = true;
+    btn.textContent = 'Publishing...';
+
+    const payload = {
+      title: document.getElementById('iaf_title').value.trim(),
+      difficulty: document.getElementById('iaf_difficulty').value,
+      deadline: document.getElementById('iaf_deadline').value || null,
+      status: document.getElementById('iaf_status').value,
+      skills_required: document.getElementById('iaf_skills').value.trim() || null,
+      description: document.getElementById('iaf_desc').value.trim() || null,
+      instructions: document.getElementById('iaf_instructions').value.trim() || null,
+      attachment_url: document.getElementById('iaf_attachment').value.trim() || null
+    };
+
+    try {
+      await api('/institute/assignments', { method: 'POST', body: payload });
+      toast('Practical assignment created and published!');
+      closeModal('instituteAssignmentModal');
+      await loadInstituteAssignments();
+    } catch (err) {
+      toast(err.message, true);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Create & Publish Assignment';
+    }
+  });
+
+  async function openInstituteSubmissionsModal(assignmentId, title) {
+    try {
+      document.getElementById('ism_title').textContent = `Submissions: ${title}`;
+      openModal('instituteSubmissionsModal');
+
+      const { assignment, submissions } = await api(`/institute/assignments/${assignmentId}/submissions`);
+      const list = document.getElementById('ism_list');
+      document.getElementById('ism_subtitle').textContent = `Total submissions received: ${submissions.length}`;
+
+      if (!submissions.length) {
+        list.innerHTML = `<p class="empty-state">No students have submitted solutions for this assignment yet.</p>`;
+        return;
+      }
+
+      list.innerHTML = submissions.map(s => `
+        <div class="card mb-2" style="background:#fff; border:1px solid var(--line); padding:16px;">
+          <div class="flex-between">
+            <div class="flex gap-1" style="align-items:center;">
+              ${renderAvatar(s.student_name, s.avatar_url, 40)}
+              <div>
+                <strong>${escapeHtml(s.student_name)}</strong>
+                <span class="pill" style="font-family:monospace; font-size:0.75rem;">ID: ${escapeHtml(s.trainee_id || ('ST-2026-TR-' + String(s.student_id).padStart(4,'0')))}</span>
+                <div class="muted" style="font-size:0.8rem;">
+                  ${escapeHtml(s.college || 'Polytechnic')} &middot; ${escapeHtml(s.branch || 'Vocational')} ${s.cgpa ? `&middot; CGPA: ${s.cgpa}` : ''} &middot; Submitted ${fmtDate(s.submitted_at)}
+                </div>
+              </div>
+            </div>
+            <div class="flex gap-1" style="align-items:center;">
+              <span class="pill pill-${s.status === 'accepted' ? 'good' : (s.status === 'rejected' ? 'bad' : 'signal')}">${escapeHtml(s.status)}</span>
+              <button class="btn btn-outline btn-sm" onclick="viewFullStudentProfile(${s.student_id})">👁️ Full Profile</button>
+            </div>
+          </div>
+
+          ${s.submission_text ? `<div style="background:var(--paper); padding:10px; border-radius:6px; margin:10px 0; font-size:0.88rem; white-space:pre-wrap;">${escapeHtml(s.submission_text)}</div>` : ''}
+
+          <div class="flex gap-1 mt-1">
+            ${s.repo_url ? `<a href="${escapeHtml(s.repo_url)}" target="_blank" class="btn btn-ghost btn-sm">🐙 Code Repo</a>` : ''}
+            ${s.file_url ? `<a href="${escapeHtml(s.file_url)}" target="_blank" class="btn btn-ghost btn-sm">📄 Solution Attachment</a>` : ''}
+          </div>
+
+          <div class="grid grid-2 mt-2" style="align-items:flex-end; border-top:1px solid var(--line); padding-top:10px;">
+            <div class="field" style="margin:0;">
+              <label>Faculty Feedback &amp; Review</label>
+              <input type="text" id="inst_fb_${s.id}" value="${escapeHtml(s.feedback || '')}" placeholder="Enter constructive feedback or lab evaluation...">
+            </div>
+            <div class="flex gap-1">
+              <select id="inst_st_${s.id}" style="max-width:140px;">
+                <option value="submitted" ${s.status === 'submitted' ? 'selected' : ''}>Submitted</option>
+                <option value="reviewed" ${s.status === 'reviewed' ? 'selected' : ''}>Reviewed</option>
+                <option value="accepted" ${s.status === 'accepted' ? 'selected' : ''}>Accepted</option>
+                <option value="rejected" ${s.status === 'rejected' ? 'selected' : ''}>Needs Rework</option>
+              </select>
+              <button class="btn btn-primary btn-sm" onclick="updateInstituteSubmissionFeedback(${s.id})">Save Grade</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  async function updateInstituteSubmissionFeedback(subId) {
+    const feedback = document.getElementById(`inst_fb_${subId}`).value.trim();
+    const status = document.getElementById(`inst_st_${subId}`).value;
+    try {
+      await api(`/institute/assignments/submissions/${subId}/feedback`, {
+        method: 'PUT',
+        body: { status, feedback }
+      });
+      toast('Evaluation & feedback saved.');
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  function openCreateCourseModal() {
+    document.getElementById('courseForm').reset();
+    openModal('courseModal');
+  }
+
+  document.getElementById('courseForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('cm_btn');
+    btn.disabled = true;
+    btn.textContent = 'Publishing...';
+
+    const payload = {
+      title: document.getElementById('cm_title').value.trim(),
+      category: document.getElementById('cm_category').value.trim() || 'Technical',
+      duration: document.getElementById('cm_duration').value.trim() || '8 Weeks',
+      thumbnail_url: document.getElementById('cm_thumb').value.trim() || null,
+      description: document.getElementById('cm_desc').value.trim()
+    };
+
+    try {
+      await api('/institute/training', { method: 'POST', body: payload });
+      toast('Training program published!');
+      closeModal('courseModal');
+      await loadTraining();
+      await loadOverview();
+    } catch (err) {
+      toast(err.message, true);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Publish Program';
+    }
+  });
+
+  // 4. ATTENDANCE
+  let curAttendanceDate = new Date().toISOString().split('T')[0];
+  document.getElementById('attendanceDateInput').value = curAttendanceDate;
+
+  async function loadAttendanceForDate(dateVal) {
+    curAttendanceDate = dateVal || curAttendanceDate;
+    document.getElementById('attDateHeader').textContent = `Session Date: ${curAttendanceDate}`;
+    const tbody = document.getElementById('attendanceTbody');
+    tbody.innerHTML = '<tr><td colspan="4" class="muted">Loading trainees for selected date...</td></tr>';
+
+    try {
+      const res = await api(`/institute/attendance?date=${curAttendanceDate}`);
+      const records = res.records || [];
+      if (!records.length) {
+        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No enrolled trainees found to record attendance.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = records.map(r => `
+        <tr data-student-id="${r.student_id}">
+          <td>
+            <strong>${escapeHtml(r.student_name)}</strong>
+            <div class="muted" style="font-size:0.75rem;">ID: #${r.student_id}</div>
+          </td>
+          <td>${escapeHtml(r.branch || 'Vocational')}</td>
+          <td>
+            <select class="att-status-select" style="padding:6px 10px; font-size:0.85rem;">
+              <option value="present" ${r.status === 'present' ? 'selected' : ''}>Present (✔)</option>
+              <option value="absent" ${r.status === 'absent' ? 'selected' : ''}>Absent (✗)</option>
+              <option value="late" ${r.status === 'late' ? 'selected' : ''}>Late (⏳)</option>
+            </select>
+          </td>
+          <td>
+            <input type="text" class="att-notes-input" value="${escapeHtml(r.remarks || '')}" placeholder="Optional remark..." style="font-size:0.85rem; padding:6px 10px;">
+          </td>
+        </tr>
+      `).join('');
+    } catch (err) {
+      tbody.innerHTML = `<tr><td colspan="4" style="color:var(--bad);">${escapeHtml(err.message)}</td></tr>`;
+    }
+  }
+
+  function markAllAttendance(status) {
+    document.querySelectorAll('.att-status-select').forEach(sel => sel.value = status);
+    toast(`Marked all records as ${status}`);
+  }
+
+  document.getElementById('attendanceBatchForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const rows = document.querySelectorAll('#attendanceTbody tr[data-student-id]');
+    const records = [];
+    rows.forEach(r => {
+      records.push({
+        student_id: parseInt(r.getAttribute('data-student-id')),
+        status: r.querySelector('.att-status-select').value,
+        remarks: r.querySelector('.att-notes-input').value.trim()
+      });
+    });
+
+    try {
+      await api('/institute/attendance', {
+        method: 'POST',
+        body: { session_date: curAttendanceDate, records }
+      });
+      toast('Attendance registry updated successfully!');
+    } catch (err) {
+      toast(err.message, true);
+    }
+  });
+
+  // 5. ASSESSMENTS
+  async function loadAssessments() {
+    try {
+      const res = await api('/institute/assessments');
+      const tbody = document.getElementById('assessmentsTableBody');
+      const attempts = res.assessments || [];
+      if (!attempts.length) {
+        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No assessment evaluations logged yet.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = attempts.map(a => `
+        <tr>
+          <td><strong>${escapeHtml(a.student_name)}</strong></td>
+          <td>${escapeHtml(a.quiz_title)}</td>
+          <td><strong>${a.score_percent}%</strong></td>
+          <td><span class="pill ${a.passed ? 'pill-good' : 'pill-bad'}">${a.passed ? 'Passed' : 'Failed'}</span></td>
+          <td>${fmtDate(a.attempted_at)}</td>
+        </tr>
+      `).join('');
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // 6. CERTIFICATES
+  async function loadCertificates() {
+    try {
+      const res = await api('/institute/certificates');
+      const tbody = document.getElementById('certificatesTableBody');
+      const certs = res.certificates || [];
+      if (!certs.length) {
+        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No certificates issued yet. Click "+ Issue Certificate" above.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = certs.map(c => `
+        <tr>
+          <td><strong>${escapeHtml(c.student_name)}</strong></td>
+          <td>${escapeHtml(c.title)}</td>
+          <td>${fmtDate(c.issue_date)}</td>
+          <td>
+            ${c.credential_url ? `<a href="${escapeHtml(c.credential_url)}" target="_blank" class="btn btn-ghost btn-sm">🔗 Verify Credential</a>` : '<span class="muted">Internal Registry</span>'}
+          </td>
+        </tr>
+      `).join('');
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  function openIssueCertModal() {
+    document.getElementById('issueCertForm').reset();
+    document.getElementById('ic_date').value = new Date().toISOString().split('T')[0];
+    openModal('issueCertModal');
+  }
+
+  document.getElementById('issueCertForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('ic_btn');
+    btn.disabled = true;
+    btn.textContent = 'Issuing...';
+
+    const payload = {
+      student_id: document.getElementById('ic_studentId').value,
+      title: document.getElementById('ic_title').value.trim(),
+      issue_date: document.getElementById('ic_date').value,
+      credential_url: document.getElementById('ic_url').value.trim() || null
+    };
+
+    try {
+      await api('/institute/certificates', { method: 'POST', body: payload });
+      toast('Certificate issued and student notified!');
+      closeModal('issueCertModal');
+      await loadCertificates();
+      await loadOverview();
+    } catch (err) {
+      toast(err.message, true);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Issue & Alert Student';
+    }
+  });
+
+  // 7. PLACEMENTS & LEVEL 2 VERIFICATION
+  async function loadPlacements() {
+    try {
+      const res = await api('/institute/placements');
+      const tbody = document.getElementById('placementsTableBody');
+      const list = res.placements || [];
+      if (!list.length) {
+        tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No student placement milestones pending verification.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = list.map(p => {
+        const isVerified = p.verification_level === 'institute_verified' || p.verification_level === 'employer_verified';
+        return `
+          <tr>
+            <td><strong>${escapeHtml(p.student_name)}</strong></td>
+            <td>${p.milestone_days || 30} Days Post-Training</td>
+            <td><strong>${escapeHtml(p.job_title || p.outcome_type)}</strong></td>
+            <td>${escapeHtml(p.employer_name || p.company_name || 'N/A')}</td>
+            <td>${p.monthly_salary ? `₹${Number(p.monthly_salary).toLocaleString('en-IN')}/mo` : '--'}</td>
+            <td>
+              <span class="pill ${isVerified ? 'pill-good' : 'pill-signal'}">
+                ${isVerified ? 'Level 2: Verified' : 'Level 1: Self-Reported'}
+              </span>
+            </td>
+            <td>
+              <div class="flex gap-1" style="align-items:center;">
+                <button class="btn btn-outline btn-sm" onclick="viewFullStudentProfile(${p.student_id})" style="padding:2px 8px; font-size:0.8rem;">👁️ Profile</button>
+                ${!isVerified ? `
+                  <button class="btn btn-primary btn-sm" onclick="verifyMilestoneOutcome(${p.id})">Verify Level 2</button>
+                ` : `
+                  <span class="muted" style="font-size:0.8rem;">✓ Verified</span>
+                `}
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function verifyMilestoneOutcome(id) {
+    if (!confirm('Certify that this student outcome has been confirmed by institute records?')) return;
+    try {
+      await api('/institute/verify-outcome', {
+        method: 'POST',
+        body: { follow_up_id: id }
+      });
+      toast('Placement outcome verified as Level 2!');
+      await loadPlacements();
+      await loadOverview();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  // 8. ANALYTICS
+  async function loadAnalytics() {
+    try {
+      const res = await api('/institute/analytics');
+      const a = res.analytics || {};
+      document.getElementById('an_totalTrainees').textContent = a.totalStudents || 0;
+      document.getElementById('an_passRate').textContent = `${a.passRate || 0}%`;
+      document.getElementById('an_placementRate').textContent = `${a.placementRate || 0}%`;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // INITIALIZE
+  (async function init() {
+    await loadOverview();
+    await loadStudents();
+    await loadTraining();
+    await loadInstituteAssignments();
+    await loadAttendanceForDate(curAttendanceDate);
+    await loadAssessments();
+    await loadCertificates();
+    await loadPlacements();
+    await loadAnalytics();
+  })();
+</script>
+</body>
+</html>

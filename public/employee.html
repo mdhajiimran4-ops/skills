@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="refresh" content="0; url=/industry.html">
+<script>window.location.replace('/industry.html');</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Employee &amp; Recruiter Dashboard — SkillTrack</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<style>
+  .section { display: none; } .section.active { display: block; }
+  .candidate-row { border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px; }
+  .candidate-head { display: flex; justify-content: space-between; align-items: center; }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="/index.html" class="brand"><span class="brand-mark">SB</span><span class="brand-name">SkillBridge</span></a>
+  <div id="userBadge" class="flex gap-1"></div>
+</nav>
+
+<div class="dash">
+  <aside class="dash-side">
+    <a href="#" data-section="overview" class="active">Overview</a>
+    <a href="#" data-section="company">Company</a>
+    <a href="#" data-section="postjob">Post a Job</a>
+    <a href="#" data-section="myjobs">Jobs &amp; Candidates</a>
+    <a href="#" data-section="verifications">Outcome Verifications (Level 2)</a>
+  </aside>
+
+  <main class="dash-main">
+
+    <section id="overview" class="section active">
+      <h2>Welcome back</h2>
+      <p class="mt-0 muted">Recruiter access — post roles and review AI-matched candidates for your company.</p>
+      <div class="grid grid-3 mt-2" id="overviewStats"></div>
+    </section>
+
+    <section id="company" class="section">
+      <h2>Company</h2>
+      <div class="card mt-2" id="companyCard"></div>
+    </section>
+
+    <section id="postjob" class="section">
+      <h2>Post a job, internship, or training</h2>
+      <div class="card mt-2">
+        <form id="jobForm">
+          <div class="grid grid-2">
+            <div class="field"><label>Title</label><input id="j_title" required></div>
+            <div class="field"><label>Type</label>
+              <select id="j_type"><option value="job">Job</option><option value="internship">Internship</option><option value="training">Training</option></select>
+            </div>
+            <div class="field"><label>Location</label><input id="j_location"></div>
+            <div class="field"><label>District</label><input id="j_district"></div>
+          </div>
+          <div class="field"><label>Description</label><textarea id="j_desc"></textarea></div>
+          <div class="field">
+            <label>Required skills</label>
+            <div class="flex gap-1">
+              <select id="skillSelect" style="flex:1;"></select>
+              <select id="profSelect">
+                <option value="beginner">Beginner</option><option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option><option value="expert">Expert</option>
+              </select>
+              <button type="button" class="btn btn-ghost btn-sm" onclick="addSkillToJob()">Add</button>
+            </div>
+            <div id="jobSkillChips" class="mt-1"></div>
+          </div>
+          <button class="btn btn-primary" type="submit">Post job</button>
+        </form>
+      </div>
+    </section>
+
+    <section id="myjobs" class="section">
+      <h2>Jobs &amp; candidates</h2>
+      <div id="myJobsList" class="mt-2"></div>
+    </section>
+
+    <!-- VERIFICATIONS (SIH26135) -->
+    <section id="verifications" class="section">
+      <div class="flex-between">
+        <div>
+          <h2>Institute / Recruiter Outcome Corroboration (Level 2 / 3)</h2>
+          <p class="mt-0">Attest candidate 30, 90, 180, and 365-day milestone reports to establish official verified credibility.</p>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="loadVerifications()">Refresh List</button>
+      </div>
+      <div class="mt-2" id="verificationsList"></div>
+    </section>
+
+  </main>
+</div>
+
+<script src="/js/shared.js"></script>
+<script>
+  const user = requireLogin('employee');
+  renderUserBadge('userBadge');
+
+  document.querySelectorAll('.dash-side a').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      document.querySelectorAll('.dash-side a').forEach(l => l.classList.remove('active'));
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      link.classList.add('active');
+      document.getElementById(link.dataset.section).classList.add('active');
+    });
+  });
+
+  let jobSkills = [];
+
+  async function loadOverview() {
+    const { jobs } = await api('/industry/jobs');
+    document.getElementById('overviewStats').innerHTML = `
+      <div class="card"><div class="stat-num">${jobs.length}</div><div class="muted">Jobs posted (company-wide)</div></div>
+      <div class="card"><div class="stat-num">${jobs.filter(j=>j.status==='open').length}</div><div class="muted">Currently open</div></div>
+    `;
+  }
+
+  async function loadCompany() {
+    const { company } = await api('/industry/profile');
+    document.getElementById('companyCard').innerHTML = company.company_name ? `
+      <h3>${company.company_name}</h3>
+      <p class="muted mt-0">${company.industry_sector || ''} &middot; ${company.district || ''}</p>
+      <p>${company.description || 'No description yet.'}</p>
+      <p class="muted">Company profile is managed by your Industry account holder.</p>
+    ` : `<p class="empty-state">No company profile set up yet by your organization.</p>`;
+  }
+
+  async function loadSkillsForJob() {
+    const { skills } = await api('/public/skills-master');
+    document.getElementById('skillSelect').innerHTML = skills.map(s => `<option value="${s.id}" data-name="${s.name}">${s.name}</option>`).join('');
+  }
+
+  function addSkillToJob() {
+    const sel = document.getElementById('skillSelect');
+    const opt = sel.options[sel.selectedIndex];
+    if (!opt) return;
+    const skill_id = Number(opt.value);
+    const required_proficiency = document.getElementById('profSelect').value;
+    if (jobSkills.find(s => s.skill_id === skill_id)) return;
+    jobSkills.push({ skill_id, name: opt.dataset.name, required_proficiency });
+    renderJobSkillChips();
+  }
+  function removeJobSkill(id) { jobSkills = jobSkills.filter(s => s.skill_id !== id); renderJobSkillChips(); }
+  function renderJobSkillChips() {
+    document.getElementById('jobSkillChips').innerHTML = jobSkills.map(s => `
+      <span class="pill pill-signal" style="margin-right:6px;">${s.name} · ${s.required_proficiency}
+        <a href="#" onclick="removeJobSkill(${s.skill_id});return false;" style="color:inherit;margin-left:4px;">✕</a>
+      </span>`).join('');
+  }
+
+  document.getElementById('jobForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    try {
+      await api('/industry/jobs', { method: 'POST', body: {
+        title: j_title.value, description: j_desc.value, job_type: j_type.value,
+        location: j_location.value, district: j_district.value, skills: jobSkills
+      }});
+      toast('Job posted.');
+      e.target.reset();
+      jobSkills = []; renderJobSkillChips();
+      loadOverview(); loadMyJobs();
+    } catch (err) { toast(err.message, true); }
+  });
+
+  async function loadMyJobs() {
+    const { jobs } = await api('/industry/jobs');
+    const container = document.getElementById('myJobsList');
+    if (!jobs.length) { container.innerHTML = `<p class="empty-state">No jobs posted yet.</p>`; return; }
+    container.innerHTML = jobs.map(j => `
+      <div class="card mt-2">
+        <div class="flex-between">
+          <div><h3>${j.title}</h3><p class="muted mt-0">${j.job_type} &middot; ${j.location || ''} &middot; <span class="pill">${j.status}</span></p></div>
+          <button class="btn btn-primary btn-sm" onclick="loadCandidates(${j.id})">View candidates</button>
+        </div>
+        <div id="candidates-${j.id}" class="mt-2"></div>
+      </div>
+    `).join('');
+  }
+
+  async function loadCandidates(jobId) {
+    try {
+      const { candidates } = await api(`/industry/jobs/${jobId}/candidates`);
+      const box = document.getElementById(`candidates-${jobId}`);
+      box.innerHTML = candidates.length ? candidates.map(c => `
+        <div class="candidate-row">
+          <div class="candidate-head">
+            <div><strong>${c.name}</strong><p class="muted mt-0">${c.district || ''}</p></div>
+            <span class="pill ${scoreColor(c.matchScore)}">${c.matchScore}% match</span>
+          </div>
+          ${c.missingSkills.length ? `<p class="muted">Missing: ${c.missingSkills.join(', ')}</p>` : ''}
+          <select onchange="updateAppStatus(${c.applicationId}, this.value, ${jobId})" style="max-width:160px;">
+            <option value="applied" ${c.status==='applied'?'selected':''}>Applied</option>
+            <option value="shortlisted" ${c.status==='shortlisted'?'selected':''}>Shortlisted</option>
+            <option value="interview" ${c.status==='interview'?'selected':''}>Interview</option>
+            <option value="offered" ${c.status==='offered'?'selected':''}>Offered</option>
+            <option value="hired" ${c.status==='hired'?'selected':''}>Hired</option>
+            <option value="rejected" ${c.status==='rejected'?'selected':''}>Rejected</option>
+          </select>
+        </div>
+      `).join('') : `<p class="empty-state">No applicants yet.</p>`;
+    } catch (err) { toast(err.message, true); }
+  }
+
+  async function updateAppStatus(applicationId, status, jobId) {
+    try {
+      await api(`/industry/applications/${applicationId}/status`, { method: 'PUT', body: { status } });
+      toast('Candidate status updated.');
+      loadCandidates(jobId);
+    } catch (err) { toast(err.message, true); }
+  }
+
+  async function loadVerifications() {
+    try {
+      const res = await api('/industry/pending-verifications');
+      const container = document.getElementById('verificationsList');
+      const records = res.records || [];
+
+      if (!records.length) {
+        container.innerHTML = `<p class="empty-state">No pending candidate outcome records to corroborate.</p>`;
+        return;
+      }
+
+      const levelBadges = {
+        'self_reported': '<span class="pill pill-level1">Level 1: Self-Reported</span>',
+        'institute_verified': '<span class="pill pill-level2">Level 2: Institute Verified</span>',
+        'employer_verified': '<span class="pill pill-level3">Level 3: Employer Verified</span>'
+      };
+
+      container.innerHTML = `
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          ${records.map(r => `
+            <div class="card" style="border:1px solid var(--line); border-left:4px solid ${r.verification_level === 'employer_verified' ? '#059669' : (r.verification_level === 'institute_verified' ? '#2563EB' : '#D97706')};">
+              <div class="flex-between">
+                <div>
+                  <h3 style="margin:0 0 4px;">${escapeHtml(r.student_name)}</h3>
+                  <div class="muted" style="font-size:0.85rem;">
+                    ${escapeHtml(r.student_email)} &middot; College: <strong>${escapeHtml(r.college || '—')}</strong> &middot; District: <strong>${escapeHtml(r.student_district || r.location_district || '—')}</strong>
+                  </div>
+                </div>
+                <div>
+                  ${levelBadges[r.verification_level] || levelBadges.self_reported}
+                  <span class="pill" style="margin-left:6px;">${r.milestone_days} Days Horizon</span>
+                </div>
+              </div>
+
+              <div class="grid grid-3 mt-2" style="background:var(--paper); padding:8px 12px; border-radius:4px; font-size:0.88rem;">
+                <div><strong>Role:</strong> ${escapeHtml(r.job_title || '—')}</div>
+                <div><strong>Employer:</strong> ${escapeHtml(r.employer_name || '—')}</div>
+                <div><strong>Salary:</strong> ${r.monthly_salary ? `₹${Number(r.monthly_salary).toLocaleString('en-IN')}/mo` : 'Unspecified'}</div>
+              </div>
+
+              ${r.outcome_type === 'seeking' && r.unemployment_reason ? `
+                <div style="background:#FFFBEB; border:1px solid #FDE68A; border-radius:4px; padding:6px 10px; margin-top:8px; font-size:0.85rem; color:#92400E;">
+                  <strong>Candidate Barrier:</strong> ${escapeHtml(r.unemployment_reason.replace(/_/g, ' '))}
+                  ${r.unemployment_notes ? `— <em>"${escapeHtml(r.unemployment_notes)}"</em>` : ''}
+                </div>
+              ` : ''}
+
+              <div class="flex gap-2 mt-2" style="align-items:center; justify-content:flex-end;">
+                <input type="text" id="emp_notes_${r.id}" placeholder="Institutional Corroboration Notes" value="${r.follow_up_notes || ''}" style="width:280px; padding:6px 10px; font-size:0.85rem;">
+                <button class="btn btn-primary btn-sm" onclick="verifyRecord(${r.id})">
+                  ${r.verification_level === 'institute_verified' ? '✓ Update Verification' : '✓ Corroborate Outcome (Level 2)'}
+                </button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    } catch (err) {
+      console.error('Error loading verifications:', err);
+    }
+  }
+
+  async function verifyRecord(recordId) {
+    const notes = document.getElementById(`emp_notes_${recordId}`).value;
+
+    try {
+      const res = await api(`/industry/verifications/${recordId}`, {
+        method: 'PUT',
+        body: { notes }
+      });
+      toast(res.message || 'Milestone corroborated!');
+      await loadVerifications();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  (async function init() {
+    await loadOverview();
+    await loadCompany();
+    await loadSkillsForJob();
+    await loadMyJobs();
+    await loadVerifications();
+  })();
+</script>
+</body>
+</html>

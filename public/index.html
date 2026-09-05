@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkillTrack — Unified Skills-to-Job &amp; Longitudinal Outcome Tracking Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<style>
+  .hero-wrapper { padding: 60px 0 50px; background: linear-gradient(180deg, #F8FAFC 0%, var(--paper) 100%); }
+  .hero-grid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 40px; align-items: center; }
+  .hero-headline { font-size: 3.2rem; line-height: 1.1; margin-bottom: 18px; }
+  .hero-headline span { color: #2563EB; }
+  .hero-subtitle { font-size: 1.15rem; color: #475569; line-height: 1.6; margin-bottom: 28px; }
+  
+  .stats-banner-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    padding: 36px 0;
+    border-bottom: 1px solid var(--line);
+    text-align: center;
+  }
+  .stat-card-item .metric-big {
+    font-family: var(--font-display);
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--slate-deep);
+  }
+  .stat-card-item .metric-title { font-size: 0.92rem; font-weight: 700; color: #1E293B; margin-top: 4px; }
+  .stat-card-item .metric-sub { font-size: 0.78rem; color: #64748B; margin-top: 2px; }
+
+  .footer-official {
+    background: #0B1526;
+    color: #94A3B8;
+    padding: 60px 0 30px;
+    font-size: 0.88rem;
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 40px;
+  }
+  .footer-official h4 { color: #F8FAFC; font-size: 0.95rem; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .footer-official a { color: #94A3B8; text-decoration: none; display: block; margin-bottom: 8px; }
+  .footer-official a:hover { color: #38BDF8; }
+  .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; text-align: center; font-size: 0.8rem; }
+</style>
+</head>
+<body>
+
+<!-- Live Telemetry Ticker Header Strip (Inspired by State Workforce Infrastructure) -->
+<header class="telemetry-ticker-bar">
+  <div class="telemetry-live-badge">
+    <span class="telemetry-dot"></span>
+    <strong>State Telemetry Live:</strong> Technical Education &amp; Industrial Apprenticeship Portal
+  </div>
+  <div class="telemetry-metrics-strip">
+    <div class="telemetry-item"><span>Active Trainees:</span> <span class="telemetry-val">2,48,572</span></div>
+    <div class="telemetry-item"><span>1-Year Retention:</span> <span class="telemetry-val" style="color:#4ADE80;">92.4%</span></div>
+    <div class="telemetry-item"><span>Audit Status:</span> <span class="telemetry-tag-pill">Compliant (Data-MM-E)</span></div>
+  </div>
+</header>
+
+<!-- Main Navigation -->
+<nav class="topnav">
+  <a href="/index.html" class="brand">
+    <span class="brand-mark">ST</span>
+    <span class="brand-name">SkillTrack <small style="font-size:0.7rem; font-weight:normal; color:var(--ink-soft); margin-left:4px;">MSDCE</small></span>
+  </a>
+  <div class="nav-links">
+    <a href="#pillars">Foundational Pillars</a>
+    <a href="#roles">Five Stakeholders</a>
+    <a href="/login.html">Sign In</a>
+    <a href="/register.html" class="btn btn-primary btn-sm">Register Account</a>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero-wrapper">
+  <div class="container hero-grid">
+    <div>
+      <div class="gov-badge">
+        <span style="color:#2563EB;">●</span> State Verified Workforce Infrastructure • SIH26135
+      </div>
+      <h1 class="hero-headline">Unified Skills-to-Job <span>Tracking Platform</span></h1>
+      <p class="hero-subtitle">
+        A comprehensive digital decision-support framework connecting students, accredited vocational institutes, industrial employers, and state governance to ensure high-retention technical employment.
+      </p>
+      <div class="flex gap-1">
+        <a href="/register.html" class="btn btn-primary">Register Your Account</a>
+        <a href="/login.html" class="btn btn-ghost">Sign In to Portal</a>
+      </div>
+      <div class="flex gap-2 mt-3" style="font-size:0.85rem; color:#475569;">
+        <span><strong style="color:#10B981;">✓</strong> Verified Aadhaar &amp; DigiLocker e-KYC</span>
+        <span><strong style="color:#10B981;">✓</strong> Tamper-Proof QR Skill Passports</span>
+      </div>
+    </div>
+
+    <!-- Live Telemetry Card (Hero Right) -->
+    <div class="hero-telemetry-card">
+      <div class="telemetry-card-head">
+        <div>
+          <span style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:#2563EB;">Live Telemetry</span>
+          <h3 style="margin:2px 0 0; font-size:1.8rem; color:var(--slate-deep);">2,48,572</h3>
+          <span style="font-size:0.8rem; color:#64748B;">Active Trainees Enrolled Statewide</span>
+        </div>
+        <div style="display:flex; gap:4px;">
+          <span style="width:8px; height:8px; border-radius:50%; background:#EF4444;"></span>
+          <span style="width:8px; height:8px; border-radius:50%; background:#F59E0B;"></span>
+          <span style="width:8px; height:8px; border-radius:50%; background:#10B981;"></span>
+        </div>
+      </div>
+
+      <!-- District Distribution Bar Chart -->
+      <div class="telemetry-district-bars">
+        <div class="telemetry-bar-col">
+          <div class="telemetry-bar-fill" style="height: 85%;"></div>
+          <span class="telemetry-bar-label">Pune</span>
+        </div>
+        <div class="telemetry-bar-col">
+          <div class="telemetry-bar-fill" style="height: 54%; background:#60A5FA;"></div>
+          <span class="telemetry-bar-label">Nagpur</span>
+        </div>
+        <div class="telemetry-bar-col">
+          <div class="telemetry-bar-fill" style="height: 48%; background:#93C5FD;"></div>
+          <span class="telemetry-bar-label">Nashik</span>
+        </div>
+        <div class="telemetry-bar-col">
+          <div class="telemetry-bar-fill" style="height: 68%; background:#3B82F6;"></div>
+          <span class="telemetry-bar-label">Thane</span>
+        </div>
+      </div>
+
+      <div class="retention-highlight-banner">
+        <div style="width:36px; height:36px; border-radius:50%; background:#DCFCE7; display:flex; align-items:center; justify-content:center; color:#166534; font-weight:700; font-size:1.1rem;">
+          ✓
+        </div>
+        <div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <strong style="font-size:1.2rem; color:#166534;">92.4%</strong>
+            <span style="font-size:0.7rem; background:#DCFCE7; color:#166534; padding:1px 6px; border-radius:4px; font-weight:700;">State Highest</span>
+          </div>
+          <span style="font-size:0.8rem; color:#15803D;">Sustained 12-Month Job Retention Rate</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Accredited Education Partners & Regulatory Bodies -->
+<div class="edu-trust-banner">
+  <div class="container">
+    <div class="edu-trust-header">National Curriculum, Vocational Accreditation &amp; Regulatory Partners</div>
+    <div class="edu-trust-grid">
+      <!-- MSBTE -->
+      <div class="edu-partner-badge" title="Maharashtra State Board of Technical Education">
+        <svg width="30" height="30" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="16" cy="16" r="15" fill="#0D47A1" stroke="#FFD54F" stroke-width="1.5"/>
+          <path d="M16 6 L20 12 L16 11 L12 12 Z" fill="#FFD54F"/>
+          <circle cx="16" cy="18" r="6" fill="#1565C0" stroke="#FFF" stroke-width="1.2"/>
+          <text x="16" y="20.5" font-size="7" font-weight="900" fill="#FFF" text-anchor="middle" font-family="Arial, sans-serif">TE</text>
+        </svg>
+        <div class="edu-partner-info">
+          <span class="edu-partner-code">MSBTE</span>
+          <span class="edu-partner-label">State Technical Board</span>
+        </div>
+      </div>
+
+      <!-- AICTE -->
+      <div class="edu-partner-badge" title="All India Council for Technical Education">
+        <svg width="30" height="30" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="16" cy="16" r="15" fill="#BF360C" stroke="#FFE082" stroke-width="1.5"/>
+          <path d="M16 7 C12 10, 10 15, 10 20 C13 18, 19 18, 22 20 C22 15, 20 10, 16 7 Z" fill="#FFE082"/>
+          <circle cx="16" cy="19" r="4" fill="#E65100" stroke="#FFF" stroke-width="1"/>
+          <polygon points="16,11 18,16 14,16" fill="#FFF"/>
+        </svg>
+        <div class="edu-partner-info">
+          <span class="edu-partner-code">AICTE</span>
+          <span class="edu-partner-label">National Apex Body</span>
+        </div>
+      </div>
+
+      <!-- Skill India / NSDC -->
+      <div class="edu-partner-badge" title="Skill India & NSDC National Standards">
+        <svg width="30" height="30" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="16" cy="16" r="15" fill="#1B5E20" stroke="#81C784" stroke-width="1.5"/>
+          <path d="M16 6 L18 13 L25 14 L20 18 L22 25 L16 21 L10 25 L12 18 L7 14 L14 13 Z" fill="#FFB300"/>
+          <circle cx="16" cy="16" r="4" fill="#0D5302" stroke="#FFF" stroke-width="1"/>
+          <text x="16" y="18" font-size="6" font-weight="900" fill="#FFF" text-anchor="middle" font-family="Arial, sans-serif">SI</text>
+        </svg>
+        <div class="edu-partner-info">
+          <span class="edu-partner-code">Skill India</span>
+          <span class="edu-partner-label">NSDC Standards</span>
+        </div>
+      </div>
+
+      <!-- NCVET -->
+      <div class="edu-partner-badge" title="National Council for Vocational Education and Training">
+        <svg width="30" height="30" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="30" height="30" x="1" y="1" rx="6" fill="#311B92" stroke="#B388FF" stroke-width="1.5"/>
+          <path d="M7 11 L16 8 L25 11 L25 19 C25 24, 16 27, 16 27 C16 27, 7 24, 7 19 Z" fill="#4A148C" stroke="#EA80FC" stroke-width="1"/>
+          <path d="M11 16 L14 19 L21 12" stroke="#69F0AE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="edu-partner-info">
+          <span class="edu-partner-code">NCVET</span>
+          <span class="edu-partner-label">Vocational Standard</span>
+        </div>
+      </div>
+
+      <!-- MoE / NPTEL -->
+      <div class="edu-partner-badge" title="Ministry of Education & NPTEL">
+        <svg width="30" height="30" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="16" cy="16" r="15" fill="#4527A0" stroke="#D1C4E9" stroke-width="1.5"/>
+          <polygon points="16,8 24,13 16,18 8,13" fill="#FFE082"/>
+          <path d="M11 16 L11 22 C11 24, 21 24, 21 22 L21 16" stroke="#FFE082" stroke-width="1.5" fill="none"/>
+        </svg>
+        <div class="edu-partner-info">
+          <span class="edu-partner-code">MoE / NPTEL</span>
+          <span class="edu-partner-label">IIT Curated</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 4 Key Metrics Strip -->
+<div class="container">
+  <div class="stats-banner-strip">
+    <div class="stat-card-item">
+      <div class="metric-big">450+</div>
+      <div class="metric-title">Accredited Institutes</div>
+      <div class="metric-sub">Government &amp; Aided Polytechnic / ITI</div>
+    </div>
+    <div class="stat-card-item">
+      <div class="metric-big" style="color:#2563EB;">1,200+</div>
+      <div class="metric-title">Industry Hiring Partners</div>
+      <div class="metric-sub">Automotive, IT, Cloud &amp; Manufacturing</div>
+    </div>
+    <div class="stat-card-item">
+      <div class="metric-big" style="color:#059669;">94.2%</div>
+      <div class="metric-title">Skill Audit Compliance</div>
+      <div class="metric-sub">Verified syllabus &amp; live assessments</div>
+    </div>
+    <div class="stat-card-item">
+      <div class="metric-big" style="color:#7C3AED;">36 Districts</div>
+      <div class="metric-title">Unified Coverage</div>
+      <div class="metric-sub">Statewide Central Outcome Grid</div>
+    </div>
+  </div>
+</div>
+
+<!-- Four Foundational Pillars Section (Directly from User Design) -->
+<section class="pillars-section container" id="pillars">
+  <div style="text-align:center; max-width:680px; margin:0 auto 40px;">
+    <span class="telemetry-tag-pill" style="background:#E0E7FF; color:#3730A3;">END-TO-END ARCHITECTURE</span>
+    <h2 style="font-size:2.4rem; margin:10px 0 6px;">Four Foundational Pillars</h2>
+    <p style="margin:0 auto; color:#64748B;">
+      A state-monitored lifecycle guaranteeing that every student transitions successfully from technical training to sustainable career growth.
+    </p>
+  </div>
+
+  <div class="grid grid-2" style="gap:24px;">
+
+    <!-- Pillar 01 -->
+    <div class="pillar-card">
+      <div class="pillar-header">
+        <div class="pillar-icon-box" style="color:#2563EB;">📖</div>
+        <span class="pillar-num">Pillar 01</span>
+      </div>
+      <h3 style="margin:0;">Skill Training &amp; Quizzes</h3>
+      <p style="margin:0; font-size:0.92rem; color:#475569;">
+        Accredited technical curriculum directly mapped to industrial requirements. Modular lessons, company-authored MCQ quizzes, and automated skill verification.
+      </p>
+      <div class="pillar-profile-spotlight">
+        <div style="font-weight:700; color:#1E293B;">Student Profile Focus</div>
+        <div style="color:#2563EB; font-weight:600; margin-top:2px;">Rohit Patil • 34 Modules Completed</div>
+        <div style="font-size:0.78rem; color:#64748B;">Curriculum: Full-Stack Cloud Engineering • State Exam Verified</div>
+      </div>
+    </div>
+
+    <!-- Pillar 02 -->
+    <div class="pillar-card">
+      <div class="pillar-header">
+        <div class="pillar-icon-box" style="color:#7C3AED;">🖥️</div>
+        <span class="pillar-num">Pillar 02</span>
+      </div>
+      <h3 style="margin:0;">Academic Mentorship &amp; Verification</h3>
+      <p style="margin:0; font-size:0.92rem; color:#475569;">
+        Faculty-led oversight, capstone project reviews, and Level 2 Institute Verification ensure student employment and credentials reflect genuine workplace readiness.
+      </p>
+      <div class="pillar-profile-spotlight">
+        <div style="font-weight:700; color:#1E293B;">Faculty Supervisor</div>
+        <div style="color:#7C3AED; font-weight:600; margin-top:2px;">Prof. Arvind Joshi • Lead Evaluator</div>
+        <div style="font-size:0.78rem; color:#64748B;">Domain: AI &amp; Distributed Architecture • Certified State Mentor</div>
+      </div>
+    </div>
+
+    <!-- Pillar 03 -->
+    <div class="pillar-card">
+      <div class="pillar-header">
+        <div class="pillar-icon-box" style="color:#059669;">💼</div>
+        <span class="pillar-num">Pillar 03</span>
+      </div>
+      <h3 style="margin:0;">Direct Industry Placement</h3>
+      <p style="margin:0; font-size:0.92rem; color:#475569;">
+        Direct algorithmic pipeline matching qualified trainees to enterprise requirements with live candidate pipelines, interview scheduling, and Level 3 Employer Verification.
+      </p>
+      <div class="pillar-profile-spotlight">
+        <div style="font-weight:700; color:#1E293B;">Direct Placement Engine</div>
+        <div style="color:#059669; font-weight:600; margin-top:2px;">1,200+ Enterprise Recruiters • Avg Hiring Velocity: 14 Days</div>
+        <div style="font-size:0.78rem; color:#64748B;">Instant State Offer Verification &amp; Standardized Remuneration</div>
+      </div>
+    </div>
+
+    <!-- Pillar 04 -->
+    <div class="pillar-card">
+      <div class="pillar-header">
+        <div class="pillar-icon-box" style="color:#F59E0B;">🔄</div>
+        <span class="pillar-num">Pillar 04</span>
+      </div>
+      <h3 style="margin:0;">Sustained Retention Follow-Up</h3>
+      <p style="margin:0; font-size:0.92rem; color:#475569;">
+        Automated 30, 90, 180, and 365-day post-placement milestone tracking ensuring career longevity, wage growth progression, and actionable root-cause analysis for unplaced youth.
+      </p>
+      <div class="pillar-profile-spotlight">
+        <div style="font-weight:700; color:#1E293B;">Trainee Digital Passport</div>
+        <div style="color:#B45309; font-weight:600; margin-top:2px;">Ayesha Khan • 12-Month Milestone Active</div>
+        <div style="font-size:0.78rem; color:#64748B;">Credential: Cyber-Physical Systems Lead • 1-Year Retention Confirmed</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Official State Verification CTA Box -->
+<div class="container">
+  <div class="state-cta-box">
+    <div>
+      <div style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:#38BDF8; letter-spacing:0.05em; margin-bottom:8px;">
+        OFFICIAL STATE VERIFICATION
+      </div>
+      <h3 style="margin:0 0 10px;">Are you a Trainee, College Principal, or Industrial Recruiter?</h3>
+      <p>
+        Verify trainee certificates, report employment milestones across 30, 90, 180, and 365 days, or inspect regional skill gap analytics in seconds on the unified state infrastructure.
+      </p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:10px; align-items:flex-start;">
+      <a href="/government.html" class="btn btn-primary" style="width:100%; text-align:center;">Access State Dashboard</a>
+      <a href="/login.html" class="btn btn-ghost" style="width:100%; text-align:center; color:#fff; border-color:rgba(255,255,255,0.3);">Validate Trainee Journey</a>
+    </div>
+  </div>
+</div>
+
+<!-- 5 Connected Stakeholders Section -->
+<section class="roles container" id="roles" style="padding-top:0;">
+  <h2>Built for Five Connected Stakeholders</h2>
+  <p class="mt-0 mb-3">
+    Each role connects to a unified relational database to create an unbroken continuum from training to long-term career progression.
+  </p>
+  <div class="grid grid-3 mt-2">
+
+    <!-- Student -->
+    <div class="card role-card">
+      <span class="tag">01 • Student</span>
+      <h3>Learn, Verify, Get Hired &amp; Progress</h3>
+      <ul>
+        <li>Permanent profile photo (DP) &amp; contact verification</li>
+        <li>Employability Readiness Score (0-100)</li>
+        <li>AI Skill Gap &amp; 5-Step Learning Pathway</li>
+        <li>30, 90, 180, 365-day follow-up reporting</li>
+        <li>Interactive company MCQ quizzes &amp; interviews</li>
+      </ul>
+      <div class="role-actions">
+        <a href="/register.html?role=student" class="btn btn-primary btn-sm">Join as Student</a>
+      </div>
+    </div>
+
+    <!-- Industry -->
+    <div class="card role-card">
+      <span class="tag">02 • Industry Employer</span>
+      <h3>Hire &amp; Verify Production Talent</h3>
+      <ul>
+        <li>Post jobs &amp; technical skill requirements</li>
+        <li>Publish modular training courses &amp; MCQ quizzes</li>
+        <li>Candidate pipeline with quiz scores &amp; interview scheduling</li>
+        <li>Level 3 Employer Placement &amp; Retention Verification</li>
+      </ul>
+      <div class="role-actions">
+        <a href="/register.html?role=industry" class="btn btn-primary btn-sm">Join as Employer</a>
+      </div>
+    </div>
+
+    <!-- Training Institute / Mentor -->
+    <div class="card role-card">
+      <span class="tag">03 • Training Institute / Faculty</span>
+      <h3>Accredit &amp; Verify Placements</h3>
+      <ul>
+        <li>Manage courses, lessons, and batch completions</li>
+        <li>Review student milestone submissions</li>
+        <li>Level 2 Institute Outcome Verification</li>
+        <li>Monitor college completion and placement rates</li>
+      </ul>
+      <div class="role-actions">
+        <a href="/register.html?role=employee" class="btn btn-primary btn-sm">Join as Institute</a>
+      </div>
+    </div>
+
+    <!-- Government -->
+    <div class="card role-card">
+      <span class="tag">04 • Government &amp; Governance</span>
+      <h3>Outcome-Based Decision Support</h3>
+      <ul>
+        <li>30, 90, 180, 365-day retention analytics &amp; salary curves</li>
+        <li>Regional AI Skill Gap (Industry Demand vs Student Supply)</li>
+        <li>Automated policy &amp; curriculum reform recommendations</li>
+        <li>Unemployment root-cause diagnostics &amp; institute audits</li>
+      </ul>
+      <div class="role-actions">
+        <a href="/government.html" class="btn btn-primary btn-sm">Government Portal</a>
+      </div>
+    </div>
+
+    <!-- Investor / CSR -->
+    <div class="card role-card">
+      <span class="tag">05 • Impact Investor / CSR</span>
+      <h3>Measure Social Return on Investment</h3>
+      <ul>
+        <li>Aggregate employment conversion &amp; wage metrics</li>
+        <li>District-level outcomes and retention longevity</li>
+        <li>Outcome-based program efficiency evaluations</li>
+      </ul>
+      <div class="role-actions">
+        <a href="/register.html?role=investor" class="btn btn-primary btn-sm">Investor Portal</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Official Footer -->
+<footer class="footer-official">
+  <div class="container footer-grid">
+    <div>
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+        <span style="font-weight:700; color:#fff; font-size:1.2rem;">SKILLTRACK</span>
+        <span style="font-size:0.75rem; background:#1E293B; color:#38BDF8; padding:2px 6px; border-radius:4px;">MSDCE</span>
+      </div>
+      <p style="color:#94A3B8; font-size:0.85rem; line-height:1.6;">
+        Unified Skills-to-Job Infrastructure operated in governance with the Directorate of Technical Education and Vocational Training. State Verified Workforce Analytics.
+      </p>
+      <div style="display:flex; align-items:center; gap:6px; font-size:0.8rem; color:#4ADE80; margin-top:12px;">
+        <span style="width:8px; height:8px; border-radius:50%; background:#22C55E;"></span>
+        All State Regional Nodes Operational
+      </div>
+    </div>
+
+    <div>
+      <h4>For Trainees</h4>
+      <a href="/register.html?role=student">Candidate Registration</a>
+      <a href="/student.html">Digital Skill Passport</a>
+      <a href="/student.html">Longitudinal Milestones</a>
+      <a href="/student.html">Employability Readiness</a>
+    </div>
+
+    <div>
+      <h4>Institutions</h4>
+      <a href="/employee.html">College Accreditation</a>
+      <a href="/employee.html">Placement Verification</a>
+      <a href="/employee.html">Curriculum Mapping</a>
+      <a href="/government.html">Performance Audits</a>
+    </div>
+
+    <div>
+      <h4>Governance</h4>
+      <a href="/government.html">Retention Telemetry</a>
+      <a href="/government.html">Regional Skill Gaps</a>
+      <a href="/government.html">Unemployment Root Causes</a>
+      <a href="/government.html">Audit &amp; Compliance</a>
+    </div>
+  </div>
+
+  <div class="container footer-bottom">
+    &copy; 2026 SkillTrack Platform. State Unified Skills-to-Employment Infrastructure. All Rights Reserved.
+  </div>
+</footer>
+
+<script src="/js/shared.js"></script>
+</body>
+</html>

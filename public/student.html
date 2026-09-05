@@ -1,0 +1,2780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Dashboard — SkillBridge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<style>
+  .section { display: none; } .section.active { display: block; }
+  .skill-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .job-card { border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; margin-bottom: 14px; background: var(--panel); }
+  .job-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .project-actions { display: flex; gap: 8px; margin-top: auto; padding-top: 14px; }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="/index.html" class="brand"><span class="brand-mark">ST</span><span class="brand-name">SkillTrack</span></a>
+  <div id="userBadge" class="flex gap-1"></div>
+</nav>
+
+<div class="dash">
+  <aside class="dash-side">
+    <a href="#" data-section="overview" class="active">Dashboard</a>
+    <a href="#" data-section="profile">Profile</a>
+    <a href="#" data-section="skills">Skills</a>
+    <a href="#" data-section="training">Training</a>
+    <a href="#" data-section="certificates">Certificates</a>
+    <a href="#" data-section="projects">Projects</a>
+    <a href="#" data-section="ai-skill-gap">AI Skill Gap</a>
+    <a href="#" data-section="learning-plan">Learning Plan</a>
+    <a href="#" data-section="jobs">Jobs</a>
+    <a href="#" data-section="employment">Employment</a>
+    <a href="#" data-section="followups">Follow-ups</a>
+    <a href="#" data-section="notifications">Notifications</a>
+    <a href="#" data-section="settings">Settings</a>
+  </aside>
+
+  <main class="dash-main">
+
+    <!-- 1. DASHBOARD OVERVIEW -->
+    <section id="overview" class="section active">
+      <div class="flex-between">
+        <div>
+          <h2>Welcome back, <span id="studentWelcomeName">Student</span></h2>
+          <p class="mt-0">Real-time overview of your learning progression, AI skill intelligence, and verified career milestones.</p>
+          <div class="flex gap-1 mt-1" style="align-items:center; flex-wrap:wrap;">
+            <span class="pill" style="background:#0F172A; color:#38BDF8; font-family:monospace; font-weight:700; font-size:0.85rem; padding:4px 10px; border:1px solid #1E293B;">
+              Trainee ID: <span id="overviewTraineeId">ST-2026-TR-0000</span>
+            </span>
+            <button type="button" class="btn btn-ghost btn-xs" onclick="copyOverviewTraineeId()" title="Copy Trainee ID" style="padding:2px 8px; font-size:0.75rem;">📋 Copy ID</button>
+            <span id="overviewConsentBadge" class="pill pill-good" style="font-size:0.78rem; padding:3px 10px;">
+              ✓ Workforce Tracking Consent Active
+            </span>
+          </div>
+        </div>
+        <div class="flex gap-1" style="align-items:flex-start;">
+          <button class="btn btn-accent btn-sm" onclick="showSection('ai-skill-gap')">Analyze Skill Gap</button>
+          <button class="btn btn-primary btn-sm" onclick="showSection('learning-plan')">My Learning Plan</button>
+        </div>
+      </div>
+
+      <!-- EMPLOYABILITY READINESS INDICATOR (EXPLAINABLE AI) -->
+      <div class="readiness-container mt-2">
+        <div class="readiness-score-display">
+          <div class="readiness-circle" id="readinessGaugeCircle">
+            <span class="score-num" id="readinessScoreVal">--</span>
+            <span class="score-max">/ 100</span>
+          </div>
+          <div>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <h3 style="margin:0;" id="readinessTierText">Calculating...</h3>
+              <span id="readinessBadge" class="pill pill-good">Evaluating</span>
+            </div>
+            <p style="margin:6px 0 0; font-size:0.85rem;" id="readinessDisclaimer">
+              A readiness indicator, not a guarantee of employment.
+            </p>
+          </div>
+        </div>
+
+        <h4 class="mt-2" style="font-size:0.95rem; margin-bottom:8px;">Evaluation Factors Breakdown</h4>
+        <div id="readinessFactorsList" class="mt-1"></div>
+      </div>
+
+      <!-- Quick Action Shortcuts -->
+      <div class="quick-action-bar">
+        <a href="#ai-skill-gap" class="quick-action-chip" onclick="showSection('ai-skill-gap')">
+          <span>🎯</span> Run AI Skill Gap Analysis
+        </a>
+        <a href="#learning-plan" class="quick-action-chip" onclick="showSection('learning-plan')">
+          <span>🚀</span> 5-Step Learning Roadmap
+        </a>
+        <a href="#profile" class="quick-action-chip" onclick="showSection('profile'); openLinkedInSyncModal();">
+          <span>💼</span> Optimize for LinkedIn
+        </a>
+        <a href="#certificates" class="quick-action-chip" onclick="showSection('certificates')">
+          <span>📜</span> View &amp; Add Certificates
+        </a>
+        <a href="#jobs" class="quick-action-chip" onclick="showSection('jobs')">
+          <span>🏢</span> Match Target Vacancies
+        </a>
+      </div>
+
+      <!-- Quick Metrics Grid -->
+      <div class="grid grid-4 mt-2" id="overviewStats"></div>
+    </section>
+
+    <!-- 2. EXPANDED PROFILE -->
+    <section id="profile" class="section">
+      <div class="flex-between">
+        <div>
+          <h2>Student Profile &amp; LinkedIn Sync</h2>
+          <p class="mt-0">Comprehensive information for employers, polytechnic institutions, and verification audits.</p>
+        </div>
+        <button type="button" class="btn btn-linkedin btn-sm" onclick="openLinkedInSyncModal()">
+          🔗 LinkedIn Profile Optimizer
+        </button>
+      </div>
+
+      <!-- LINKEDIN PROFILE CARD -->
+      <div class="linkedin-preview-card mt-2">
+        <div class="linkedin-cover-banner"></div>
+        <div class="linkedin-card-content">
+          <div class="flex-between" style="align-items:flex-end; flex-wrap:wrap; gap:12px;">
+            <div class="flex gap-2" style="align-items:flex-end;">
+              <div class="linkedin-avatar-wrapper" id="linkedinAvatarPreview">
+                <span class="avatar-initials avatar-initials-xl">ST</span>
+              </div>
+              <div style="margin-bottom:6px;">
+                <h3 style="margin:0; font-size:1.25rem; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                  <span id="linkedinCardName">Student Name</span>
+                  <span class="pill pill-good" style="font-size:0.72rem; padding:2px 8px;">✓ Verified Candidate</span>
+                  <span id="linkedinCardTraineeId" class="pill" style="background:#EBF3FE; color:#1652B5; font-family:monospace; font-weight:700; font-size:0.75rem; padding:2px 8px; border:1px solid #BFDBFE;">ST-2026-TR-0000</span>
+                </h3>
+                <div class="muted mt-0" style="font-size:0.88rem;" id="linkedinCardHeadline">
+                  Aspiring Professional &middot; SkillTrack Member
+                </div>
+                <div class="muted" style="font-size:0.8rem;" id="linkedinCardLocation">
+                  Pune, Maharashtra &middot; Government Polytechnic Pune
+                </div>
+              </div>
+            </div>
+            <div class="flex gap-1" style="margin-bottom:6px;">
+              <button type="button" class="btn btn-linkedin btn-sm" onclick="openLinkedInSyncModal()">
+                🔗 Export to LinkedIn
+              </button>
+              <a id="linkedinDirectLink" href="https://linkedin.com" target="_blank" class="btn btn-ghost btn-sm" style="display:none;">
+                View Profile
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subtabs mt-2" id="profileTabs">
+        <button type="button" class="subtab-btn active" data-tab="tab-basic">Basic Info</button>
+        <button type="button" class="subtab-btn" data-tab="tab-academic">Academic Details</button>
+        <button type="button" class="subtab-btn" data-tab="tab-professional">Professional &amp; Links</button>
+      </div>
+
+      <div class="card">
+        <form id="expandedProfileForm">
+          
+          <!-- TAB 1: BASIC INFO -->
+          <div id="tab-basic" class="subtab-pane active">
+            <!-- CONSENT-BASED TRAINEE IDENTITY (Feature 1) -->
+            <div class="trainee-identity-card" style="background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); color:#fff; padding:18px 22px; border-radius:10px; margin-bottom:20px; border: 1px solid #334155; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
+              <div class="flex-between" style="flex-wrap:wrap; gap:12px; align-items:center;">
+                <div>
+                  <div style="display:flex; align-items:center; gap:10px;">
+                    <span style="font-size:1.3rem;">🛡️</span>
+                    <h3 style="margin:0; color:#F8FAFC; font-size:1.15rem;">Official Workforce Trainee Identity</h3>
+                    <span id="traineeConsentStatusBadge" class="pill pill-good" style="font-size:0.75rem;">✓ Consent Active</span>
+                  </div>
+                  <p style="margin:6px 0 0; color:#94A3B8; font-size:0.84rem;">
+                    Unique state-registered ID under National Skill Qualification &amp; Apprenticeship tracking.
+                  </p>
+                </div>
+                <div class="flex gap-1" style="align-items:center;">
+                  <div style="background:#1E293B; border:1px solid #475569; padding:8px 14px; border-radius:6px; font-family:monospace; font-size:1.05rem; font-weight:700; color:#38BDF8; letter-spacing:0.5px;" id="traineeIdDisplay">
+                    ST-2026-TR-0000
+                  </div>
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="copyTraineeId()" style="background:#334155; color:#fff; border-color:#475569;">
+                    📋 Copy ID
+                  </button>
+                </div>
+              </div>
+              <div style="border-top:1px solid #334155; margin-top:14px; padding-top:12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; font-size:0.82rem; color:#CBD5E1;">
+                <div id="consentTimestampText">
+                  🔒 Consent granted on registration for authorized state skill tracking, employer verification, and wage analytics.
+                </div>
+                <label style="display:inline-flex; align-items:center; gap:8px; cursor:pointer; color:#E2E8F0; font-weight:500;">
+                  <input type="checkbox" id="profile_consent_toggle" checked onchange="toggleConsent(this.checked)">
+                  Maintain Workforce Tracking Consent
+                </label>
+              </div>
+            </div>
+
+            <!-- PROFILE PHOTO LIFECYCLE (Passport & LinkedIn Sizing Standard: 1:1 Aspect Ratio) -->
+            <div class="flex gap-2" style="align-items:center; margin-bottom: 24px; flex-wrap:wrap; background:#F8FAFC; padding:16px 20px; border-radius:8px; border:1px solid var(--line);">
+              <div class="avatar-preview-box">
+                <div id="avatarPreviewContainer" style="width:80px; height:80px; display:inline-flex; align-items:center; justify-content:center;">
+                  <img id="avatarPreviewImg" class="avatar-preview" src="/uploads/default-avatar.png" onerror="this.src='https://ui-avatars.com/api/?name=Student&background=24344D&color=fff'" alt="Avatar">
+                </div>
+                <span class="passport-badge">LinkedIn / Passport</span>
+              </div>
+              <div style="flex:1; min-width:280px;">
+                <div class="flex-between">
+                  <label style="font-weight:700; font-size:0.92rem; color:var(--slate-deep); display:block; margin-bottom:4px;">
+                    Professional Profile Photo
+                  </label>
+                  <span class="pill pill-good" style="font-size:0.75rem;">1:1 Circular Crop Standard</span>
+                </div>
+                <p class="muted mt-0" style="font-size:0.83rem; margin-bottom:10px;">
+                  Sized to exact passport &amp; LinkedIn profile dimensions (80×80px circular crop). Never stretches or elongates.
+                </p>
+                <div class="flex gap-1" style="flex-wrap:wrap; align-items:center;">
+                  <input type="text" id="avatar_url" placeholder="Paste image URL or upload photo" style="flex:1; min-width:200px;">
+                  <button type="button" class="btn btn-primary btn-sm" onclick="document.getElementById('avatarFileInput').click()">📁 Upload Photo</button>
+                  <button type="button" class="btn btn-danger btn-sm" onclick="removeStudentPhoto()" title="Remove profile photo">❌ Remove Photo</button>
+                  <input type="file" id="avatarFileInput" style="display:none;" accept="image/*" onchange="handleAvatarUpload(this.files[0])">
+                </div>
+                <div class="field-hint" style="margin-top:6px;">
+                  Supports PNG, JPG, WebP up to 10MB. Removing photo automatically activates your official initials badge.
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-2">
+              <div class="field">
+                <label>Full Name <span class="required-star">*</span></label>
+                <input id="p_name" required placeholder="Your full name">
+              </div>
+              <div class="field">
+                <label>Email Address</label>
+                <input id="p_email" disabled style="background:var(--paper); cursor:not-allowed;">
+              </div>
+              <div class="field">
+                <label>Phone Number</label>
+                <input id="phone" placeholder="e.g. +91 9876543210">
+                <div class="field-hint">Valid phone number with country/area code</div>
+              </div>
+              <div class="field">
+                <label>Employment Status</label>
+                <select id="employment_status">
+                  <option value="seeking">Seeking work / internships</option>
+                  <option value="training">Currently in training</option>
+                  <option value="employed">Employed</option>
+                  <option value="unemployed">Unemployed</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>District</label>
+                <input id="district" placeholder="e.g. Hyderabad">
+              </div>
+              <div class="field">
+                <label>State</label>
+                <input id="state" placeholder="e.g. Telangana">
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Headline</label>
+              <input id="headline" placeholder="e.g. Aspiring Full Stack Developer | Computer Science Undergrad">
+            </div>
+
+            <div class="field">
+              <label>About / Bio</label>
+              <textarea id="bio" placeholder="Tell recruiters about yourself, your passions, and goals..."></textarea>
+            </div>
+          </div>
+
+          <!-- TAB 2: ACADEMIC INFO -->
+          <div id="tab-academic" class="subtab-pane">
+            <div class="grid grid-2">
+              <div class="field">
+                <label>College / University</label>
+                <input id="college" placeholder="e.g. Osmania University / JNTUH">
+              </div>
+              <div class="field">
+                <label>Branch / Department</label>
+                <input id="branch" placeholder="e.g. Computer Science and Engineering">
+              </div>
+              <div class="field">
+                <label>Student ID / College Roll No.</label>
+                <input id="college_id" placeholder="e.g. 1604-20-733-001">
+              </div>
+              <div class="field">
+                <label>Current Year</label>
+                <select id="current_year">
+                  <option value="">Select current year</option>
+                  <option value="1st Year">1st Year</option>
+                  <option value="2nd Year">2nd Year</option>
+                  <option value="3rd Year">3rd Year</option>
+                  <option value="4th Year">4th Year</option>
+                  <option value="Graduated">Graduated</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Current Semester</label>
+                <select id="semester">
+                  <option value="">Select semester</option>
+                  <option value="Sem 1">Semester 1</option>
+                  <option value="Sem 2">Semester 2</option>
+                  <option value="Sem 3">Semester 3</option>
+                  <option value="Sem 4">Semester 4</option>
+                  <option value="Sem 5">Semester 5</option>
+                  <option value="Sem 6">Semester 6</option>
+                  <option value="Sem 7">Semester 7</option>
+                  <option value="Sem 8">Semester 8</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>CGPA / Grade</label>
+                <input id="cgpa" placeholder="e.g. 8.75 (0.0 to 10.0)">
+                <div class="field-hint">Enter your latest CGPA on a scale of 10</div>
+              </div>
+              <div class="field">
+                <label>Graduation Year</label>
+                <input id="graduation_year" type="number" min="1990" max="2035" placeholder="e.g. 2026">
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 3: PROFESSIONAL & LINKS -->
+          <div id="tab-professional" class="subtab-pane">
+            <div class="grid grid-2">
+              <div class="field">
+                <label>LinkedIn Profile URL</label>
+                <input id="linkedin_url" placeholder="https://linkedin.com/in/yourprofile">
+              </div>
+              <div class="field">
+                <label>GitHub Profile URL</label>
+                <input id="github_url" placeholder="https://github.com/yourhandle">
+              </div>
+              <div class="field">
+                <label>Portfolio / Personal Website URL</label>
+                <input id="portfolio_url" placeholder="https://yourportfolio.com">
+              </div>
+              <div class="field">
+                <label>Resume (PDF / Document)</label>
+                <div class="flex gap-1">
+                  <input id="resume_url" placeholder="URL or upload PDF resume" style="flex:1;">
+                  <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('resumeFileInput').click()">Upload File</button>
+                  <input type="file" id="resumeFileInput" style="display:none;" accept=".pdf,.doc,.docx" onchange="handleResumeUpload(this.files[0])">
+                </div>
+                <div id="resumePreviewLink" class="mt-1"></div>
+              </div>
+              <div class="field" style="grid-column: 1 / -1;">
+                <label>Preferred Job Roles / Career Interests</label>
+                <input id="preferred_jobs" placeholder="e.g. Full Stack Developer, DevOps Engineer, Cloud Architect">
+              </div>
+              <div class="field" style="grid-column: 1 / -1;">
+                <label>Experience &amp; Past Internships</label>
+                <textarea id="experience" placeholder="Describe previous internships, client freelancing, or student employment roles..."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+          <button class="btn btn-primary" type="submit">Save Profile Changes</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- 3. VERIFIED SKILLS INVENTORY -->
+    <section id="skills" class="section">
+      <div class="flex-between">
+        <div>
+          <h2>Verified Skills Inventory</h2>
+          <p class="mt-0">Manage your technical competencies, frameworks, tools, and verifiable certifications.</p>
+        </div>
+        <button class="btn btn-accent btn-sm" onclick="showSection('ai-skill-gap')">Analyze Gaps &rarr;</button>
+      </div>
+
+      <div class="card mt-2">
+        <h3 style="margin-top:0;">Add or Update Skill</h3>
+        <p class="muted mt-0" style="font-size:0.85rem;">Select an industry-standard skill and your self-assessed proficiency tier.</p>
+        <div class="flex gap-2" style="flex-wrap:wrap; align-items:flex-end;">
+          <div class="field" style="flex:2; min-width:240px; margin-bottom:0;">
+            <label style="font-weight:600;">Skill Name</label>
+            <select id="skillSelect" style="width:100%;"></select>
+          </div>
+          <div class="field" style="flex:1; min-width:160px; margin-bottom:0;">
+            <label style="font-weight:600;">Proficiency Tier</label>
+            <select id="profSelect" style="width:100%;">
+              <option value="beginner">Beginner</option>
+              <option value="intermediate" selected>Intermediate</option>
+              <option value="advanced">Advanced</option>
+              <option value="expert">Expert</option>
+            </select>
+          </div>
+          <button type="button" class="btn btn-primary" onclick="addSkill()" style="margin-bottom:0; height:42px;">+ Add Skill</button>
+        </div>
+      </div>
+
+      <div class="card mt-2">
+        <div class="flex-between">
+          <h3 style="margin:0;">My Skill Profile</h3>
+          <span class="pill pill-good" id="skillsCountBadge">Verified &amp; Self-Reported</span>
+        </div>
+        <div id="skillList" class="mt-2"></div>
+      </div>
+    </section>
+
+    <!-- 4. PROJECTS & PORTFOLIO -->
+    <section id="projects" class="section">
+      <div class="flex-between">
+        <div>
+          <h2>Projects &amp; Portfolio</h2>
+          <p class="mt-0">Showcase your technical projects, apps, kits, or research to industry recruiters.</p>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="openAddProjectModal()">+ Add New Project</button>
+      </div>
+
+      <div id="projectList" class="grid grid-3 mt-2"></div>
+    </section>
+
+    <!-- 4. TRAINING (Courses & Assignments) -->
+    <section id="training" class="section">
+      <div class="flex-between">
+        <div>
+          <h2>Training &amp; Applied Industry Learning</h2>
+          <p class="mt-0">Master vocational and software competencies through institute curricula and employer-sponsored assignments.</p>
+        </div>
+      </div>
+
+      <div class="subtabs mt-2" id="trainingTabs">
+        <button type="button" class="subtab-btn active" data-tab="tab-train-courses">Enrolled Courses &amp; Curriculum</button>
+        <button type="button" class="subtab-btn" data-tab="tab-train-assignments">Industry Assignments</button>
+        <button type="button" class="subtab-btn" data-tab="tab-train-submissions">My Submissions</button>
+      </div>
+
+      <div id="tab-train-courses" class="subtab-pane active">
+        <div id="courseList" class="grid grid-2 mt-2"></div>
+      </div>
+
+      <div id="tab-train-assignments" class="subtab-pane">
+        <div id="assignmentList" class="mt-2"></div>
+      </div>
+
+      <div id="tab-train-submissions" class="subtab-pane">
+        <div id="mySubmissionsList" class="mt-2"></div>
+      </div>
+    </section>
+
+    <!-- 5. CERTIFICATES -->
+    <section id="certificates" class="section">
+      <div class="flex-between">
+        <div>
+          <h2>Verified Credentials &amp; Certificates</h2>
+          <p class="mt-0">Credentials verified across state polytechnics, industry sponsors, and external accreditation bodies.</p>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="openAddCertModal()">+ Add Certificate</button>
+      </div>
+      <div id="certList" class="mt-2"></div>
+    </section>
+
+    <!-- 7. AI SKILL GAP INTELLIGENCE -->
+    <section id="ai-skill-gap" class="section">
+      <div class="flex-between">
+        <div>
+          <h2>AI Skill Intelligence &amp; Gap Analysis</h2>
+          <p class="mt-0">Deterministic skill-matching engine comparing your verified profile against canonical industry career profiles.</p>
+        </div>
+      </div>
+
+      <div class="card mt-2">
+        <div class="grid grid-2" style="align-items:flex-end;">
+          <div class="field" style="margin-bottom:0;">
+            <label>Select Target Industry Role</label>
+            <select id="targetRoleSelect" onchange="document.getElementById('customRoleInput').value=''">
+              <option value="">-- Choose Target Career Role --</option>
+            </select>
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label>Or Type Custom Career Role</label>
+            <div class="flex gap-1">
+              <input type="text" id="customRoleInput" placeholder="e.g. Cloud Security Specialist">
+              <button class="btn btn-primary" onclick="runAiSkillGapAnalysis()">Analyze with AI</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Analysis Results Viewport -->
+      <div id="aiSkillGapResults" class="mt-2">
+        <div class="card" style="text-align:center; padding:36px;">
+          <p class="muted">Select a target career role above and click <strong>"Analyze with AI"</strong> to generate your real-time skill-gap diagnosis.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. PERSONALIZED LEARNING PLAN -->
+    <section id="learning-plan" class="section">
+      <div class="flex-between">
+        <div>
+          <h2>Personalized Learning Plan &amp; Roadmap</h2>
+          <p class="mt-0">Tailored 5-step skill-acquisition sequence, project blueprints, courses, and certifications to close your skill gaps.</p>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="loadLearningPlan()">Refresh Plan</button>
+      </div>
+
+      <div id="learningPlanContainer" class="mt-2">
+        <div class="card" style="text-align:center; padding:36px;">
+          <p class="muted">Loading personalized recommendations...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. JOBS & RECRUITER MATCHING -->
+    <section id="jobs" class="section">
+      <div class="flex-between">
+        <div>
+          <h2>Industry Jobs &amp; Opportunities</h2>
+          <p class="mt-0">Open roles ranked in real-time based on your verified skill-gap score.</p>
+        </div>
+      </div>
+
+      <div class="subtabs mt-2" id="jobTabs">
+        <button type="button" class="subtab-btn active" data-tab="tab-job-browse">Available Job Matches</button>
+        <button type="button" class="subtab-btn" data-tab="tab-job-apps">My Applications &amp; Interviews</button>
+      </div>
+
+      <div id="tab-job-browse" class="subtab-pane active">
+        <div id="jobList" class="mt-2"></div>
+      </div>
+
+      <div id="tab-job-apps" class="subtab-pane">
+        <div id="upcomingInterviewsBanner" class="mt-2"></div>
+        <div id="applicationList" class="mt-2"></div>
+      </div>
+    </section>
+
+    <!-- 10. EMPLOYMENT VERIFICATION & OUTCOMES -->
+    <section id="employment" class="section">
+      <div class="flex-between">
+        <div>
+          <h2>Employment Verification &amp; Placement Outcomes</h2>
+          <p class="mt-0">Official record of your placement, apprenticeship, or professional employment status.</p>
+        </div>
+      </div>
+
+      <!-- Trust Legend -->
+      <div class="flex gap-2 mt-2" style="font-size:0.8rem; background:#fff; padding:10px 14px; border:1px solid var(--line); border-radius:var(--radius); flex-wrap:wrap;">
+        <span><strong>Verification Integrity Levels:</strong></span>
+        <span class="pill pill-good">Level 1: Self-Reported</span>
+        <span class="pill pill-signal">Level 2: Institute Verified</span>
+        <span class="pill pill-primary" style="background:var(--slate-deep); color:#fff;">Level 3: Employer Verified</span>
+      </div>
+
+      <div class="card mt-2">
+        <h3>Current Verified Status</h3>
+        <div id="employmentStatusCard" class="mt-1">
+          <p class="muted">Loading employment records...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11. FOLLOW-UPS & LONGITUDINAL CAREER MILESTONES -->
+    <section id="followups" class="section">
+      <div class="flex-between">
+        <div>
+          <h2>Longitudinal Career Follow-Up Tracking</h2>
+          <p class="mt-0">Post-training employment verification across 30, 90, 180, and 365-day intervals for state accreditation.</p>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="openFollowUpModal()">+ Report Milestone</button>
+      </div>
+
+      <div class="card mt-2" style="background:#F0FDF4; border:1px solid #BBF7D0; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+        <div>
+          <strong style="color:#166534;">Active Career Milestone Follow-Up Required</strong>
+          <p style="margin:4px 0 0; font-size:0.85rem; color:#166534;">
+            Keeping your post-graduation milestones current ensures ongoing alumni mentorship and state-certified credentials.
+          </p>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="openFollowUpModal()">Report Outcome Now</button>
+      </div>
+
+      <div class="mt-2" id="careerJourneyContainer">
+        <div class="muted">Loading longitudinal career trajectory...</div>
+      </div>
+    </section>
+
+    <!-- 12. NOTIFICATIONS -->
+    <section id="notifications" class="section">
+      <div class="flex-between">
+        <div>
+          <h2>Notifications &amp; Activity Stream</h2>
+          <p class="mt-0">Alerts regarding certificate issuances, employer interview invites, and training submissions.</p>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="markAllNotificationsRead()">Mark All Read</button>
+      </div>
+
+      <div id="notificationsList" class="mt-2">
+        <div class="muted">Loading notifications...</div>
+      </div>
+    </section>
+
+    <!-- 13. SETTINGS & SECURITY -->
+    <section id="settings" class="section">
+      <div class="flex-between">
+        <div>
+          <h2>Account Settings &amp; Security</h2>
+          <p class="mt-0">Manage your credentials, password, and communication preferences.</p>
+        </div>
+      </div>
+
+      <div class="card mt-2" style="max-width:600px;">
+        <h3>Change Account Password</h3>
+        <form id="settingsPasswordForm" class="mt-2">
+          <div class="field">
+            <label>Current Password <span class="required-star">*</span></label>
+            <input type="password" id="st_curPassword" required placeholder="Enter current password">
+          </div>
+          <div class="field">
+            <label>New Password <span class="required-star">*</span></label>
+            <input type="password" id="st_newPassword" minlength="6" required placeholder="At least 6 characters">
+          </div>
+          <div class="field">
+            <label>Confirm New Password <span class="required-star">*</span></label>
+            <input type="password" id="st_confirmPassword" minlength="6" required placeholder="Confirm new password">
+          </div>
+          <button type="submit" class="btn btn-primary">Update Password</button>
+        </form>
+      </div>
+    </section>
+
+
+  </main>
+</div>
+
+<!-- ================= MODALS ================= -->
+
+<!-- CERTIFICATE ADD MODAL -->
+<div class="modal-backdrop" id="certModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 id="certModalTitle">Add Certificate</h3>
+      <button class="modal-close" onclick="closeModal('certModal')">&times;</button>
+    </div>
+    <form id="certModalForm">
+      <div class="modal-body">
+        <div class="field">
+          <label>Certificate Title <span class="required-star">*</span></label>
+          <input id="cm_title" required placeholder="e.g. AWS Certified Solutions Architect">
+        </div>
+        <div class="grid grid-2">
+          <div class="field">
+            <label>Issuing Organization <span class="required-star">*</span></label>
+            <input id="cm_issuer" required placeholder="e.g. Amazon Web Services / MSBTE">
+          </div>
+          <div class="field">
+            <label>Issue Date <span class="required-star">*</span></label>
+            <input type="date" id="cm_date" required>
+          </div>
+        </div>
+        <div class="field">
+          <label>Credential URL / Verification Link</label>
+          <input type="url" id="cm_url" placeholder="https://www.credly.com/badges/...">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('certModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="cm_submitBtn">Save Certificate</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- PROJECT MODAL (ADD / EDIT) -->
+<div class="modal-backdrop" id="projectModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 id="projectModalTitle">Add Project</h3>
+      <button class="modal-close" onclick="closeModal('projectModal')">&times;</button>
+    </div>
+    <form id="projectModalForm">
+      <input type="hidden" id="pm_id">
+      <div class="modal-body">
+        <div class="field">
+          <label>Project Title <span class="required-star">*</span></label>
+          <input id="pm_title" required placeholder="e.g. AI-Powered Smart Attendance">
+        </div>
+        <div class="grid grid-2">
+          <div class="field">
+            <label>Status</label>
+            <select id="pm_status">
+              <option value="completed">Completed</option>
+              <option value="in_progress">In Progress</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Technologies / Skills</label>
+            <input id="pm_tech" placeholder="e.g. React, Node.js, MySQL">
+          </div>
+        </div>
+        <div class="grid grid-2">
+          <div class="field">
+            <label>Live Demo URL</label>
+            <input id="pm_url" placeholder="https://myproject.live">
+          </div>
+          <div class="field">
+            <label>GitHub / Repo URL</label>
+            <input id="pm_repo" placeholder="https://github.com/...">
+          </div>
+        </div>
+        <div class="field">
+          <label>Project Image / Screenshot</label>
+          <div class="flex gap-1">
+            <input id="pm_image" placeholder="Image URL or upload screenshot" style="flex:1;">
+            <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('pmFileInput').click()">Upload File</button>
+            <input type="file" id="pmFileInput" style="display:none;" accept="image/*" onchange="handleProjectImageUpload(this.files[0])">
+          </div>
+          <div id="pmImagePreview" class="mt-1"></div>
+        </div>
+        <div class="field">
+          <label>Description</label>
+          <textarea id="pm_desc" placeholder="Explain the problem solved, architecture, and your contributions..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('projectModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="pm_submitBtn">Save Project</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ASSIGNMENT SUBMISSION MODAL -->
+<div class="modal-backdrop" id="assignmentModal">
+  <div class="modal-box modal-box-lg">
+    <div class="modal-header">
+      <h3 id="am_title">Assignment Details</h3>
+      <button class="modal-close" onclick="closeModal('assignmentModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div id="am_meta" class="flex-between" style="padding-bottom:12px; border-bottom:1px solid var(--line); margin-bottom:16px;"></div>
+      <div>
+        <h4>Description</h4>
+        <p id="am_desc" style="white-space:pre-wrap;"></p>
+      </div>
+      <div id="am_instructions_box" class="mt-2">
+        <h4>Instructions &amp; Requirements</h4>
+        <div id="am_instructions" class="card" style="background:var(--paper); white-space:pre-wrap;"></div>
+      </div>
+      <div id="am_attachment_box" class="mt-2" style="display:none;">
+        <h4>Resources &amp; Attachments</h4>
+        <div id="am_attachment"></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Submission Form / View -->
+      <div id="am_submission_area">
+        <h4>Your Submission</h4>
+        <div id="am_existing_status" class="mb-2"></div>
+        <form id="assignmentSubmitForm">
+          <div class="field">
+            <label>Submission Notes / Summary</label>
+            <textarea id="as_text" placeholder="Explain your solution, architecture, and any instructions for the reviewer..."></textarea>
+          </div>
+          <div class="grid grid-2">
+            <div class="field">
+              <label>Repository / Demo Link</label>
+              <input id="as_repo" placeholder="https://github.com/your/repo">
+            </div>
+            <div class="field">
+              <label>Attach Solution File (Zip / PDF / Doc)</label>
+              <div class="flex gap-1">
+                <input id="as_file" placeholder="File URL or upload" style="flex:1;">
+                <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('asFileInput').click()">Upload File</button>
+                <input type="file" id="asFileInput" style="display:none;" accept=".zip,.pdf,.doc,.docx,.txt" onchange="handleAssignmentFileUpload(this.files[0])">
+              </div>
+              <div id="asFilePreview" class="field-hint"></div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary" id="as_submitBtn">Submit Solution</button>
+        </form>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-ghost" onclick="closeModal('assignmentModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- COURSE LESSONS MODAL -->
+<div class="modal-backdrop" id="courseLessonsModal">
+  <div class="modal-box modal-box-lg">
+    <div class="modal-header">
+      <div>
+        <h3 id="clm_courseTitle">Course Curriculum</h3>
+        <p class="muted mt-0" id="clm_courseProvider"></p>
+      </div>
+      <button class="modal-close" onclick="closeModal('courseLessonsModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div id="clm_lessonList"></div>
+      <div id="clm_activeLessonViewer" class="card mt-2" style="display:none; background:var(--paper);"></div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-ghost" onclick="closeModal('courseLessonsModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- COURSE QUIZZES MODAL (STUDENT) -->
+<div class="modal-backdrop" id="studentQuizzesModal">
+  <div class="modal-box modal-box-lg">
+    <div class="modal-header">
+      <div>
+        <h3 id="sqm_title">Course Quizzes &amp; Assessments</h3>
+        <p class="muted mt-0" id="sqm_subtitle">Test your knowledge with company-authored MCQs to verify your skills.</p>
+      </div>
+      <button class="modal-close" onclick="closeModal('studentQuizzesModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div id="sqm_quizList"></div>
+      <div id="sqm_attemptsList" class="mt-2"></div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-ghost" onclick="closeModal('studentQuizzesModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- TAKE QUIZ MODAL (MCQ RUNNER) -->
+<div class="modal-backdrop" id="quizRunnerModal">
+  <div class="modal-box modal-box-lg">
+    <div class="modal-header">
+      <div>
+        <h3 id="qrm_title">Interactive Quiz</h3>
+        <p class="muted mt-0" id="qrm_subtitle"></p>
+      </div>
+      <button class="modal-close" onclick="closeModal('quizRunnerModal')">&times;</button>
+    </div>
+    <form id="quizRunnerForm">
+      <div class="modal-body" id="qrm_body">
+        <div id="qrm_feedback" style="display:none;" class="mb-2"></div>
+        <div id="qrm_questionsList"></div>
+      </div>
+      <div class="modal-footer" id="qrm_footer">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('quizRunnerModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="qrm_submitBtn">Submit Answers for Grading</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- LONGITUDINAL FOLLOW-UP MODAL (SIH26135) -->
+<div class="modal-backdrop" id="followUpModal">
+  <div class="modal-box modal-box-lg">
+    <div class="modal-header">
+      <div>
+        <h3>Report Career Milestone Outcome</h3>
+        <p class="muted mt-0">Continuous tracking across 30, 90, 180, and 365 days for career progression &amp; accreditation.</p>
+      </div>
+      <button class="modal-close" onclick="closeModal('followUpModal')">&times;</button>
+    </div>
+    <form id="followUpForm">
+      <div class="modal-body">
+        <div class="grid grid-2">
+          <div class="field">
+            <label>Follow-Up Milestone <span class="required-star">*</span></label>
+            <select id="fu_milestone" required>
+              <option value="30">30 Days Post-Training (1 Month)</option>
+              <option value="90">90 Days Post-Training (3 Months)</option>
+              <option value="180">180 Days Post-Training (6 Months)</option>
+              <option value="365">365 Days Post-Training (1 Year / Sustained Retention)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Current Status <span class="required-star">*</span></label>
+            <select id="fu_outcome" required onchange="toggleFollowUpFields(this.value)">
+              <option value="employed">Employed (Salaried Job / Corporate)</option>
+              <option value="self_employed">Self-Employed (Freelancer / Founder / Consultant)</option>
+              <option value="apprenticeship">Apprenticeship (Industrial / Trade)</option>
+              <option value="seeking">Looking for Job / Unemployed</option>
+              <option value="higher_education">Higher Education / Further Training</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Employed Fields -->
+        <div id="fu_employed_group">
+          <div class="grid grid-2">
+            <div class="field">
+              <label>Employer / Company / Studio Name</label>
+              <input id="fu_company" placeholder="e.g. DataTech Solutions Pvt Ltd">
+            </div>
+            <div class="field">
+              <label>Job Role / Designation</label>
+              <input id="fu_role" placeholder="e.g. Junior Data Analyst">
+            </div>
+          </div>
+          <div class="grid grid-2">
+            <div class="field">
+              <label>Monthly Salary / Remuneration (₹)</label>
+              <input type="number" id="fu_salary" placeholder="e.g. 25000">
+              <div class="field-hint">Used for state wage progression analytics. Confidential &amp; aggregated.</div>
+            </div>
+            <div class="field">
+              <label>Work Location / District</label>
+              <input id="fu_district" placeholder="e.g. Pune">
+            </div>
+          </div>
+        </div>
+
+        <!-- Unemployed Root-Cause Diagnostics -->
+        <div id="fu_seeking_group" style="display:none; background:#FFFBEB; border:1px solid #FDE68A; border-radius:6px; padding:16px; margin:10px 0;">
+          <h4 style="margin:0 0 8px; color:#92400E;">Unemployment Diagnostic Feedback (State Analytics)</h4>
+          <p style="margin:0 0 12px; font-size:0.85rem; color:#78350F;">
+            Your honest feedback helps government departments adapt vocational curriculums and connect with local employers.
+          </p>
+          <div class="field">
+            <label>Primary Barrier to Employment</label>
+            <select id="fu_reason">
+              <option value="lack_of_skills">Lack of specific skills demanded by industry (Cloud / Modern Stack)</option>
+              <option value="lack_of_experience">Insufficient practical / hands-on project experience</option>
+              <option value="interview_difficulty">Struggling with technical coding or case-study interview rounds</option>
+              <option value="communication">Soft skills / language / presentation barrier</option>
+              <option value="location">Geographic / relocation / commute constraints</option>
+              <option value="salary_mismatch">Offered salary below minimum expectation</option>
+              <option value="no_suitable_jobs">Absence of relevant industry jobs in my home district</option>
+              <option value="other">Other personal / academic reasons</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Diagnostic Notes</label>
+            <textarea id="fu_unempNotes" placeholder="Share specific details (e.g., 'Interviews asked for Docker & AWS, which was missing in college syllabus')..."></textarea>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Career Growth &amp; Promotion Notes</label>
+          <textarea id="fu_notes" placeholder="Note any promotions, certifications earned on the job, or milestone reflections..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('followUpModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="fu_submitBtn">Submit Milestone Report</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- AI 5-STEP ROADMAP MODAL -->
+<div class="modal-backdrop" id="roadmapModal">
+  <div class="modal-box modal-box-lg">
+    <div class="modal-header">
+      <div>
+        <h3 id="rdm_jobTitle">AI Prioritized Learning Roadmap</h3>
+        <p class="muted mt-0">Deterministic 5-step skill-gap closure pathway tailored to industry requirements.</p>
+      </div>
+      <button class="modal-close" onclick="closeModal('roadmapModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div id="rdm_headerCard" class="card mb-2" style="background:var(--paper);"></div>
+      <h4 class="mt-2 mb-1">Your 5-Step Action Pathway</h4>
+      <div id="rdm_stepsList"></div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-ghost" onclick="closeModal('roadmapModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<script src="/js/shared.js"></script>
+<script>
+  const user = requireLogin('student');
+  renderUserBadge('userBadge');
+  if (user && user.name) {
+    document.getElementById('studentWelcomeName').textContent = user.name;
+  }
+
+  // Section Navigation
+  function showSection(secId) {
+    document.querySelectorAll('.dash-side a').forEach(l => l.classList.toggle('active', l.dataset.section === secId));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    const target = document.getElementById(secId);
+    if (target) target.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  document.querySelectorAll('.dash-side a').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      showSection(link.dataset.section);
+    });
+  });
+
+  // Profile Subtabs Navigation
+  document.querySelectorAll('#profileTabs .subtab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#profileTabs .subtab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('#profile .subtab-pane').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // Training Subtabs Navigation (Courses / Assignments / Submissions)
+  document.querySelectorAll('#trainingTabs .subtab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#trainingTabs .subtab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('#training .subtab-pane').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // Job Subtabs Navigation
+  document.querySelectorAll('#jobTabs .subtab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#jobTabs .subtab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('#jobs .subtab-pane').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // Profile Photo Lifecycle Helpers
+  function renderStudentAvatar(p) {
+    const container = document.getElementById('avatarPreviewContainer');
+    const name = p?.name || user?.name || 'Student';
+    if (container) {
+      container.innerHTML = renderAvatar(name, p?.avatar_url, 80);
+    }
+
+    const linkedinAv = document.getElementById('linkedinAvatarPreview');
+    if (linkedinAv) {
+      linkedinAv.innerHTML = renderAvatar(name, p?.avatar_url, 90);
+    }
+    const nameEl = document.getElementById('linkedinCardName');
+    if (nameEl) nameEl.textContent = name;
+    const hlEl = document.getElementById('linkedinCardHeadline');
+    if (hlEl) hlEl.textContent = p?.headline || 'Aspiring Technical Professional · SkillTrack Member';
+    const locEl = document.getElementById('linkedinCardLocation');
+    if (locEl) {
+      const parts = [p?.district, p?.state, p?.college].filter(Boolean);
+      locEl.textContent = parts.length ? parts.join(' · ') : 'Maharashtra, India · SkillTrack Verified';
+    }
+    const directLink = document.getElementById('linkedinDirectLink');
+    if (directLink) {
+      if (p?.linkedin_url) {
+        directLink.href = p.linkedin_url;
+        directLink.style.display = 'inline-flex';
+      } else {
+        directLink.style.display = 'none';
+      }
+    }
+  }
+
+  async function removeStudentPhoto() {
+    document.getElementById('avatar_url').value = '';
+    const name = document.getElementById('p_name').value.trim() || user?.name || 'Student';
+    renderStudentAvatar({ name, avatar_url: '' });
+
+    try {
+      await api('/student/profile', {
+        method: 'PUT',
+        body: { avatar_url: '' }
+      });
+      const curUser = getSessionUser();
+      if (curUser) {
+        curUser.avatar_url = null;
+        localStorage.setItem('user', JSON.stringify(curUser));
+        renderUserBadge('userBadge');
+      }
+      toast('Profile photo removed. Default initials badge is now active.');
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  let profileData = null;
+  let activeAssignmentId = null;
+
+  // 1. OVERVIEW
+  async function loadOverview() {
+    try {
+      const { skills, certificates, projects } = profileData || { skills: [], certificates: [], projects: [] };
+      const { applications } = await api('/student/applications');
+      const { assignments } = await api('/student/assignments');
+      const { submissions } = await api('/student/my-submissions');
+
+      document.getElementById('overviewStats').innerHTML = `
+        <div class="card"><div class="stat-num">${skills.length}</div><div class="muted">Skills logged</div></div>
+        <div class="card"><div class="stat-num">${projects.length}</div><div class="muted">Projects showcased</div></div>
+        <div class="card"><div class="stat-num">${assignments.length}</div><div class="muted">Active assignments</div></div>
+        <div class="card"><div class="stat-num">${submissions.length}</div><div class="muted">Work submitted</div></div>
+        <div class="card"><div class="stat-num">${certificates.length}</div><div class="muted">Certificates</div></div>
+        <div class="card"><div class="stat-num">${applications.length}</div><div class="muted">Job applications</div></div>
+      `;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // 2. PROFILE LOADING & SAVING
+  async function loadProfile() {
+    const data = await api('/student/profile');
+    profileData = data;
+    const p = data.profile;
+
+    document.getElementById('p_name').value = p.name || user.name || '';
+    document.getElementById('p_email').value = p.email || user.email || '';
+    document.getElementById('phone').value = p.phone || '';
+    document.getElementById('headline').value = p.headline || '';
+    document.getElementById('district').value = p.district || '';
+    document.getElementById('state').value = p.state || '';
+    document.getElementById('employment_status').value = p.employment_status || 'seeking';
+    document.getElementById('bio').value = p.bio || '';
+    document.getElementById('avatar_url').value = p.avatar_url || '';
+
+    renderStudentAvatar(p);
+
+    // Feature 1: Consent-Based Trainee Identity
+    const traineeId = p.trainee_id || ('ST-2026-TR-' + String(user.id || 1).padStart(4, '0'));
+    const isConsentActive = p.consent_given !== false && p.consent_given !== 0;
+
+    const ovId = document.getElementById('overviewTraineeId');
+    if (ovId) ovId.textContent = traineeId;
+
+    const liCardId = document.getElementById('linkedinCardTraineeId');
+    if (liCardId) liCardId.textContent = traineeId;
+
+    const traineeIdDisp = document.getElementById('traineeIdDisplay');
+    if (traineeIdDisp) traineeIdDisp.textContent = traineeId;
+
+    const ovConsent = document.getElementById('overviewConsentBadge');
+    const trConsent = document.getElementById('traineeConsentStatusBadge');
+    const trToggle = document.getElementById('profile_consent_toggle');
+    const trConsentText = document.getElementById('consentTimestampText');
+
+    if (isConsentActive) {
+      if (ovConsent) {
+        ovConsent.className = 'pill pill-good';
+        ovConsent.textContent = '✓ Workforce Tracking Consent Active';
+      }
+      if (trConsent) {
+        trConsent.className = 'pill pill-good';
+        trConsent.textContent = '✓ Consent Active';
+      }
+      if (trToggle) trToggle.checked = true;
+      if (trConsentText) {
+        const dateStr = p.consent_date ? new Date(p.consent_date).toLocaleDateString('en-IN', { year:'numeric', month:'short', day:'numeric' }) : 'Registration date';
+        trConsentText.textContent = `🔒 Consent verified on ${dateStr} for authorized state skill missions, employer verification, and wage analytics.`;
+      }
+    } else {
+      if (ovConsent) {
+        ovConsent.className = 'pill pill-warn';
+        ovConsent.textContent = '⚠️ Workforce Tracking Paused';
+      }
+      if (trConsent) {
+        trConsent.className = 'pill pill-warn';
+        trConsent.textContent = 'Paused';
+      }
+      if (trToggle) trToggle.checked = false;
+      if (trConsentText) {
+        trConsentText.textContent = '⚠️ Consent currently paused. Your profile and outcomes are not shared with state skill missions or verified recruiters.';
+      }
+    }
+
+    // Academics
+    document.getElementById('college').value = p.college || '';
+    document.getElementById('branch').value = p.branch || '';
+    document.getElementById('current_year').value = p.current_year || '';
+    document.getElementById('semester').value = p.semester || '';
+    document.getElementById('cgpa').value = p.cgpa || '';
+    document.getElementById('graduation_year').value = p.graduation_year || '';
+    document.getElementById('college_id').value = p.college_id || '';
+
+    // Professional & Links
+    document.getElementById('linkedin_url').value = p.linkedin_url || '';
+    document.getElementById('github_url').value = p.github_url || '';
+    document.getElementById('portfolio_url').value = p.portfolio_url || '';
+    document.getElementById('resume_url').value = p.resume_url || '';
+    document.getElementById('preferred_jobs').value = p.preferred_jobs || '';
+    document.getElementById('experience').value = p.experience || '';
+
+    if (p.resume_url) {
+      document.getElementById('resumePreviewLink').innerHTML = `
+        <a href="${p.resume_url}" target="_blank" class="btn btn-ghost btn-sm">📄 View Current Resume</a>
+      `;
+    } else {
+      document.getElementById('resumePreviewLink').innerHTML = '';
+    }
+
+    renderSkillList(data.skills);
+    renderCertList(data.certificates);
+    renderProjectList(data.projects);
+  }
+
+  function copyTraineeId() {
+    const p = profileData?.profile || {};
+    const id = p.trainee_id || ('ST-2026-TR-' + String(user?.id || 1).padStart(4, '0'));
+    navigator.clipboard.writeText(id).then(() => {
+      toast(`Trainee ID copied: ${id}`);
+    }).catch(() => {
+      toast(`Trainee ID: ${id}`);
+    });
+  }
+
+  function copyOverviewTraineeId() {
+    copyTraineeId();
+  }
+
+  async function toggleConsent(isChecked) {
+    try {
+      const res = await api('/student/consent', {
+        method: 'PUT',
+        body: { consent: isChecked }
+      });
+      toast(res.message || (isChecked ? 'Workforce tracking consent active.' : 'Workforce tracking consent paused.'));
+      if (profileData && profileData.profile) {
+        profileData.profile.consent_given = isChecked ? 1 : 0;
+        profileData.profile.consent_date = new Date().toISOString();
+      }
+      await loadProfile();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  async function handleAvatarUpload(file) {
+    if (!file) return;
+    try {
+      toast('Uploading photo...');
+      const res = await uploadFile(file);
+      document.getElementById('avatar_url').value = res.url;
+      const name = document.getElementById('p_name').value.trim() || user?.name || 'Student';
+      renderStudentAvatar({ name, avatar_url: res.url });
+      
+      // Persist immediately
+      await api('/student/profile', {
+        method: 'PUT',
+        body: { avatar_url: res.url }
+      });
+      const curUser = getSessionUser();
+      if (curUser) {
+        curUser.avatar_url = res.url;
+        localStorage.setItem('user', JSON.stringify(curUser));
+        renderUserBadge('userBadge');
+      }
+      toast('Photo updated permanently.');
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  async function handleResumeUpload(file) {
+    if (!file) return;
+    try {
+      toast('Uploading resume...');
+      const res = await uploadFile(file);
+      document.getElementById('resume_url').value = res.url;
+      document.getElementById('resumePreviewLink').innerHTML = `
+        <a href="${res.url}" target="_blank" class="btn btn-ghost btn-sm">📄 View Uploaded: ${res.fileName}</a>
+      `;
+      toast('Resume uploaded. Click Save Profile to apply.');
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  document.getElementById('expandedProfileForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    try {
+      const cgpaVal = document.getElementById('cgpa').value.trim();
+      if (!isValidCgpa(cgpaVal)) {
+        toast('CGPA must be a valid number between 0.0 and 10.0', true);
+        return;
+      }
+      const phoneVal = document.getElementById('phone').value.trim();
+      if (!isValidPhone(phoneVal)) {
+        toast('Please enter a valid phone number', true);
+        return;
+      }
+
+      const res = await api('/student/profile', {
+        method: 'PUT',
+        body: {
+          name: document.getElementById('p_name').value.trim(),
+          phone: phoneVal,
+          headline: document.getElementById('headline').value,
+          bio: document.getElementById('bio').value,
+          district: document.getElementById('district').value,
+          state: document.getElementById('state').value,
+          employment_status: document.getElementById('employment_status').value,
+          avatar_url: document.getElementById('avatar_url').value,
+          college: document.getElementById('college').value,
+          branch: document.getElementById('branch').value,
+          current_year: document.getElementById('current_year').value,
+          semester: document.getElementById('semester').value,
+          cgpa: cgpaVal,
+          graduation_year: document.getElementById('graduation_year').value,
+          college_id: document.getElementById('college_id').value,
+          linkedin_url: document.getElementById('linkedin_url').value,
+          github_url: document.getElementById('github_url').value,
+          portfolio_url: document.getElementById('portfolio_url').value,
+          resume_url: document.getElementById('resume_url').value,
+          preferred_jobs: document.getElementById('preferred_jobs').value.trim(),
+          experience: document.getElementById('experience').value.trim()
+        }
+      });
+      if (res.user) {
+        setSession(getToken(), res.user);
+        renderUserBadge('userBadge');
+      }
+      toast('Profile saved successfully.');
+      await loadProfile();
+      await loadOverview();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  });
+
+  // 3. PROJECTS CRUD
+  function renderProjectList(projects) {
+    const list = document.getElementById('projectList');
+    if (!projects || !projects.length) {
+      list.innerHTML = `<div class="card" style="grid-column: 1 / -1;"><p class="empty-state">No projects added yet. Click "+ Add New Project" to showcase your work.</p></div>`;
+      return;
+    }
+
+    list.innerHTML = projects.map(p => {
+      const tags = (p.tech_stack || '').split(',').map(t => t.trim()).filter(Boolean);
+      const isCompleted = p.status !== 'in_progress';
+      return `
+        <div class="project-card">
+          ${p.image_url ? `<img src="${p.image_url}" class="project-card-img" alt="${p.title}" onerror="this.style.display='none'">` : ''}
+          <div class="project-card-body">
+            <div class="flex-between">
+              <h3>${p.title}</h3>
+              <span class="pill ${isCompleted ? 'pill-good' : 'pill-signal'}">${isCompleted ? 'Completed' : 'In Progress'}</span>
+            </div>
+            <p class="muted mt-1" style="font-size:0.88rem; flex:1;">${p.description || 'No description provided.'}</p>
+            <div class="project-card-tags">
+              ${tags.map(t => `<span class="pill" style="font-size:0.75rem;">${t}</span>`).join('')}
+            </div>
+            <div class="project-actions flex-between">
+              <div class="flex gap-1">
+                ${p.project_url ? `<a href="${p.project_url}" target="_blank" class="btn btn-ghost btn-sm">Live Demo</a>` : ''}
+                ${p.repo_url ? `<a href="${p.repo_url}" target="_blank" class="btn btn-ghost btn-sm">Repo</a>` : ''}
+              </div>
+              <div class="flex gap-1">
+                <button class="btn btn-ghost btn-sm" onclick="editProject(${JSON.stringify(p).replace(/"/g, '&quot;')})">Edit</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteProject(${p.id})">Delete</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function openAddProjectModal() {
+    document.getElementById('projectModalForm').reset();
+    document.getElementById('pm_id').value = '';
+    document.getElementById('projectModalTitle').textContent = 'Add New Project';
+    document.getElementById('pm_submitBtn').textContent = 'Add Project';
+    document.getElementById('pmImagePreview').innerHTML = '';
+    openModal('projectModal');
+  }
+
+  function editProject(p) {
+    document.getElementById('pm_id').value = p.id;
+    document.getElementById('pm_title').value = p.title || '';
+    document.getElementById('pm_desc').value = p.description || '';
+    document.getElementById('pm_tech').value = p.tech_stack || '';
+    document.getElementById('pm_url').value = p.project_url || '';
+    document.getElementById('pm_repo').value = p.repo_url || '';
+    document.getElementById('pm_image').value = p.image_url || '';
+    document.getElementById('pm_status').value = p.status || 'completed';
+    document.getElementById('projectModalTitle').textContent = 'Edit Project';
+    document.getElementById('pm_submitBtn').textContent = 'Update Project';
+    if (p.image_url) {
+      document.getElementById('pmImagePreview').innerHTML = `<img src="${p.image_url}" style="height:50px; border-radius:4px;">`;
+    } else {
+      document.getElementById('pmImagePreview').innerHTML = '';
+    }
+    openModal('projectModal');
+  }
+
+  async function handleProjectImageUpload(file) {
+    if (!file) return;
+    try {
+      toast('Uploading image...');
+      const res = await uploadFile(file);
+      document.getElementById('pm_image').value = res.url;
+      document.getElementById('pmImagePreview').innerHTML = `<img src="${res.url}" style="height:50px; border-radius:4px;">`;
+      toast('Screenshot uploaded.');
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  document.getElementById('projectModalForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('pm_id').value;
+    const payload = {
+      title: document.getElementById('pm_title').value.trim(),
+      description: document.getElementById('pm_desc').value.trim(),
+      tech_stack: document.getElementById('pm_tech').value.trim(),
+      project_url: document.getElementById('pm_url').value.trim(),
+      repo_url: document.getElementById('pm_repo').value.trim(),
+      image_url: document.getElementById('pm_image').value.trim(),
+      status: document.getElementById('pm_status').value
+    };
+
+    try {
+      if (id) {
+        await api(`/student/projects/${id}`, { method: 'PUT', body: payload });
+        toast('Project updated.');
+      } else {
+        await api('/student/projects', { method: 'POST', body: payload });
+        toast('Project added.');
+      }
+      closeModal('projectModal');
+      await loadProfile();
+      await loadOverview();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  });
+
+  async function deleteProject(id) {
+    if (!confirm('Are you sure you want to delete this project?')) return;
+    try {
+      await api(`/student/projects/${id}`, { method: 'DELETE' });
+      toast('Project deleted.');
+      await loadProfile();
+      await loadOverview();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  // 4. INDUSTRY ASSIGNMENTS
+  async function loadAssignments() {
+    try {
+      const { assignments } = await api('/student/assignments');
+      const box = document.getElementById('assignmentList');
+      if (!assignments || !assignments.length) {
+        box.innerHTML = `<div class="card"><p class="empty-state">No industry assignments available right now. Check back soon.</p></div>`;
+        return;
+      }
+
+      box.innerHTML = assignments.map(a => {
+        const hasSubmitted = !!a.submission_status;
+        let subBadge = '';
+        if (hasSubmitted) {
+          subBadge = `<span class="pill pill-${a.submission_status}">Status: ${a.submission_status}</span>`;
+        }
+        return `
+          <div class="assignment-card">
+            <div class="flex-between">
+              <div>
+                <h3 style="margin:0;">${a.title}</h3>
+                <p class="muted mt-0">${a.company_name} &middot; Deadline: ${fmtDate(a.deadline)}</p>
+              </div>
+              <div class="flex gap-1">
+                <span class="pill diff-pill diff-${a.difficulty || 'intermediate'}">${a.difficulty || 'intermediate'}</span>
+                ${subBadge}
+              </div>
+            </div>
+            <p class="mt-1">${a.description || ''}</p>
+            ${a.skills_required ? `<p class="muted"><strong>Required Skills:</strong> ${a.skills_required}</p>` : ''}
+            <div class="flex gap-1 mt-2">
+              <button class="btn btn-primary btn-sm" onclick="viewAndSubmitAssignment(${JSON.stringify(a).replace(/"/g, '&quot;')})">
+                ${hasSubmitted ? 'View Submission / Re-submit' : 'View Instructions & Submit'}
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      await loadMySubmissions();
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  function viewAndSubmitAssignment(a) {
+    activeAssignmentId = a.id;
+    document.getElementById('am_title').textContent = a.title;
+    document.getElementById('am_meta').innerHTML = `
+      <div><strong>Company:</strong> ${a.company_name} &middot; <strong>Deadline:</strong> ${fmtDate(a.deadline)}</div>
+      <span class="pill diff-pill diff-${a.difficulty}">${a.difficulty}</span>
+    `;
+    document.getElementById('am_desc').textContent = a.description || 'No description provided.';
+    document.getElementById('am_instructions').textContent = a.instructions || 'Follow all standard engineering guidelines and submit your code repo or solution file.';
+
+    const attachBox = document.getElementById('am_attachment_box');
+    if (a.attachment_url) {
+      attachBox.style.display = 'block';
+      document.getElementById('am_attachment').innerHTML = `<a href="${a.attachment_url}" target="_blank" class="btn btn-ghost btn-sm">📎 Download Assignment Materials</a>`;
+    } else {
+      attachBox.style.display = 'none';
+    }
+
+    // Pre-fill existing submission if any
+    const statusBox = document.getElementById('am_existing_status');
+    if (a.submission_status) {
+      statusBox.innerHTML = `
+        <div class="card" style="background:#f0f8ff; border-left:4px solid #1B659D; padding:12px; margin-bottom:14px;">
+          <strong>Previous Submission Status:</strong> <span class="pill pill-${a.submission_status}">${a.submission_status}</span>
+          ${a.feedback ? `<div class="mt-1"><strong>Reviewer Feedback:</strong> ${a.feedback}</div>` : ''}
+        </div>
+      `;
+      document.getElementById('as_text').value = a.submission_text || '';
+      document.getElementById('as_repo').value = a.submission_repo || '';
+      document.getElementById('as_file').value = a.submission_file || '';
+      document.getElementById('as_submitBtn').textContent = 'Update My Submission';
+    } else {
+      statusBox.innerHTML = '';
+      document.getElementById('assignmentSubmitForm').reset();
+      document.getElementById('as_submitBtn').textContent = 'Submit Solution';
+    }
+
+    openModal('assignmentModal');
+  }
+
+  async function handleAssignmentFileUpload(file) {
+    if (!file) return;
+    try {
+      toast('Uploading solution file...');
+      const res = await uploadFile(file);
+      document.getElementById('as_file').value = res.url;
+      document.getElementById('asFilePreview').textContent = `Uploaded: ${res.fileName} (${Math.round(res.size/1024)} KB)`;
+      toast('Solution file attached.');
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  document.getElementById('assignmentSubmitForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!activeAssignmentId) return;
+
+    const notes = document.getElementById('as_text').value.trim();
+    const repo = document.getElementById('as_repo').value.trim();
+    const file = document.getElementById('as_file').value.trim();
+
+    if (!notes && !repo && !file) {
+      toast('Please provide notes, a repository URL, or upload a solution file.', true);
+      return;
+    }
+
+    try {
+      await api(`/student/assignments/${activeAssignmentId}/submit`, {
+        method: 'POST',
+        body: { submission_text: notes, repo_url: repo, file_url: file }
+      });
+      toast('Solution submitted successfully!');
+      closeModal('assignmentModal');
+      await loadAssignments();
+      await loadOverview();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  });
+
+  async function loadMySubmissions() {
+    try {
+      const { submissions } = await api('/student/my-submissions');
+      const box = document.getElementById('mySubmissionsList');
+      if (!submissions || !submissions.length) {
+        box.innerHTML = `<div class="card"><p class="empty-state">You haven't submitted any assignment solutions yet.</p></div>`;
+        return;
+      }
+
+      box.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Assignment</th>
+              <th>Company</th>
+              <th>Status</th>
+              <th>Submitted</th>
+              <th>Links &amp; Files</th>
+              <th>Feedback</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${submissions.map(s => `
+              <tr>
+                <td><strong>${s.assignment_title}</strong></td>
+                <td>${s.company_name}</td>
+                <td><span class="pill pill-${s.status}">${s.status}</span></td>
+                <td>${fmtDate(s.submitted_at)}</td>
+                <td>
+                  ${s.repo_url ? `<a href="${s.repo_url}" target="_blank" class="btn btn-ghost btn-sm">Repo</a>` : ''}
+                  ${s.file_url ? `<a href="${s.file_url}" target="_blank" class="btn btn-ghost btn-sm">File</a>` : ''}
+                </td>
+                <td>${s.feedback ? `<em>${s.feedback}</em>` : '<span class="muted">Awaiting review</span>'}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // 5. COURSES & LESSONS
+  async function loadCourses() {
+    const { courses, enrollments } = await api('/student/courses');
+    const enrolledIds = new Map(enrollments.map(e => [e.course_id, e]));
+
+    document.getElementById('courseList').innerHTML = courses.map(c => {
+      const en = enrolledIds.get(c.id);
+      return `
+        <div class="card" style="display:flex; flex-direction:column;">
+          ${c.thumbnail_url ? `<img src="${c.thumbnail_url}" style="width:100%; height:140px; object-fit:cover; border-radius:var(--radius); margin-bottom:12px;" onerror="this.style.display='none'">` : ''}
+          <div class="flex-between">
+            <h3>${c.title}</h3>
+            ${c.difficulty ? `<span class="pill diff-pill diff-${c.difficulty}">${c.difficulty}</span>` : ''}
+          </div>
+          <p class="muted mt-0">${c.company_name || c.provider || 'SkillBridge Academy'} &middot; ${c.duration_weeks || 4} weeks &middot; ${c.category || 'Technical'}</p>
+          <p style="flex:1;">${c.description || ''}</p>
+          ${en ? `
+            <div class="score-track mt-1"><div class="score-fill" style="width:${en.progress_percent}%"></div></div>
+            <p class="muted mt-1">${en.progress_percent}% complete &middot; <span class="pill">${en.status}</span></p>
+            <div class="flex-between mt-1">
+              <label class="muted" style="font-size:0.8rem;">Update progress:</label>
+              <input type="range" min="0" max="100" value="${en.progress_percent}" onchange="updateProgress(${c.id}, this.value)">
+            </div>
+          ` : ''}
+          <div class="flex gap-1 mt-2">
+            ${!en ? `<button class="btn btn-accent btn-sm" onclick="enroll(${c.id})">Enroll Now</button>` : ''}
+            <button class="btn btn-ghost btn-sm" onclick="viewCourseLessons(${c.id})">View Lessons</button>
+            <button class="btn btn-primary btn-sm" onclick="openStudentQuizzesModal(${c.id}, '${escapeHtml(c.title)}')">MCQ Quizzes</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  async function enroll(id) {
+    try {
+      await api(`/student/courses/${id}/enroll`, { method: 'POST' });
+      toast('Enrolled in course!');
+      loadCourses();
+      loadOverview();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  async function updateProgress(id, val) {
+    try {
+      await api(`/student/courses/${id}/progress`, { method: 'PUT', body: { progress_percent: Number(val) } });
+      toast('Progress updated.');
+      loadCourses();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  async function viewCourseLessons(courseId) {
+    try {
+      const { course, lessons } = await api(`/student/courses/${courseId}/lessons`);
+      document.getElementById('clm_courseTitle').textContent = course.title;
+      document.getElementById('clm_courseProvider').textContent = `${course.company_name || course.provider || 'SkillBridge'} • ${course.category || ''}`;
+
+      const list = document.getElementById('clm_lessonList');
+      const viewer = document.getElementById('clm_activeLessonViewer');
+      viewer.style.display = 'none';
+
+      if (!lessons || !lessons.length) {
+        list.innerHTML = `<p class="empty-state">No lessons published for this course yet.</p>`;
+      } else {
+        list.innerHTML = lessons.map(l => `
+          <div class="lesson-row">
+            <div class="flex gap-1">
+              <span class="lesson-badge">${l.lesson_order}</span>
+              <div>
+                <strong>${l.title}</strong>
+                <div class="muted" style="font-size:0.8rem; text-transform:uppercase;">${l.content_type}</div>
+              </div>
+            </div>
+            <button class="btn btn-ghost btn-sm" onclick="openLessonContent(${JSON.stringify(l).replace(/"/g, '&quot;')})">Open Lesson</button>
+          </div>
+        `).join('');
+      }
+
+      openModal('courseLessonsModal');
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  function openLessonContent(l) {
+    const viewer = document.getElementById('clm_activeLessonViewer');
+    viewer.style.display = 'block';
+
+    let contentHtml = `<h4>${l.title}</h4>`;
+    if (l.content_type === 'video' && l.content_url) {
+      contentHtml += `
+        <p><strong>Video Link:</strong> <a href="${l.content_url}" target="_blank" class="btn btn-ghost btn-sm">▶ Watch Video Lesson</a></p>
+      `;
+    }
+    if (l.content_type === 'document' && l.content_url) {
+      contentHtml += `
+        <p><strong>Document / Materials:</strong> <a href="${l.content_url}" target="_blank" class="btn btn-ghost btn-sm">📄 Download Document</a></p>
+      `;
+    }
+    if (l.content_text) {
+      contentHtml += `
+        <div style="background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:14px; white-space:pre-wrap;">
+          ${l.content_text}
+        </div>
+      `;
+    }
+
+    viewer.innerHTML = contentHtml;
+  }
+
+  // STUDENT COURSE QUIZZES & MCQ RUNNER
+  let activeTakingQuizId = null;
+  let activeTakingCourseId = null;
+
+  async function openStudentQuizzesModal(courseId, courseTitle) {
+    activeTakingCourseId = courseId;
+    document.getElementById('sqm_title').textContent = `Quizzes: ${courseTitle}`;
+    try {
+      const { quizzes } = await api(`/student/courses/${courseId}/quizzes`);
+      const { attempts } = await api(`/student/courses/${courseId}/my-quiz-attempts`);
+      const quizBox = document.getElementById('sqm_quizList');
+      const attemptsBox = document.getElementById('sqm_attemptsList');
+
+      if (!quizzes || !quizzes.length) {
+        quizBox.innerHTML = `<p class="empty-state">No quizzes published for this course yet.</p>`;
+      } else {
+        quizBox.innerHTML = `
+          <h4>Available Assessments</h4>
+          <div class="grid grid-2 mt-1">
+            ${quizzes.map(q => {
+              const bestAttempt = (attempts || []).filter(a => a.quiz_id === q.id).sort((a,b) => b.score_percent - a.score_percent)[0];
+              return `
+                <div class="card" style="background:#fff; border:1px solid var(--line); display:flex; flex-direction:column;">
+                  <div class="flex-between">
+                    <strong>${escapeHtml(q.title)}</strong>
+                    <span class="pill ${bestAttempt && bestAttempt.passed ? 'pill-good' : 'pill-signal'}">
+                      Pass: ${q.passing_score}%
+                    </span>
+                  </div>
+                  <p class="muted mt-1" style="font-size:0.85rem; flex:1;">${escapeHtml(q.description || 'MCQ assessment for skill verification.')}</p>
+                  ${bestAttempt ? `
+                    <div class="muted mt-1" style="font-size:0.82rem;">
+                      Best score: <strong>${bestAttempt.score_percent}%</strong> (${bestAttempt.passed ? '✅ Passed' : '❌ Needs improvement'})
+                    </div>
+                  ` : ''}
+                  <div class="mt-2">
+                    <button class="btn btn-primary btn-sm btn-block" onclick="startTakingQuiz(${q.id}, '${escapeHtml(q.title)}')">
+                      ${bestAttempt ? 'Retake Quiz' : 'Start Quiz'}
+                    </button>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+      }
+
+      if (attempts && attempts.length) {
+        attemptsBox.innerHTML = `
+          <h4 class="mt-2">Your Assessment History</h4>
+          <table>
+            <thead><tr><th>Quiz</th><th>Score</th><th>Status</th><th>Attempted</th></tr></thead>
+            <tbody>
+              ${attempts.map(a => `
+                <tr>
+                  <td>${escapeHtml(a.quiz_title)}</td>
+                  <td><strong>${a.score_percent}%</strong></td>
+                  <td><span class="pill ${a.passed ? 'pill-good' : 'pill-bad'}">${a.passed ? 'Passed' : 'Failed'}</span></td>
+                  <td>${fmtDate(a.attempted_at)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+      } else {
+        attemptsBox.innerHTML = '';
+      }
+
+      openModal('studentQuizzesModal');
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  async function startTakingQuiz(quizId, quizTitle) {
+    activeTakingQuizId = quizId;
+    document.getElementById('qrm_title').textContent = quizTitle;
+    document.getElementById('qrm_subtitle').textContent = 'Answer all questions and submit for immediate automated scoring and skill verification.';
+    document.getElementById('qrm_feedback').style.display = 'none';
+    document.getElementById('qrm_submitBtn').style.display = 'inline-block';
+    document.getElementById('qrm_submitBtn').disabled = false;
+    document.getElementById('quizRunnerForm').reset();
+
+    try {
+      const { quiz, questions } = await api(`/student/quizzes/${quizId}/take`);
+      const qList = document.getElementById('qrm_questionsList');
+      if (!questions || !questions.length) {
+        qList.innerHTML = `<p class="empty-state">No questions added to this quiz yet.</p>`;
+        document.getElementById('qrm_submitBtn').style.display = 'none';
+      } else {
+        qList.innerHTML = questions.map((q, idx) => `
+          <div class="card mb-2" style="background:#fff; border:1px solid var(--line); padding:16px;">
+            <div class="flex-between">
+              <strong>Question ${idx + 1} (${q.points || 1} pt${(q.points||1) > 1 ? 's' : ''})</strong>
+            </div>
+            <p class="mt-1" style="font-size:0.95rem; font-weight:500;">${escapeHtml(q.question_text)}</p>
+            <div style="display:flex; flex-direction:column; gap:8px; margin-top:10px;">
+              <label style="display:flex; align-items:center; gap:8px; cursor:pointer; padding:8px 12px; border-radius:4px; border:1px solid var(--line); background:var(--panel);">
+                <input type="radio" name="question_${q.id}" value="A" required>
+                <span><strong>A)</strong> ${escapeHtml(q.option_a)}</span>
+              </label>
+              <label style="display:flex; align-items:center; gap:8px; cursor:pointer; padding:8px 12px; border-radius:4px; border:1px solid var(--line); background:var(--panel);">
+                <input type="radio" name="question_${q.id}" value="B">
+                <span><strong>B)</strong> ${escapeHtml(q.option_b)}</span>
+              </label>
+              ${q.option_c ? `
+                <label style="display:flex; align-items:center; gap:8px; cursor:pointer; padding:8px 12px; border-radius:4px; border:1px solid var(--line); background:var(--panel);">
+                  <input type="radio" name="question_${q.id}" value="C">
+                  <span><strong>C)</strong> ${escapeHtml(q.option_c)}</span>
+                </label>
+              ` : ''}
+              ${q.option_d ? `
+                <label style="display:flex; align-items:center; gap:8px; cursor:pointer; padding:8px 12px; border-radius:4px; border:1px solid var(--line); background:var(--panel);">
+                  <input type="radio" name="question_${q.id}" value="D">
+                  <span><strong>D)</strong> ${escapeHtml(q.option_d)}</span>
+                </label>
+              ` : ''}
+            </div>
+          </div>
+        `).join('');
+      }
+
+      closeModal('studentQuizzesModal');
+      openModal('quizRunnerModal');
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  document.getElementById('quizRunnerForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!activeTakingQuizId) return;
+
+    const form = e.target;
+    const formData = new FormData(form);
+    const answers = [];
+    for (const [key, value] of formData.entries()) {
+      if (key.startsWith('question_')) {
+        const question_id = parseInt(key.replace('question_', ''));
+        answers.push({ question_id, selected_option: value });
+      }
+    }
+
+    try {
+      const res = await api(`/student/quizzes/${activeTakingQuizId}/submit`, {
+        method: 'POST',
+        body: { answers }
+      });
+
+      const fb = document.getElementById('qrm_feedback');
+      fb.style.display = 'block';
+      fb.innerHTML = `
+        <div class="card" style="background:${res.passed ? '#EBF7EE' : '#FDF0EC'}; border:1px solid ${res.passed ? '#A8DDB5' : '#F5BDB0'}; padding:16px;">
+          <h3 style="margin:0; color:${res.passed ? '#2D8A4E' : '#C53030'};">
+            ${res.passed ? '🎉 Assessment Passed!' : 'Needs Improvement'}
+          </h3>
+          <p class="mt-1" style="font-size:1.05rem;">
+            <strong>Your Score:</strong> ${res.scorePercent}% (${res.earnedPoints} / ${res.totalPoints} points) &middot; 
+            <strong>Required to Pass:</strong> ${res.passingScore}%
+          </p>
+          <p class="mt-0">${res.message}</p>
+          ${res.passed ? '<p class="pill pill-good" style="display:inline-block; margin-top:8px;">✔ Associated skills have been automatically verified on your profile!</p>' : ''}
+        </div>
+      `;
+
+      document.getElementById('qrm_submitBtn').style.display = 'none';
+      toast(res.passed ? 'Quiz passed! Skill verified.' : 'Quiz completed.');
+      await loadProfile();
+      await loadOverview();
+      await loadJobs();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  });
+
+  // 6. SKILLS
+  async function loadSkillsMaster() {
+    try {
+      const res = await api('/student/skills-master');
+      const skills = res.skills || [];
+      const sel = document.getElementById('skillSelect');
+      if (sel) {
+        sel.innerHTML = '<option value="">-- Choose Skill --</option>' + 
+          skills.map(s => `<option value="${s.id}">${escapeHtml(s.name)} (${escapeHtml(s.category)})</option>`).join('');
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function addSkill() {
+    const sel = document.getElementById('skillSelect');
+    const prof = document.getElementById('profSelect');
+    if (!sel || !prof || !sel.value) return toast('Please select a skill to add', true);
+    try {
+      await api('/student/skills', { method: 'POST', body: {
+        skill_id: sel.value,
+        proficiency: prof.value
+      }});
+      toast('Skill added to profile!');
+      await loadProfile();
+      await loadOverview();
+      await loadReadiness();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  function renderSkillList(skills) {
+    const el = document.getElementById('skillList');
+    if (!el) return;
+    const badge = document.getElementById('skillsCountBadge');
+    if (badge) badge.textContent = `${(skills || []).length} Skills Logged`;
+    if (!skills || !skills.length) {
+      el.innerHTML = '<p class="empty-state">No skills added yet. Select a skill above to add to your profile.</p>';
+      return;
+    }
+    el.innerHTML = skills.map(s => `
+      <div class="skill-row">
+        <span><strong>${escapeHtml(s.name)}</strong></span>
+        <div class="flex gap-1" style="align-items:center;">
+          <span class="pill pill-good">${escapeHtml(s.proficiency)}</span>
+          ${s.verified ? '<span class="pill pill-good">✓ Verified</span>' : '<span class="pill">Self-Reported</span>'}
+          <button type="button" class="btn btn-ghost btn-sm" onclick="removeSkill(${s.skill_id})" style="color:var(--bad); padding:2px 8px;" title="Remove skill">✕</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  async function removeSkill(skillId) {
+    if (!confirm('Remove this skill from your profile?')) return;
+    try {
+      await api(`/student/skills/${skillId}`, { method: 'DELETE' });
+      toast('Skill removed.');
+      await loadProfile();
+      await loadOverview();
+      await loadReadiness();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  // 7. CERTIFICATES
+  function openAddCertModal() {
+    document.getElementById('certModalForm').reset();
+    document.getElementById('cm_date').value = new Date().toISOString().split('T')[0];
+    openModal('certModal');
+  }
+
+  async function deleteStudentCertificate(id) {
+    if (!confirm('Are you sure you want to remove this certificate?')) return;
+    try {
+      await api(`/student/certificates/${id}`, { method: 'DELETE' });
+      toast('Certificate deleted.');
+      await loadCertificates();
+      await loadOverview();
+      await loadReadiness();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  async function loadCertificates() {
+    try {
+      const res = await api('/student/certificates');
+      renderCertList(res.certificates || []);
+    } catch (err) {
+      console.error('Error loading certificates:', err);
+    }
+  }
+
+  function renderCertList(certs) {
+    document.getElementById('certList').innerHTML = certs.length ? `<div class="grid grid-2">${certs.map(c => `
+      <div class="card">
+        <div class="flex-between">
+          <h3 style="margin:0;">${escapeHtml(c.title)}</h3>
+          <button class="btn btn-danger btn-sm" onclick="deleteStudentCertificate(${c.id})">Delete</button>
+        </div>
+        <p class="muted mt-0" style="margin-top:6px;">Issued by ${escapeHtml(c.issued_by || 'Accredited Partner')} &middot; ${fmtDate(c.issue_date)}</p>
+        ${c.credential_url ? `<div class="mt-1"><a href="${escapeHtml(c.credential_url)}" target="_blank" class="btn btn-ghost btn-sm">🔗 View Credential</a></div>` : ''}
+      </div>`).join('')}</div>` : `<p class="empty-state">No certificates recorded yet. Click "+ Add Certificate" above to record your credentials.</p>`;
+  }
+
+  document.getElementById('certModalForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const payload = {
+      title: document.getElementById('cm_title').value.trim(),
+      issued_by: document.getElementById('cm_issuer').value.trim(),
+      issue_date: document.getElementById('cm_date').value,
+      credential_url: document.getElementById('cm_url').value.trim() || null
+    };
+    try {
+      await api('/student/certificates', { method: 'POST', body: payload });
+      toast('Certificate saved successfully!');
+      closeModal('certModal');
+      await loadCertificates();
+      await loadOverview();
+      await loadReadiness();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  });
+
+  // 8. JOBS & AI MATCHING
+  async function loadJobs() {
+    const { jobs } = await api('/student/jobs');
+    document.getElementById('jobList').innerHTML = jobs.length ? jobs.map(j => `
+      <div class="job-card">
+        <div class="job-head">
+          <div>
+            <h3>${j.title}</h3>
+            <p class="muted mt-0">${j.company_name} &middot; ${j.job_type} &middot; ${j.location || j.district || ''}</p>
+          </div>
+          <span class="pill ${scoreColor(j.matchScore)}">${j.matchScore}% match</span>
+        </div>
+        <p>${j.description || ''}</p>
+        ${j.missingSkills.length ? `<p class="muted">Missing: ${j.missingSkills.join(', ')}</p>` : ''}
+        <div class="flex gap-1" style="flex-wrap:wrap;">
+          <button class="btn btn-primary btn-sm" onclick="applyJob(${j.id})">Apply</button>
+          <button class="btn btn-ghost btn-sm" onclick="viewGap(${j.id})">View AI skill-gap report</button>
+          <button class="btn btn-accent btn-sm" onclick="openRoadmapModal(${j.id}, '${escapeHtml(j.title)}')">🎯 AI 5-Step Roadmap</button>
+        </div>
+        <div id="gap-${j.id}" class="mt-2"></div>
+      </div>
+    `).join('') : `<p class="empty-state">No open jobs right now.</p>`;
+  }
+
+  async function applyJob(id) {
+    try {
+      const res = await api(`/student/jobs/${id}/apply`, { method: 'POST' });
+      toast(`Applied! Match score: ${res.matchScore}%`);
+      loadApplications();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  async function viewGap(id) {
+    try {
+      const gap = await api(`/student/ai/skill-gap/${id}`);
+      const box = document.getElementById(`gap-${id}`);
+      box.innerHTML = `
+        <div class="card" style="background:var(--paper);">
+          <p><strong>AI report:</strong> ${gap.report}</p>
+          ${gap.recommendedCourses.length ? `
+            <p class="muted">Recommended courses to close the gap:</p>
+            <ul>${gap.recommendedCourses.map(c => `<li>${c.title} (covers ${c.skillsCovered} missing skill${c.skillsCovered>1?'s':''})</li>`).join('')}</ul>
+          ` : ''}
+        </div>`;
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  // 9. APPLICATIONS
+  async function loadApplications() {
+    const { applications } = await api('/student/applications');
+    const upcomingInterviews = (applications || []).filter(a => a.interview_date);
+    const bannerBox = document.getElementById('upcomingInterviewsBanner');
+    
+    if (upcomingInterviews.length) {
+      bannerBox.innerHTML = `
+        <div class="card" style="background:#EEF6FF; border:1px solid #B8D6F7; margin-bottom:16px;">
+          <h3 style="margin:0 0 12px; color:#1E429F; display:flex; align-items:center; gap:8px;">
+            <span>📅</span> Upcoming Scheduled Interviews (${upcomingInterviews.length})
+          </h3>
+          <div class="grid grid-2">
+            ${upcomingInterviews.map(i => `
+              <div style="background:#fff; border:1px solid #D1E5F8; border-radius:var(--radius); padding:14px;">
+                <div class="flex-between">
+                  <strong>${escapeHtml(i.title)}</strong>
+                  <span class="pill pill-good" style="text-transform:capitalize;">${i.interview_mode || 'Online'} Interview</span>
+                </div>
+                <div class="muted mt-1" style="font-size:0.88rem;">Company: <strong>${escapeHtml(i.company_name)}</strong></div>
+                <div class="mt-1" style="font-size:0.9rem;">
+                  <strong>Date &amp; Time:</strong> ${new Date(i.interview_date).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
+                </div>
+                ${i.interview_link ? `
+                  <div class="mt-2">
+                    <a href="${i.interview_link}" target="_blank" class="btn btn-accent btn-sm">🔗 Join Interview Call / Location</a>
+                  </div>
+                ` : ''}
+                ${i.interview_notes ? `
+                  <div class="muted mt-1" style="font-size:0.82rem; background:var(--paper); padding:6px 10px; border-radius:4px;">
+                    <strong>Recruiter Note:</strong> ${escapeHtml(i.interview_notes)}
+                  </div>
+                ` : ''}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    } else {
+      bannerBox.innerHTML = '';
+    }
+
+    document.getElementById('applicationList').innerHTML = applications.length ? `
+      <table>
+        <thead><tr><th>Role</th><th>Company</th><th>Match</th><th>Status</th><th>Interview / Next Steps</th><th>Applied</th></tr></thead>
+        <tbody>${applications.map(a => `
+          <tr>
+            <td><strong>${escapeHtml(a.title)}</strong></td>
+            <td>${escapeHtml(a.company_name)}</td>
+            <td><span class="pill ${scoreColor(a.match_score)}">${a.match_score}%</span></td>
+            <td><span class="pill pill-${a.status}">${a.status}</span></td>
+            <td>
+              ${a.interview_date ? `
+                <div style="font-size:0.85rem;">
+                  <strong>${new Date(a.interview_date).toLocaleString('en-IN', { dateStyle: 'short', timeStyle: 'short' })}</strong><br>
+                  <span class="pill" style="font-size:0.75rem; text-transform:capitalize;">${a.interview_mode || 'Online'}</span>
+                  ${a.interview_link ? `<div class="mt-1"><a href="${a.interview_link}" target="_blank" class="btn btn-ghost btn-sm">Join Call</a></div>` : ''}
+                </div>
+              ` : '<span class="muted">Awaiting scheduling</span>'}
+            </td>
+            <td>${fmtDate(a.applied_at)}</td>
+          </tr>
+        `).join('')}</tbody>
+      </table>` : `<p class="empty-state">You haven't applied to any positions yet.</p>`;
+  }
+
+  // 10. EMPLOYABILITY READINESS SCORE (SIH26135)
+  async function loadReadiness() {
+    try {
+      const res = await api('/student/readiness');
+      document.getElementById('readinessScoreVal').textContent = res.score;
+      document.getElementById('readinessTierText').textContent = res.tier;
+      const badge = document.getElementById('readinessBadge');
+      badge.textContent = res.tier;
+      badge.style.background = res.badgeColor || '#00875A';
+      badge.style.color = '#fff';
+
+      const circle = document.getElementById('readinessGaugeCircle');
+      if (res.score >= 80) {
+        circle.style.borderColor = '#00875A';
+      } else if (res.score >= 60) {
+        circle.style.borderColor = '#0052CC';
+      } else if (res.score >= 40) {
+        circle.style.borderColor = '#FFAB00';
+      } else {
+        circle.style.borderColor = '#DE350B';
+      }
+
+      const list = document.getElementById('readinessFactorsList');
+      list.innerHTML = (res.breakdown || []).map(f => `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--paper); border:1px solid var(--line); border-radius:6px; margin-bottom:8px;">
+          <div>
+            <strong style="font-size:0.95rem;">${escapeHtml(f.factor)}</strong>
+            <div class="muted" style="font-size:0.82rem;">${escapeHtml(f.detail)}</div>
+          </div>
+          <div style="text-align:right;">
+            <span style="font-size:1.1rem; font-weight:700; color:var(--accent);">${f.score}</span>
+            <span class="muted" style="font-size:0.8rem;"> / ${f.max} pts</span>
+            <div style="width:100px; height:6px; background:#DFE1E6; border-radius:3px; margin-top:4px; overflow:hidden;">
+              <div style="width:${Math.min(100, Math.round((f.score/f.max)*100))}%; height:100%; background:var(--accent); border-radius:3px;"></div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    } catch (err) {
+      console.error('Error loading readiness score:', err);
+    }
+  }
+
+  // 11. CAREER & LONGITUDINAL MILESTONES (SIH26135)
+  async function loadCareerJourney() {
+    try {
+      const res = await api('/student/career-journey');
+      const container = document.getElementById('careerJourneyContainer');
+      const records = res.journey || [];
+
+      if (!records.length) {
+        container.innerHTML = `
+          <div class="empty-state" style="text-align:center; padding:30px;">
+            <p>No milestone events recorded yet.</p>
+            <p class="muted">Report your 30-day, 90-day, 180-day, or 365-day career status above to build an official state-verified trajectory.</p>
+            <button class="btn btn-primary btn-sm mt-1" onclick="openFollowUpModal()">Report First Milestone</button>
+          </div>
+        `;
+        return;
+      }
+
+      const levelBadges = {
+        'self_reported': '<span class="pill pill-level1">Level 1: Self-Reported</span>',
+        'institute_verified': '<span class="pill pill-level2">Level 2: Institute Verified</span>',
+        'employer_verified': '<span class="pill pill-level3">Level 3: Employer Verified</span>'
+      };
+
+      const outcomeNames = {
+        'employed': 'Employed / Corporate Job',
+        'self_employed': 'Self-Employed / Entrepreneur',
+        'apprenticeship': 'Apprenticeship / Trade',
+        'seeking': 'Unemployed / Actively Seeking',
+        'higher_education': 'Higher Education'
+      };
+
+      container.innerHTML = `
+        <div class="career-timeline">
+          ${records.map(r => `
+            <div class="journey-node">
+              <div class="milestone-badge">${r.milestone_days || 30} Days Post-Training</div>
+              <div class="flex-between" style="align-items:flex-start;">
+                <div>
+                  <h4 style="margin:0 0 4px; font-size:1.05rem;">
+                    ${escapeHtml(r.job_title || outcomeNames[r.outcome_type] || 'Milestone Record')}
+                  </h4>
+                  <div class="muted" style="font-size:0.85rem;">
+                    ${r.employer_name || r.company_name ? `<strong>Employer:</strong> ${escapeHtml(r.employer_name || r.company_name)} &middot; ` : ''}
+                    ${r.location_district ? `<span>District: ${escapeHtml(r.location_district)}</span> &middot; ` : ''}
+                    ${r.monthly_salary ? `<strong style="color:#00875A;">₹${Number(r.monthly_salary).toLocaleString('en-IN')}/mo</strong> &middot; ` : ''}
+                    <span>Recorded: ${fmtDate(r.recorded_at)}</span>
+                  </div>
+                </div>
+                <div>
+                  ${levelBadges[r.verification_level] || levelBadges.self_reported}
+                </div>
+              </div>
+
+              ${r.outcome_type === 'seeking' && r.unemployment_reason ? `
+                <div style="background:#FFFBEB; border:1px solid #FDE68A; border-radius:6px; padding:10px 12px; margin-top:10px; font-size:0.85rem; color:#92400E;">
+                  <strong>Reported Employment Barrier:</strong> ${escapeHtml(r.unemployment_reason.replace(/_/g, ' '))}
+                  ${r.unemployment_notes ? `<div style="margin-top:4px; color:#78350F;"><em>"${escapeHtml(r.unemployment_notes)}"</em></div>` : ''}
+                </div>
+              ` : ''}
+
+              ${r.follow_up_notes ? `
+                <div class="muted" style="font-size:0.85rem; margin-top:8px;">
+                  <strong>Career Notes:</strong> ${escapeHtml(r.follow_up_notes)}
+                </div>
+              ` : ''}
+
+              ${r.verified_by_name ? `
+                <div style="font-size:0.8rem; color:#0052CC; margin-top:8px;">
+                  ✓ Verified by: <strong>${escapeHtml(r.verified_by_name)}</strong> on ${fmtDate(r.verified_at)}
+                </div>
+              ` : ''}
+            </div>
+          `).join('')}
+        </div>
+      `;
+    } catch (err) {
+      console.error('Error loading career journey:', err);
+    }
+  }
+
+  function openFollowUpModal() {
+    document.getElementById('followUpForm').reset();
+    toggleFollowUpFields('employed');
+    openModal('followUpModal');
+  }
+
+  function toggleFollowUpFields(val) {
+    const isSeeking = val === 'seeking';
+    document.getElementById('fu_seeking_group').style.display = isSeeking ? 'block' : 'none';
+    document.getElementById('fu_employed_group').style.display = isSeeking ? 'none' : 'block';
+  }
+
+  document.getElementById('followUpForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const outcome = document.getElementById('fu_outcome').value;
+    const payload = {
+      milestone_days: document.getElementById('fu_milestone').value,
+      outcome_type: outcome,
+      job_title: document.getElementById('fu_role').value || '',
+      monthly_salary: document.getElementById('fu_salary').value || null,
+      employer_name: document.getElementById('fu_company').value || '',
+      location_district: document.getElementById('fu_district').value || '',
+      unemployment_reason: outcome === 'seeking' ? document.getElementById('fu_reason').value : null,
+      unemployment_notes: outcome === 'seeking' ? document.getElementById('fu_unempNotes').value : null,
+      follow_up_notes: document.getElementById('fu_notes').value || null
+    };
+
+    try {
+      const res = await api('/student/follow-up', { method: 'POST', body: payload });
+      toast(res.message || 'Milestone recorded!');
+      closeModal('followUpModal');
+      await loadCareerJourney();
+      await loadProfile();
+      await loadOverview();
+      await loadReadiness();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  });
+
+  // 12. AI 5-STEP ROADMAP MODAL
+  async function openRoadmapModal(jobId, jobTitle) {
+    openModal('roadmapModal');
+    document.getElementById('rdm_jobTitle').textContent = `AI Prioritized Learning Roadmap: ${jobTitle || 'Target Role'}`;
+    document.getElementById('rdm_headerCard').innerHTML = '<div class="muted">Generating prioritized learning roadmap...</div>';
+    document.getElementById('rdm_stepsList').innerHTML = '';
+
+    try {
+      const res = await api(`/student/ai/roadmap/${jobId}`);
+      
+      document.getElementById('rdm_headerCard').innerHTML = `
+        <div class="flex-between">
+          <div>
+            <h3 style="margin:0;">Target: ${escapeHtml(res.job ? res.job.title : jobTitle)}</h3>
+            <p class="muted mt-0" style="font-size:0.85rem;">
+              ${escapeHtml(res.diagnosticSummary || '')}
+            </p>
+          </div>
+          <div style="text-align:right;">
+            <span class="pill ${scoreColor(res.matchScore)}" style="font-size:1.1rem; padding:6px 14px;">${res.matchScore}% Match</span>
+          </div>
+        </div>
+        <div class="mt-2" style="font-size:0.85rem; display:flex; gap:16px; flex-wrap:wrap;">
+          <span><strong>Matched Skills:</strong> ${res.matched.length ? res.matched.map(m => m.name).join(', ') : 'None'}</span>
+          <span><strong>Missing Skills:</strong> ${res.missing.length ? `<span style="color:#DE350B;">${res.missing.map(m => m.name).join(', ')}</span>` : '<span style="color:#00875A;">None</span>'}</span>
+        </div>
+      `;
+
+      document.getElementById('rdm_stepsList').innerHTML = (res.roadmap || []).map(st => `
+        <div style="background:#fff; border:1px solid var(--line); border-left:4px solid var(--accent); border-radius:6px; padding:14px; margin-bottom:12px;">
+          <div class="flex-between">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="badge-step" style="background:var(--accent); color:#fff; font-weight:bold; width:26px; height:26px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:0.85rem;">${st.step}</span>
+              <strong style="font-size:1rem;">${escapeHtml(st.title)}</strong>
+            </div>
+            <span class="pill" style="font-size:0.75rem;">${escapeHtml(st.timeline)}</span>
+          </div>
+          <div style="margin:8px 0 4px; font-size:0.88rem; color:#42526E;">
+            <strong>Focus:</strong> ${escapeHtml(st.focus)}
+          </div>
+          <div style="font-size:0.88rem; color:#172B4D; background:var(--paper); padding:8px 10px; border-radius:4px;">
+            <strong>Recommended Action:</strong> ${escapeHtml(st.action)}
+          </div>
+        </div>
+      `).join('');
+    } catch (err) {
+      document.getElementById('rdm_headerCard').innerHTML = `<p class="empty-state">${escapeHtml(err.message)}</p>`;
+    }
+  }
+
+  // ================= 13. AI SKILL INTELLIGENCE ENGINE =================
+  async function loadAiTargetRoles() {
+    try {
+      const res = await api('/student/ai/target-roles');
+      const sel = document.getElementById('targetRoleSelect');
+      if (res.roles && res.roles.length) {
+        sel.innerHTML = '<option value="">-- Choose Target Career Role --</option>' + 
+          res.roles.map(r => `<option value="${escapeHtml(r.title)}">${escapeHtml(r.title)} (${r.skills.length} core competencies)</option>`).join('');
+      }
+    } catch (err) {
+      console.error('Error loading AI target roles:', err);
+    }
+  }
+
+  async function runAiSkillGapAnalysis() {
+    const selectedRole = document.getElementById('targetRoleSelect').value;
+    const customRole = document.getElementById('customRoleInput').value.trim();
+    const targetRole = customRole || selectedRole;
+    if (!targetRole) {
+      toast('Please select or type a target industry role', true);
+      return;
+    }
+
+    const container = document.getElementById('aiSkillGapResults');
+    container.innerHTML = `<div class="card" style="text-align:center; padding:30px;"><p class="muted">Running AI Skill Intelligence Engine analysis for <strong>${escapeHtml(targetRole)}</strong>...</p></div>`;
+
+    try {
+      const res = await api('/student/ai/analyze-target-role', {
+        method: 'POST',
+        body: { target_role: targetRole }
+      });
+      renderSkillGapResults(res, targetRole);
+    } catch (err) {
+      container.innerHTML = `<div class="card" style="border-left:4px solid var(--bad);"><p style="color:var(--bad);">${escapeHtml(err.message)}</p></div>`;
+    }
+  }
+
+  function renderSkillGapResults(res, targetRole) {
+    const container = document.getElementById('aiSkillGapResults');
+    if (!container) return;
+
+    const matchedSkills = res.matchedSkills || res.matched || [];
+    const partialSkills = res.partialSkills || res.partiallyMatchedSkills || res.weak || [];
+    const missingSkillsRanked = res.missingSkillsRanked || res.missingSkills || res.missing || [];
+    const matchPercentage = typeof res.matchPercentage === 'number' ? res.matchPercentage : (res.matchScore || 0);
+    const totalTargetSkills = res.totalTargetSkills || (matchedSkills.length + partialSkills.length + missingSkillsRanked.length) || 1;
+    const summary = res.summary || res.report?.summary || `Analysis computed against current industry demand patterns for ${targetRole}.`;
+
+    container.innerHTML = `
+      <div class="card">
+        <div class="flex-between" style="flex-wrap:wrap; gap:16px;">
+          <div>
+            <h3 style="margin:0;">Target Career Role: ${escapeHtml(targetRole)}</h3>
+            <p class="muted mt-0">${escapeHtml(summary)}</p>
+          </div>
+          <div style="text-align:right;">
+            <span class="pill ${scoreColor(matchPercentage)}" style="font-size:1.3rem; padding:6px 16px; font-weight:700;">${matchPercentage}% Match</span>
+            <div class="muted" style="font-size:0.78rem; margin-top:4px;">${matchedSkills.length} of ${totalTargetSkills} skills verified</div>
+          </div>
+        </div>
+
+        <div class="score-track mt-2" style="height:10px;">
+          <div class="score-fill" style="width:${matchPercentage}%; background:${matchPercentage >= 70 ? '#2F7A54' : (matchPercentage >= 40 ? '#E2A33B' : '#B4442E')};"></div>
+        </div>
+
+        <div class="grid grid-3 mt-3">
+          <!-- 1. Matched Skills -->
+          <div style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:var(--radius); padding:16px;">
+            <strong style="color:#166534; display:block; margin-bottom:8px;">✔ Verified Matching Skills (${matchedSkills.length})</strong>
+            ${matchedSkills.length ? `<div style="display:flex; flex-wrap:wrap; gap:6px;">${matchedSkills.map(s => `<span class="pill pill-good">${escapeHtml(s.name || s)}</span>`).join('')}</div>` : '<p class="muted" style="font-size:0.82rem;">No overlapping skills identified yet.</p>'}
+          </div>
+
+          <!-- 2. Partially Matched -->
+          <div style="background:#FFFBEB; border:1px solid #FDE68A; border-radius:var(--radius); padding:16px;">
+            <strong style="color:#92400E; display:block; margin-bottom:8px;">⚡ In-Progress / Beginner Skills (${partialSkills.length})</strong>
+            ${partialSkills.length ? `<div style="display:flex; flex-wrap:wrap; gap:6px;">${partialSkills.map(s => `<span class="pill pill-signal">${escapeHtml(s.name || s)}</span>`).join('')}</div>` : '<p class="muted" style="font-size:0.82rem;">None detected.</p>'}
+          </div>
+
+          <!-- 3. Missing Skills Ranked -->
+          <div style="background:#FEF2F2; border:1px solid #FECACA; border-radius:var(--radius); padding:16px;">
+            <strong style="color:#991B1B; display:block; margin-bottom:8px;">▲ Priority Skills to Acquire (${missingSkillsRanked.length})</strong>
+            ${missingSkillsRanked.length ? `<div style="display:flex; flex-direction:column; gap:6px;">${missingSkillsRanked.map((s, idx) => `
+              <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.85rem;">
+                <span style="font-weight:600; color:#7F1D1D;">${idx + 1}. ${escapeHtml(typeof s === 'string' ? s : (s.name || s.skill || 'Skill'))}</span>
+                <span class="pill pill-bad" style="font-size:0.7rem;">${escapeHtml(s.priority || (idx < 2 ? 'High' : (idx < 4 ? 'Medium' : 'Low')))}</span>
+              </div>
+            `).join('')}</div>` : '<p class="muted" style="font-size:0.82rem;">Zero missing competencies detected!</p>'}
+          </div>
+        </div>
+
+        <div class="mt-3 flex-between" style="border-top:1px solid var(--line); padding-top:16px; flex-wrap:wrap; gap:12px;">
+          <p class="muted" style="margin:0; font-size:0.85rem;">Ready to close this gap? Explore your AI Personalized Learning Plan tailored for this role.</p>
+          <button class="btn btn-accent btn-sm" onclick="showSection('learning-plan')">View Tailored Learning Plan →</button>
+        </div>
+      </div>
+    `;
+  }
+
+  // ================= 14. PERSONALIZED LEARNING PLAN =================
+  async function loadLearningPlan() {
+    const container = document.getElementById('learningPlanContainer');
+    container.innerHTML = `<div class="muted">Generating personalized AI learning recommendations...</div>`;
+
+    try {
+      const res = await api('/student/learning-plan');
+      const plan = res.plan || {};
+      const targetRole = res.targetRole || 'Software Engineer';
+
+      container.innerHTML = `
+        <div class="card mb-2" style="background:#F8FAFC; border-left:4px solid var(--slate-deep);">
+          <div class="flex-between">
+            <div>
+              <h3 style="margin:0;">Career Target: ${escapeHtml(targetRole)}</h3>
+              <p class="muted mt-0">${escapeHtml(plan.summary || 'Prioritized roadmap generated by AI Skill Intelligence.')}</p>
+            </div>
+            <span class="pill pill-signal" style="font-weight:700;">5-Step Roadmap</span>
+          </div>
+        </div>
+
+        <!-- 5-Step Learning Roadmap -->
+        <h3 class="mt-3" style="font-size:1.1rem;">5-Step Structured Learning Sequence</h3>
+        <div class="mt-2">
+          ${(plan.learningSequence || []).map(st => `
+            <div class="roadmap-step">
+              <div class="roadmap-step-num">${st.step}</div>
+              <div class="roadmap-step-content">
+                <div class="flex-between">
+                  <strong style="font-size:1rem; color:var(--slate-deep);">${escapeHtml(st.title)}</strong>
+                  <span class="pill" style="font-size:0.75rem;">${escapeHtml(st.timeline)}</span>
+                </div>
+                <div style="margin:6px 0; font-size:0.88rem;"><strong>Focus:</strong> ${escapeHtml(st.focus)}</div>
+                <div style="background:var(--paper); padding:8px 12px; border-radius:var(--radius); font-size:0.85rem; color:var(--ink-soft);">
+                  <strong>Action Blueprint:</strong> ${escapeHtml(st.action)}
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+
+        <!-- Hands-On Projects to Build -->
+        <h3 class="mt-3" style="font-size:1.1rem;">Recommended Hands-On Projects to Build</h3>
+        <div class="grid grid-2 mt-2">
+          ${(plan.recommendedProjects || []).map(pr => `
+            <div class="card">
+              <div class="flex-between">
+                <h4 style="margin:0; font-size:1rem;">${escapeHtml(pr.title)}</h4>
+                <span class="pill pill-good" style="font-size:0.72rem;">Portfolio Ready</span>
+              </div>
+              <p class="muted mt-1" style="font-size:0.85rem;">${escapeHtml(pr.description)}</p>
+              <div style="font-size:0.8rem; margin:8px 0;"><strong>Tech Stack:</strong> <code style="background:#eee; padding:2px 6px; border-radius:3px;">${escapeHtml(pr.techStack)}</code></div>
+              <div style="font-size:0.82rem; background:#F0FDF4; padding:8px 10px; border-radius:4px; color:#166534;">
+                <strong>Engineering Spec:</strong> ${escapeHtml(pr.spec)}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+
+        <!-- Recommended Courses & Certifications -->
+        <div class="grid grid-2 mt-3">
+          <div class="card">
+            <h4 style="margin:0 0 12px; font-size:1rem;">Recommended Courses &amp; Modules</h4>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              ${(plan.recommendedCourses || []).map(c => `
+                <div style="padding:10px; border:1px solid var(--line); border-radius:4px; background:#fff;">
+                  <strong>${escapeHtml(c.title)}</strong>
+                  <div class="muted" style="font-size:0.82rem;">${escapeHtml(c.provider)} &middot; ${escapeHtml(c.duration)}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+          <div class="card">
+            <h4 style="margin:0 0 12px; font-size:1rem;">Industry Certifications to Target</h4>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              ${(plan.recommendedCertifications || []).map(cert => `
+                <div style="padding:10px; border:1px solid var(--line); border-radius:4px; background:#fff;">
+                  <strong>${escapeHtml(cert.title)}</strong>
+                  <div class="muted" style="font-size:0.82rem;">${escapeHtml(cert.issuer)}</div>
+                  <div style="font-size:0.8rem; color:var(--good); margin-top:2px;">⭐ ${escapeHtml(cert.roi)}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    } catch (err) {
+      container.innerHTML = `<p class="empty-state">${escapeHtml(err.message)}</p>`;
+    }
+  }
+
+  // ================= 15. EMPLOYMENT STATUS & VERIFICATION =================
+  async function loadEmploymentStatus() {
+    const card = document.getElementById('employmentStatusCard');
+    try {
+      const p = profileData?.profile || {};
+      const statusLabels = {
+        'employed': 'Employed / Industry Placement',
+        'training': 'In Vocational / Polytechnic Training',
+        'seeking': 'Actively Seeking Employment',
+        'unemployed': 'Not Seeking Employment'
+      };
+
+      card.innerHTML = `
+        <div class="flex-between" style="padding-bottom:12px; border-bottom:1px solid var(--line);">
+          <div>
+            <h4 style="margin:0; font-size:1.1rem;">${escapeHtml(statusLabels[p.employment_status] || 'Active Student')}</h4>
+            <p class="muted mt-0">${escapeHtml(p.college || 'Polytechnic Institution')} &middot; Class of ${escapeHtml(p.graduation_year || '2026')}</p>
+          </div>
+          <span class="pill pill-good" style="font-size:0.85rem; padding:4px 12px;">Level 1: Self-Reported Active</span>
+        </div>
+        <div class="grid grid-2 mt-2" style="font-size:0.9rem;">
+          <div><strong>Preferred Career Track:</strong> ${escapeHtml(p.preferred_jobs || 'Not specified')}</div>
+          <div><strong>District &amp; State:</strong> ${escapeHtml(p.district || '')}, ${escapeHtml(p.state || '')}</div>
+          <div><strong>CGPA / Percentage:</strong> ${p.cgpa ? p.cgpa : 'Not recorded'}</div>
+          <div><strong>Registered Phone:</strong> ${escapeHtml(p.phone || 'Not recorded')}</div>
+        </div>
+        <div class="mt-2">
+          <button class="btn btn-ghost btn-sm" onclick="showSection('profile')">Edit Profile &amp; Career Details</button>
+          <button class="btn btn-primary btn-sm" onclick="openFollowUpModal()">Report Placement / Milestone</button>
+        </div>
+      `;
+    } catch (err) {
+      card.innerHTML = `<p class="empty-state">${escapeHtml(err.message)}</p>`;
+    }
+  }
+
+  // ================= 16. NOTIFICATIONS =================
+  async function loadNotifications() {
+    const container = document.getElementById('notificationsList');
+    try {
+      const res = await api('/student/notifications');
+      const items = res.notifications || [];
+      if (!items.length) {
+        container.innerHTML = `<div class="card"><p class="empty-state">No notifications right now. Check back soon.</p></div>`;
+        return;
+      }
+      container.innerHTML = items.map(n => `
+        <div class="notification-item ${n.is_read ? '' : 'unread'}">
+          <div class="notification-icon">🔔</div>
+          <div style="flex:1;">
+            <div class="flex-between">
+              <strong style="font-size:0.95rem;">${escapeHtml(n.title)}</strong>
+              <span class="muted" style="font-size:0.78rem;">${fmtDate(n.created_at)}</span>
+            </div>
+            <p style="margin:4px 0 0; font-size:0.88rem; color:var(--ink);">${escapeHtml(n.message)}</p>
+          </div>
+        </div>
+      `).join('');
+    } catch (err) {
+      container.innerHTML = `<p class="empty-state">${escapeHtml(err.message)}</p>`;
+    }
+  }
+
+  async function markAllNotificationsRead() {
+    try {
+      await api('/student/notifications/read-all', { method: 'PUT' });
+      toast('Notifications marked as read.');
+      await loadNotifications();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  // ================= 17. SETTINGS PASSWORD =================
+  document.getElementById('settingsPasswordForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const currentPassword = document.getElementById('st_curPassword').value;
+    const newPassword = document.getElementById('st_newPassword').value;
+    const confirmPassword = document.getElementById('st_confirmPassword').value;
+
+    if (!newPassword || newPassword.length < 6) return toast('New password must be at least 6 characters', true);
+    if (newPassword !== confirmPassword) return toast('New passwords do not match', true);
+
+    try {
+      const res = await api('/student/settings/password', {
+        method: 'PUT',
+        body: { currentPassword, newPassword }
+      });
+      toast(res.message || 'Password changed successfully!');
+      document.getElementById('settingsPasswordForm').reset();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  });
+
+  // ================= 18. LINKEDIN PROFILE OPTIMIZER & SYNC =================
+  function openLinkedInSyncModal() {
+    const p = profileData?.profile || {};
+    const skills = profileData?.skills || [];
+    const projects = profileData?.projects || [];
+    const certs = profileData?.certificates || [];
+    const name = p.name || user?.name || 'Student';
+    const topSkills = skills.slice(0, 5).map(s => s.name).join(' | ');
+    const college = p.college || 'Government Polytechnic Pune';
+    const grad = p.graduation_year ? `'${String(p.graduation_year).slice(-2)}` : '';
+
+    // Headline
+    const headline = `${p.headline || 'Software Engineer'} | ${topSkills || 'Web Development'} | ${college} ${grad} | SkillTrack Verified Candidate`;
+    document.getElementById('liGeneratedHeadline').value = headline;
+
+    // About Summary
+    const skillListStr = skills.map(s => s.name).join(', ') || 'Modern Engineering Frameworks, System Architecture';
+    const projectHighlights = projects.slice(0, 2).map(pr => `• ${pr.title}: ${pr.description || 'Production-grade engineering system'}`).join('\n');
+    const certHighlights = certs.slice(0, 2).map(c => `• ${c.title} (Issued by ${c.issued_by})`).join('\n');
+
+    const aboutText = `Hello! I am ${name}, a ${p.headline || 'dedicated technical professional'} based in ${p.district || 'Pune, Maharashtra'}, India.
+
+🔧 Core Technical Competencies:
+${skillListStr}
+
+${projectHighlights ? `🚀 Key Project Highlights:\n${projectHighlights}\n` : ''}
+${certHighlights ? `📜 Verified Certifications:\n${certHighlights}\n` : ''}
+💡 SkillTrack Verified:
+• Completed targeted industry curriculum and skill-gap readiness pathways.
+• Portfolio verified on SkillTrack platform.
+
+I am eager to connect with industry recruiters, mentors, and fellow engineers for software development, full-stack, and technical apprenticeship opportunities.`;
+
+    document.getElementById('liGeneratedAbout').value = aboutText;
+    document.getElementById('liGeneratedSkills').value = skills.map(s => s.name).join(', ');
+
+    const extBtn = document.getElementById('liModalExternalBtn');
+    if (extBtn) {
+      extBtn.href = p.linkedin_url && p.linkedin_url.startsWith('http') ? p.linkedin_url : 'https://www.linkedin.com/';
+    }
+
+    openModal('linkedInModal');
+  }
+
+  function copyText(elemId, toastMsg) {
+    const el = document.getElementById(elemId);
+    if (!el) return;
+    el.select();
+    navigator.clipboard.writeText(el.value).then(() => {
+      toast(toastMsg || 'Copied to clipboard!');
+    }).catch(() => {
+      document.execCommand('copy');
+      toast(toastMsg || 'Copied to clipboard!');
+    });
+  }
+
+  // INITIALIZE
+  (async function init() {
+    await loadProfile();
+    await loadOverview();
+    await loadReadiness();
+    await loadCareerJourney();
+    await loadSkillsMaster();
+    await loadAssignments();
+    await loadCourses();
+    await loadCertificates();
+    await loadAiTargetRoles();
+    await loadLearningPlan();
+    await loadJobs();
+    await loadApplications();
+    await loadEmploymentStatus();
+    await loadNotifications();
+  })();
+</script>
+
+<!-- ================= LINKEDIN PROFILE OPTIMIZER & EXPORT MODAL ================= -->
+<div class="modal-backdrop" id="linkedInModal">
+  <div class="modal-box" style="max-width:650px;">
+    <div class="modal-header">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span style="font-size:1.4rem;">🔗</span>
+        <h3 id="linkedInModalTitle" style="margin:0;">LinkedIn Profile Optimizer &amp; Sync</h3>
+      </div>
+      <button type="button" class="modal-close" onclick="closeModal('linkedInModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="linkedin-sync-banner">
+        <div>
+          <strong>AI-Powered LinkedIn Synchronization</strong>
+          <p class="muted mt-0" style="font-size:0.84rem; margin-bottom:0;">
+            Format your verified SkillTrack skills, projects, and readiness score directly for your LinkedIn profile.
+          </p>
+        </div>
+        <span class="pill pill-good" style="font-size:0.75rem;">Recruiter Ready</span>
+      </div>
+
+      <!-- LinkedIn Headline -->
+      <div class="field mt-2">
+        <div class="flex-between">
+          <label style="font-weight:700;">Optimized LinkedIn Headline</label>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="copyText('liGeneratedHeadline', 'Headline copied to clipboard!')">📋 Copy Headline</button>
+        </div>
+        <textarea id="liGeneratedHeadline" rows="2" style="width:100%; font-family:monospace; font-size:0.88rem; padding:10px;"></textarea>
+      </div>
+
+      <!-- LinkedIn About / Bio -->
+      <div class="field mt-2">
+        <div class="flex-between">
+          <label style="font-weight:700;">Optimized LinkedIn About / Summary</label>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="copyText('liGeneratedAbout', 'About section copied to clipboard!')">📋 Copy About</button>
+        </div>
+        <textarea id="liGeneratedAbout" rows="7" style="width:100%; font-family:monospace; font-size:0.88rem; padding:10px;"></textarea>
+      </div>
+
+      <!-- LinkedIn Skills List to add -->
+      <div class="field mt-2">
+        <div class="flex-between">
+          <label style="font-weight:700;">Top Verified Skills to Add to LinkedIn</label>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="copyText('liGeneratedSkills', 'Skills copied to clipboard!')">📋 Copy Skills</button>
+        </div>
+        <input id="liGeneratedSkills" readonly style="background:#F8FAFC;">
+      </div>
+
+      <!-- Direct LinkedIn Profile Link -->
+      <div class="flex-between mt-3" style="border-top:1px solid var(--line); padding-top:14px;">
+        <div class="muted" style="font-size:0.85rem;">
+          Make sure to upload your 1:1 passport photo on LinkedIn for maximum profile views.
+        </div>
+        <a id="liModalExternalBtn" href="https://www.linkedin.com/in/" target="_blank" class="btn btn-linkedin">
+          Open LinkedIn Profile &rarr;
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

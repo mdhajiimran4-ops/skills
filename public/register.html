@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Create your account — SkillTrack</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css?v=2.1">
+<style>
+  .auth-wrap { max-width: 620px; margin: 36px auto 100px; padding: 0 20px 40px; }
+  .role-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 24px; }
+  .role-tabs button {
+    padding: 10px 4px; font-size: 0.8rem; font-weight: 600; border-radius: var(--radius);
+    border: 1px solid var(--line); background: #fff; color: var(--ink-soft); cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .role-tabs button:hover { border-color: var(--slate-deep); }
+  .role-tabs button.active { background: var(--slate-deep); color: #fff; border-color: var(--slate-deep); }
+  .divider-or { display: flex; align-items: center; gap: 12px; color: var(--ink-soft); font-size: 0.8rem; margin: 20px 0; }
+  .divider-or::before, .divider-or::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+  .dp-uploader {
+    display: flex; align-items: center; gap: 16px; background: var(--panel);
+    border: 1px dashed var(--line); border-radius: var(--radius); padding: 14px 18px; margin-bottom: 20px;
+  }
+  .dp-preview {
+    width: 72px; height: 72px; min-width: 72px; min-height: 72px; max-width: 72px; max-height: 72px;
+    aspect-ratio: 1 / 1; object-fit: cover; object-position: center top; border-radius: 50%;
+    border: 3px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.12); background: #eee;
+  }
+  .role-section { display: none; }
+  .role-section.active { display: block; }
+  .form-section-header {
+    font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--signal-deep); margin: 20px 0 10px; border-bottom: 1px solid var(--line); padding-bottom: 4px;
+  }
+  .note { font-size: 0.82rem; color: var(--ink-soft); margin-top: 14px; background: #fff; padding: 10px 14px; border-radius: var(--radius); border-left: 4px solid var(--signal); }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="/index.html" class="brand"><span class="brand-mark">ST</span><span class="brand-name">SkillTrack</span></a>
+  <div class="nav-links"><a href="/login.html">Already registered? Log in</a></div>
+</nav>
+
+<div class="auth-wrap">
+  <h2>Create your account</h2>
+  <p class="mt-0">Select your role to configure your verified profile and start matching opportunities.</p>
+
+  <div class="role-tabs" id="roleTabs">
+    <button type="button" data-role="student" class="active">Student</button>
+    <button type="button" data-role="institute">Institute</button>
+    <button type="button" data-role="industry">Employer</button>
+    <button type="button" data-role="government">Government</button>
+    <button type="button" data-role="employee">Mentor</button>
+    <button type="button" data-role="investor">Investor</button>
+  </div>
+
+  <!-- QUICK-FILL DEMO BUTTONS -->
+  <div class="demo-box" style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:var(--radius); padding:10px 14px; margin-bottom:18px;">
+    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+      <span style="font-size:0.82rem; font-weight:700; color:#166534;">⚡ Auto-Fill Test Registration:</span>
+      <div style="display:flex; gap:6px; flex-wrap:wrap;">
+        <button type="button" class="btn btn-ghost btn-sm" onclick="quickFill('student')" style="background:#fff; font-size:0.75rem; padding:4px 10px; border-color:#86EFAC; font-weight:600;">Sample Student</button>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="quickFill('industry')" style="background:#fff; font-size:0.75rem; padding:4px 10px; border-color:#86EFAC; font-weight:600;">Sample Employer</button>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="quickFill('institute')" style="background:#fff; font-size:0.75rem; padding:4px 10px; border-color:#86EFAC; font-weight:600;">Sample Institute</button>
+      </div>
+    </div>
+  </div>
+
+  <a href="#" id="googleBtn" class="btn-google">
+    <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.9v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.66 9c0-.59.1-1.17.29-1.7V4.97H.9A9 9 0 0 0 0 9c0 1.45.35 2.83.9 4.03l3.05-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .9 4.97l3.05 2.33C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
+    Continue with Google
+  </a>
+
+  <div class="divider-or">or complete full registration</div>
+
+  <form id="registerForm">
+    
+    <!-- 1. PERMANENT PROFILE PHOTO (DP) -->
+    <div class="dp-uploader">
+      <div id="dpContainer" style="display:inline-block;">
+        <img id="dpPreview" class="dp-preview" src="/uploads/default-avatar.png" onerror="this.src='https://ui-avatars.com/api/?name=User&background=24344D&color=fff'" alt="Avatar Preview">
+      </div>
+      <div style="flex:1;">
+        <label style="font-weight:600; font-size:0.85rem; display:block; margin-bottom:4px;" id="dpLabel">Profile Photo (DP) <span class="muted" style="font-weight:normal;">(Saved permanently)</span></label>
+        <div class="flex gap-1" style="flex-wrap:wrap;">
+          <input type="text" id="avatar_url" placeholder="Photo URL or upload below" style="flex:1; min-width:140px; font-size:0.85rem;">
+          <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('dpFileInput').click()">Upload</button>
+          <button type="button" class="btn btn-danger btn-sm" onclick="removeDp()" title="Remove profile photo">Remove</button>
+          <input type="file" id="dpFileInput" style="display:none;" accept="image/*" onchange="handleDpUpload(this.files[0])">
+        </div>
+        <div class="field-hint" id="dpHint">Accepted formats: JPG, PNG, WebP up to 10MB</div>
+      </div>
+    </div>
+
+    <!-- 2. CORE CREDENTIALS & CONTACT -->
+    <div class="form-section-header">Account Credentials &amp; Contact</div>
+    
+    <div class="grid grid-2">
+      <div class="field">
+        <label id="nameLabel">Full Name <span class="required-star">*</span></label>
+        <input type="text" id="name" required placeholder="e.g. Rahul Sharma">
+      </div>
+      <div class="field">
+        <label>Email Address <span class="required-star">*</span></label>
+        <input type="email" id="email" required placeholder="name@domain.com">
+      </div>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="field">
+        <label>Phone Number <span class="required-star">*</span></label>
+        <input type="tel" id="phone" placeholder="e.g. +91 9876543210" required>
+        <div class="field-hint">Used for secure login &amp; alerts</div>
+      </div>
+      <div class="field">
+        <label>Password <span class="required-star">*</span></label>
+        <input type="password" id="password" minlength="6" required placeholder="At least 6 characters">
+      </div>
+    </div>
+
+    <!-- 3. ROLE-SPECIFIC DETAILED SECTIONS -->
+    
+    <!-- STUDENT SECTION -->
+    <div id="role-student" class="role-section active">
+      <div class="form-section-header">Academic &amp; Career Details</div>
+      <div class="grid grid-2">
+        <div class="field">
+          <label>College / University</label>
+          <input type="text" id="college" placeholder="e.g. Government Polytechnic / State University">
+        </div>
+        <div class="field">
+          <label>Branch / Specialization</label>
+          <input type="text" id="branch" placeholder="e.g. Computer Science / Mechanical">
+        </div>
+        <div class="field">
+          <label>Current Year</label>
+          <select id="current_year">
+            <option value="">Select year</option>
+            <option value="1st Year">1st Year</option>
+            <option value="2nd Year">2nd Year</option>
+            <option value="3rd Year">3rd Year</option>
+            <option value="4th Year">4th Year</option>
+            <option value="Graduated">Graduated</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Semester</label>
+          <select id="semester">
+            <option value="">Select semester</option>
+            <option value="Sem 1">Semester 1</option>
+            <option value="Sem 2">Semester 2</option>
+            <option value="Sem 3">Semester 3</option>
+            <option value="Sem 4">Semester 4</option>
+            <option value="Sem 5">Semester 5</option>
+            <option value="Sem 6">Semester 6</option>
+            <option value="Sem 7">Semester 7</option>
+            <option value="Sem 8">Semester 8</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>CGPA / Percentage</label>
+          <input type="number" id="cgpa" step="0.01" min="0" max="10" placeholder="e.g. 8.5">
+        </div>
+        <div class="field">
+          <label>Graduation Year</label>
+          <input type="number" id="graduation_year" min="1995" max="2035" placeholder="e.g. 2026">
+        </div>
+      </div>
+      <div class="field">
+        <label>Target Career Role / Preferred Jobs</label>
+        <input type="text" id="preferred_jobs" placeholder="e.g. Full Stack Developer, Embedded Engineer, Cloud Architect">
+      </div>
+      <div class="grid grid-2">
+        <div class="field">
+          <label>District / City</label>
+          <input type="text" id="student_district" placeholder="e.g. Pune / Mumbai">
+        </div>
+        <div class="field">
+          <label>State</label>
+          <input type="text" id="student_state" placeholder="e.g. Maharashtra">
+        </div>
+      </div>
+    </div>
+
+    <!-- INSTITUTE SECTION -->
+    <div id="role-institute" class="role-section">
+      <div class="form-section-header">Training Institute / Polytechnic Details</div>
+      <div class="grid grid-2">
+        <div class="field">
+          <label>Affiliation / Accreditation Code</label>
+          <input type="text" id="inst_affiliation" placeholder="e.g. MSBTE / AICTE / NSDC Partner">
+        </div>
+        <div class="field">
+          <label>Official Portal / Website</label>
+          <input type="url" id="inst_website" placeholder="https://polytechnic.ac.in">
+        </div>
+        <div class="field">
+          <label>Training Coordinator Email</label>
+          <input type="email" id="inst_email" placeholder="placement@polytechnic.ac.in">
+        </div>
+        <div class="field">
+          <label>Official Contact Phone</label>
+          <input type="tel" id="inst_phone" placeholder="e.g. +91 9876543210">
+        </div>
+        <div class="field">
+          <label>District / City</label>
+          <input type="text" id="inst_district" placeholder="e.g. Nagpur">
+        </div>
+        <div class="field">
+          <label>State</label>
+          <input type="text" id="inst_state" placeholder="e.g. Maharashtra">
+        </div>
+      </div>
+      <div class="field">
+        <label>Institute Profile &amp; Lab Facilities</label>
+        <textarea id="inst_desc" placeholder="Briefly describe your training infrastructure, recognized trade courses, and industry tie-ups..."></textarea>
+      </div>
+    </div>
+
+    <!-- INDUSTRY / EMPLOYER SECTION -->
+    <div id="role-industry" class="role-section">
+      <div class="form-section-header">Company &amp; Hiring Profile</div>
+      <div class="grid grid-2">
+        <div class="field">
+          <label>Industry Sector</label>
+          <input type="text" id="industry_sector" placeholder="e.g. Software &amp; IT, Manufacturing, Automotive">
+        </div>
+        <div class="field">
+          <label>Company Website</label>
+          <input type="url" id="website" placeholder="https://example.com">
+        </div>
+        <div class="field">
+          <label>Recruiter / HR Email</label>
+          <input type="email" id="contact_email" placeholder="hr@company.com">
+        </div>
+        <div class="field">
+          <label>HR Contact Phone</label>
+          <input type="tel" id="contact_phone" placeholder="e.g. +91 9876543210">
+        </div>
+        <div class="field">
+          <label>District / City</label>
+          <input type="text" id="ind_district" placeholder="e.g. Bengaluru">
+        </div>
+        <div class="field">
+          <label>State</label>
+          <input type="text" id="ind_state" placeholder="e.g. Karnataka">
+        </div>
+      </div>
+      <div class="field">
+        <label>Company Overview</label>
+        <textarea id="ind_desc" placeholder="Briefly describe your company, tech stack, and hiring initiatives..."></textarea>
+      </div>
+    </div>
+
+    <!-- EMPLOYEE / MENTOR SECTION -->
+    <div id="role-employee" class="role-section">
+      <div class="form-section-header">Professional Mentor Details</div>
+      <div class="grid grid-2">
+        <div class="field">
+          <label>Job Title / Designation</label>
+          <input type="text" id="emp_job_title" placeholder="e.g. Lead Solutions Architect / Mentor">
+        </div>
+        <div class="field">
+          <label>Department</label>
+          <input type="text" id="emp_dept" placeholder="e.g. Core Engineering">
+        </div>
+      </div>
+    </div>
+
+    <!-- GOVERNMENT SECTION -->
+    <div id="role-government" class="role-section">
+      <div class="form-section-header">Government Department &amp; Officer Info</div>
+      <div class="grid grid-2">
+        <div class="field">
+          <label>Department / Ministry</label>
+          <input type="text" id="gov_dept" placeholder="e.g. Dept of Skill Development &amp; Entrepreneurship">
+        </div>
+        <div class="field">
+          <label>Designation</label>
+          <input type="text" id="gov_title" placeholder="e.g. Nodal Officer / District Inspector">
+        </div>
+      </div>
+    </div>
+
+    <!-- INVESTOR SECTION -->
+    <div id="role-investor" class="role-section">
+      <div class="form-section-header">Investor &amp; Impact Analytics</div>
+      <div class="field">
+        <label>Investment Fund / Organization Name</label>
+        <input type="text" id="inv_org" placeholder="e.g. Impact Skilling Venture Fund">
+      </div>
+    </div>
+
+    <!-- SUBMISSION & VERIFICATION ACTION BLOCK -->
+    <div id="registrationActionCard" class="card mt-2" style="background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%); border: 2px solid #0F172A; padding: 22px; box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12); margin-top: 28px; border-radius: 8px;">
+      
+      <!-- CONSENT-BASED TRAINEE PROFILE CHECKBOX -->
+      <div id="studentConsentBlock" style="background:#EFF6FF; border:1px solid #BFDBFE; border-radius:6px; padding:14px 16px; margin-bottom:18px;">
+        <label style="display:flex; align-items:flex-start; gap:12px; cursor:pointer; margin:0; font-size:0.88rem; color:#1E3A8A; line-height:1.45;">
+          <input type="checkbox" id="consentCheckbox" required checked style="margin-top:2px; width:20px; height:20px; accent-color: #2563EB; cursor:pointer;">
+          <span>
+            <strong>Consent for Verified Workforce Tracking:</strong> I consent to SkillTrack securely maintaining my trainee details, verified skills, training credentials, and employment milestone outcomes for state workforce intelligence, longitudinal follow-ups, and recruiter matching.
+          </span>
+        </label>
+      </div>
+
+      <!-- PRIMARY CREATE ACCOUNT SUBMIT BUTTON -->
+      <button type="submit" class="btn btn-primary btn-block" id="submitBtn" style="padding: 16px 24px; font-size: 1.15rem; font-weight: 800; letter-spacing: 0.02em; background: linear-gradient(135deg, #16233A 0%, #0F172A 100%); border: 2px solid #E2A33B; box-shadow: 0 4px 14px rgba(226, 163, 59, 0.4); color: #fff; cursor: pointer; border-radius: 6px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s ease;">
+        <span>Create Account</span>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#E2A33B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+      </button>
+
+      <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-top:12px; font-size:0.82rem; color:var(--ink-soft);">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2F7A54" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        <span>Secure 256-bit encrypted state workforce registration</span>
+      </div>
+    </div>
+  </form>
+
+  <p class="note" id="pendingNote" style="display:none;">
+    <strong>Verification Notice:</strong> Industry, institute, and government officer accounts are verified by a state officer before full live publishing privileges are granted. You can still log in and explore your portal immediately.
+  </p>
+</div>
+
+<!-- STICKY BOTTOM SUBMIT BAR (ALWAYS VISIBLE ON SCREEN AS USER TYPES) -->
+<div id="stickyActionBar" style="position:fixed; bottom:0; left:0; right:0; background:rgba(255,255,255,0.98); backdrop-filter:blur(10px); border-top:2px solid #0F172A; box-shadow:0 -6px 20px rgba(0,0,0,0.14); padding:12px 24px; z-index:9999; display:flex; align-items:center; justify-content:space-between;">
+  <div style="display:flex; align-items:center; gap:12px;">
+    <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#10B981; box-shadow:0 0 8px #10B981;"></span>
+    <span style="font-size:0.92rem; font-weight:700; color:var(--slate-deep);" id="stickyRoleLabel">Student Registration</span>
+    <span class="muted" style="font-size:0.8rem; display:inline-block;" id="stickyPrompt">&bull; Click button to submit details</span>
+  </div>
+  <button type="button" class="btn btn-primary" onclick="submitRegistration()" id="stickySubmitBtn" style="background:linear-gradient(135deg, #16233A 0%, #0F172A 100%); border:2px solid #E2A33B; padding:11px 28px; font-weight:800; font-size:1rem; box-shadow:0 3px 12px rgba(226, 163, 59, 0.35); cursor:pointer;">
+    Create Account &rarr;
+  </button>
+</div>
+
+<script src="/js/shared.js"></script>
+<script>
+  let selectedRole = 'student';
+  const params = new URLSearchParams(window.location.search);
+  const urlRole = params.get('role');
+
+  function setRole(role) {
+    selectedRole = role;
+    document.querySelectorAll('#roleTabs button').forEach(b => b.classList.toggle('active', b.dataset.role === role));
+    
+    // Update role-specific sections
+    document.querySelectorAll('.role-section').forEach(sec => sec.classList.remove('active'));
+    const activeSec = document.getElementById(`role-${role}`);
+    if (activeSec) activeSec.classList.add('active');
+
+    // Update labels and placeholders
+    const nameLabel = document.getElementById('nameLabel');
+    const nameInput = document.getElementById('name');
+    const dpLabel = document.getElementById('dpLabel');
+    const dpPreview = document.getElementById('dpPreview');
+
+    if (role === 'institute') {
+      nameLabel.innerHTML = 'Institute / College Name <span class="required-star">*</span>';
+      nameInput.placeholder = 'e.g. Government Polytechnic, Pune';
+      dpLabel.innerHTML = 'Institute Logo / Crest <span class="muted" style="font-weight:normal;">(Permanent)</span>';
+      dpPreview.onerror = function() { this.src = 'https://ui-avatars.com/api/?name=Institute&background=16233A&color=E2A33B'; };
+    } else if (role === 'industry') {
+      nameLabel.innerHTML = 'Company Name <span class="required-star">*</span>';
+      nameInput.placeholder = 'e.g. Acme Tech Solutions';
+      dpLabel.innerHTML = 'Company Logo <span class="muted" style="font-weight:normal;">(Permanent)</span>';
+      dpPreview.onerror = function() { this.src = 'https://ui-avatars.com/api/?name=Company&background=16233A&color=E2A33B'; };
+    } else if (role === 'government') {
+      nameLabel.innerHTML = 'Officer Full Name <span class="required-star">*</span>';
+      nameInput.placeholder = 'e.g. Dr. Rajesh Verma';
+      dpLabel.innerHTML = 'Official Photo / Badge <span class="muted" style="font-weight:normal;">(Permanent)</span>';
+      dpPreview.onerror = function() { this.src = 'https://ui-avatars.com/api/?name=Officer&background=0F172A&color=fff'; };
+    } else if (role === 'employee') {
+      nameLabel.innerHTML = 'Mentor Full Name <span class="required-star">*</span>';
+      nameInput.placeholder = 'e.g. Priya Sundaram';
+      dpLabel.innerHTML = 'Mentor Profile Photo (DP) <span class="muted" style="font-weight:normal;">(Permanent)</span>';
+      dpPreview.onerror = function() { this.src = 'https://ui-avatars.com/api/?name=Mentor&background=1E3A8A&color=fff'; };
+    } else {
+      nameLabel.innerHTML = 'Full Name <span class="required-star">*</span>';
+      nameInput.placeholder = 'e.g. Rahul Sharma';
+      dpLabel.innerHTML = 'Profile Photo (DP) <span class="muted" style="font-weight:normal;">(Permanent)</span>';
+      dpPreview.onerror = function() { this.src = 'https://ui-avatars.com/api/?name=Student&background=24344D&color=fff'; };
+    }
+
+    const consentBlock = document.getElementById('studentConsentBlock');
+    const consentCheckbox = document.getElementById('consentCheckbox');
+    if (consentBlock && consentCheckbox) {
+      if (role === 'student') {
+        consentBlock.style.display = 'block';
+        consentCheckbox.required = true;
+      } else {
+        consentBlock.style.display = 'none';
+        consentCheckbox.required = false;
+      }
+    }
+
+    const roleLabels = {
+      student: 'Student Registration',
+      institute: 'Institute Registration',
+      industry: 'Employer Registration',
+      government: 'Government Officer Registration',
+      employee: 'Mentor Registration',
+      investor: 'Investor Registration'
+    };
+    const stickyRoleLabel = document.getElementById('stickyRoleLabel');
+    if (stickyRoleLabel) stickyRoleLabel.textContent = roleLabels[role] || 'Account Registration';
+
+    document.getElementById('pendingNote').style.display = (role === 'industry' || role === 'government' || role === 'institute') ? 'block' : 'none';
+    document.getElementById('googleBtn').href = `/api/auth/google?state=${role}`;
+  }
+
+  function submitRegistration() {
+    const form = document.getElementById('registerForm');
+    if (form.reportValidity && !form.reportValidity()) {
+      return;
+    }
+    if (form.requestSubmit) {
+      form.requestSubmit();
+    } else {
+      document.getElementById('submitBtn').click();
+    }
+  }
+
+  function quickFill(role) {
+    setRole(role);
+    const rand = Math.floor(1000 + Math.random() * 9000);
+    document.getElementById('name').value = role === 'student' ? 'Amit Deshmukh' : (role === 'industry' ? 'Nova Cloud Labs' : 'Govt Polytechnic Pune');
+    document.getElementById('email').value = `${role}_${rand}@skilltrack.test`;
+    document.getElementById('phone').value = `+91 98200 ${rand}`;
+    document.getElementById('password').value = 'Password123!';
+    
+    if (role === 'student') {
+      document.getElementById('college').value = 'Pune Institute of Computer Technology';
+      document.getElementById('branch').value = 'Computer Engineering';
+      document.getElementById('current_year').value = '3rd Year';
+      document.getElementById('semester').value = 'Sem 6';
+      document.getElementById('cgpa').value = '8.95';
+      document.getElementById('graduation_year').value = '2026';
+      document.getElementById('preferred_jobs').value = 'Full Stack Developer & Cloud Engineer';
+      document.getElementById('student_district').value = 'Pune';
+      document.getElementById('student_state').value = 'Maharashtra';
+      document.getElementById('consentCheckbox').checked = true;
+    } else if (role === 'industry') {
+      document.getElementById('industry_sector').value = 'Information Technology & Cloud';
+      document.getElementById('website').value = 'https://novacloud.example.com';
+      document.getElementById('ind_district').value = 'Mumbai';
+      document.getElementById('ind_state').value = 'Maharashtra';
+      document.getElementById('ind_desc').value = 'Enterprise cloud solutions and scalable web services.';
+    } else if (role === 'institute') {
+      document.getElementById('inst_affiliation').value = 'MSBTE / AICTE Accredited';
+      document.getElementById('inst_website').value = 'https://gppune.ac.in';
+      document.getElementById('inst_district').value = 'Pune';
+      document.getElementById('inst_state').value = 'Maharashtra';
+      document.getElementById('inst_desc').value = 'State vocational polytechnic providing technical certifications.';
+    }
+
+    const actionCard = document.getElementById('registrationActionCard');
+    if (actionCard) actionCard.scrollIntoView({ behavior: 'smooth' });
+    toast(`Sample ${role} details filled. Click Create Account!`);
+  }
+
+  document.querySelectorAll('#roleTabs button').forEach(btn => {
+    btn.addEventListener('click', () => setRole(btn.dataset.role));
+  });
+
+  setRole(urlRole && ['student','institute','industry','employee','government','investor'].includes(urlRole) ? urlRole : 'student');
+
+  async function handleDpUpload(file) {
+    if (!file) return;
+    try {
+      toast('Uploading photo...');
+      const res = await uploadFile(file);
+      document.getElementById('avatar_url').value = res.url;
+      document.getElementById('dpPreview').src = res.url;
+      toast('Profile photo attached permanently.');
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+
+  function removeDp() {
+    document.getElementById('avatar_url').value = '';
+    const name = document.getElementById('name').value.trim() || 'User';
+    document.getElementById('dpPreview').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=24344D&color=fff`;
+    toast('Profile photo removed. Default initials badge will be used.');
+  }
+
+  document.getElementById('avatar_url').addEventListener('input', (e) => {
+    if (e.target.value.trim()) {
+      document.getElementById('dpPreview').src = e.target.value.trim();
+    }
+  });
+
+  document.getElementById('registerForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const phoneVal = document.getElementById('phone').value.trim();
+    if (!isValidPhone(phoneVal)) {
+      toast('Please enter a valid phone number (7 to 20 digits).', true);
+      return;
+    }
+
+    const payload = {
+      name: document.getElementById('name').value.trim(),
+      email: document.getElementById('email').value.trim(),
+      phone: phoneVal,
+      password: document.getElementById('password').value,
+      avatar_url: document.getElementById('avatar_url').value.trim() || null,
+      role: selectedRole
+    };
+
+    if (selectedRole === 'student') {
+      const cgpa = document.getElementById('cgpa').value.trim();
+      if (!isValidCgpa(cgpa)) {
+        toast('CGPA must be between 0.0 and 10.0', true);
+        return;
+      }
+      payload.college = document.getElementById('college').value.trim();
+      payload.branch = document.getElementById('branch').value.trim();
+      payload.current_year = document.getElementById('current_year').value;
+      payload.semester = document.getElementById('semester').value;
+      payload.cgpa = cgpa ? parseFloat(cgpa) : null;
+      payload.graduation_year = document.getElementById('graduation_year').value.trim() || null;
+      payload.preferred_jobs = document.getElementById('preferred_jobs').value.trim();
+      payload.district = document.getElementById('student_district').value.trim();
+      payload.state = document.getElementById('student_state').value.trim();
+    } else if (selectedRole === 'institute') {
+      payload.affiliation = document.getElementById('inst_affiliation')?.value.trim();
+      payload.website = document.getElementById('inst_website')?.value.trim();
+      payload.contact_email = document.getElementById('inst_email')?.value.trim() || payload.email;
+      payload.contact_phone = document.getElementById('inst_phone')?.value.trim() || payload.phone;
+      payload.district = document.getElementById('inst_district')?.value.trim();
+      payload.state = document.getElementById('inst_state')?.value.trim();
+      payload.description = document.getElementById('inst_desc')?.value.trim();
+    } else if (selectedRole === 'industry') {
+      payload.industry_sector = document.getElementById('industry_sector').value.trim();
+      payload.website = document.getElementById('website').value.trim();
+      payload.contact_email = document.getElementById('contact_email').value.trim() || payload.email;
+      payload.contact_phone = document.getElementById('contact_phone').value.trim() || payload.phone;
+      payload.district = document.getElementById('ind_district').value.trim();
+      payload.state = document.getElementById('ind_state').value.trim();
+      payload.description = document.getElementById('ind_desc').value.trim();
+    } else if (selectedRole === 'employee') {
+      payload.job_title = document.getElementById('emp_job_title').value.trim() || 'Mentor';
+      payload.department = document.getElementById('emp_dept')?.value.trim();
+    }
+
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Creating Account...';
+
+    try {
+      const data = await api('/auth/register', {
+        method: 'POST',
+        body: payload
+      });
+      setSession(data.token, data.user);
+      toast('Account created successfully!');
+      
+      const role = data.user.role;
+      let target = `/${role}.html`;
+      if (role === 'employer' || role === 'industry' || role === 'employee') target = '/industry.html';
+      if (role === 'institute') target = '/institute.html';
+      setTimeout(() => {
+        window.location.href = target;
+      }, 500);
+    } catch (err) {
+      toast(err.message, true);
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Create Verified Account';
+    }
+  });
+</script>
+
+</body>
+</html>
+
